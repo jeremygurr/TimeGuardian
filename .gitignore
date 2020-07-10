@@ -1,0 +1,16 @@
+
+# Lines that start with '#' are comments.
+# exclude patterns (uncomment them if you want to use them):
+# --------------------------------
+# When adding lines to this file, add a comment next to the exclude path detailing what it's excluding
+# mac directory index files
+.DS_Store
+# unix swap file
+*.swp
+*.swo
+# potential log files
+*.log
+*.iml
+*.o
+# *.xcodeproj
+

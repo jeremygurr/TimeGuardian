@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="16119" systemVersion="19F101" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="TimeBudget" representedClassName="TimeBudget" syncable="YES">
+        <attribute name="name" attributeType="String"/>
+        <relationship name="funds" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="TimeFund" inverseName="budget" inverseEntity="TimeFund"/>
+        <relationship name="superFund" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="TimeFund" inverseName="subBudget" inverseEntity="TimeFund"/>
+    </entity>
+    <entity name="TimeFund" representedClassName="TimeFund" syncable="YES">
+        <attribute name="balance" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="name" attributeType="String"/>
+        <relationship name="budget" maxCount="1" deletionRule="Nullify" destinationEntity="TimeBudget" inverseName="funds" inverseEntity="TimeBudget"/>
+        <relationship name="subBudget" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TimeBudget" inverseName="superFund" inverseEntity="TimeBudget"/>
+    </entity>
+    <elements>
+        <element name="TimeBudget" positionX="-63" positionY="-18" width="128" height="88"/>
+        <element name="TimeFund" positionX="272.59765625" positionY="-15.421875" width="128" height="103"/>
+    </elements>
+</model>
