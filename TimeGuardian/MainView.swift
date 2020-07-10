@@ -31,6 +31,11 @@ struct MainView: View {
 						Text(budget.name)
 					}
 				}
+				.onDelete { indexSet in
+					for index in indexSet {
+						self.managedObjectContext.delete(self.budgets[index])
+					}
+				}
 			}
 			.navigationBarTitle(Text("Budget List"), displayMode: .inline)
 		}
