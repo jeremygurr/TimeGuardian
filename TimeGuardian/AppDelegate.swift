@@ -9,8 +9,6 @@
 import UIKit
 import CoreData
 
-var masterContext: NSManagedObjectContext? = nil
-
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 	
@@ -60,8 +58,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 			}
 		})
 		
-		masterContext = container.viewContext
-		TestDataBuilder(context: container.viewContext).createTestData()
 		return container
 	}()
 	

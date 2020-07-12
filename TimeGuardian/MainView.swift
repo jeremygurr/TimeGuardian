@@ -10,20 +10,15 @@ func errorLog(_ message: String) {
 	print(message)
 }
 
+
 struct MainView: View {
-	//	@EnvironmentObject private var userData: UserData
-	@Environment(\.managedObjectContext) var managedObjectContext
-	@FetchRequest(
-		entity: TimeBudget.entity(),
-		sortDescriptors: [
-			NSSortDescriptor(keyPath: \TimeBudget.name, ascending: true),
-		]
-	) var budgets: FetchedResults<TimeBudget>
+	@EnvironmentObject private var budgetFrontModel: BudgetFrontModel
+	@State private var isEditable = false
 	
 	var body: some View {
 		NavigationView {
 			List {
-				ForEach(budgets, id: \.self) { budget in
+				ForEach(budgetFrontModel.budgetList, id: \.self) { budget in
 					NavigationLink(
 						destination: Text("Stub")
 						//						BudgetView(budget: budget)
@@ -31,22 +26,36 @@ struct MainView: View {
 						Text(budget.name)
 					}
 				}
+				.onMove(perform: move)
 				.onDelete { indexSet in
 					for index in indexSet {
-						self.managedObjectContext.delete(self.budgets[index])
+						self.budgetFrontModel.deleteBudget(index: index)
 					}
 				}
 			}
 			.navigationBarTitle(Text("Budget List"), displayMode: .inline)
 		}
 	}
+	
+	func move(from source: IndexSet, to destination: Int) {
+		budgetFrontModel.moveBudget(fromOffsets: source, toOffset: destination)
+		//			withAnimation {
+		//				isEditable = false
+		//			}
+	}
 }
 
 struct MainView_Previews: PreviewProvider {
 	static var previews: some View {
-		MainView()
-			.environment(\.managedObjectContext, masterContext!)
-		//			.environmentObject(UserData.sample)
+		do {
+			let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+			let frontModel: BudgetFrontModel = try BudgetFrontModel(dataContext: context)
+			return MainView()
+				.environmentObject(frontModel)
+		} catch {
+			let nserror = error as NSError
+			fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
+		}
 	}
 }
 
