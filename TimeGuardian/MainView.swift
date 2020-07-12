@@ -13,23 +13,22 @@ func errorLog(_ message: String) {
 
 struct MainView: View {
 	@Environment(\.editMode) var mode
-	@EnvironmentObject private var budgetFrontModel: BudgetFrontModel
+	@EnvironmentObject private var frontModel: BudgetFrontModel
 	
 	var body: some View {
 		NavigationView {
 			VStack {
 				List {
-					ForEach(budgetFrontModel.budgetList, id: \.self) { budget in
+					ForEach(frontModel.budgetList, id: \.self) { budget in
 						NavigationLink(
-							destination: Text("Stub")
-							//						BudgetView(budget: budget)
+							destination: BudgetView(budget: budget)
 						) {
 							Text(budget.name)
 						}
 					}
 					.onDelete { indexSet in
 						for index in indexSet {
-							self.budgetFrontModel.deleteBudget(index: index)
+							self.frontModel.deleteBudget(index: index)
 						}
 					}
 					.onMove(perform: move)
@@ -41,7 +40,7 @@ struct MainView: View {
 	}
 	
 	func move(from source: IndexSet, to destination: Int) {
-		budgetFrontModel.moveBudget(fromOffsets: source, toOffset: destination)
+		frontModel.moveBudget(fromOffsets: source, toOffset: destination)
 		//			withAnimation {
 		//				isEditable = false
 		//			}

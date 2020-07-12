@@ -43,6 +43,28 @@ class BudgetFrontModel: ObservableObject {
 		]
 		
 		budgetList = try dataContext.fetch(request)
+		
+	}
+	
+	func getFunds(budget: TimeBudget) -> [TimeFund] {
+		guard let fundSet = budget.funds,
+			let funds = fundSet.allObjects as? [TimeFund]
+			else {
+				return []
+		}
+		return funds
+	}
+	
+	func hasSubBudget(fund: TimeFund) -> Bool {
+		return false
+	}
+	
+	func adjustBalance(fund: TimeFund, amount: Int) {
+		
+	}
+	
+	func zeroBalance(fund: TimeFund) {
+		
 	}
 	
 }

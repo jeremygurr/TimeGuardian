@@ -12,6 +12,7 @@
 		0005627924BA7E7F003AECC6 /* TimeFund+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0005627524BA7E7F003AECC6 /* TimeFund+CoreDataClass.swift */; };
 		0005627A24BA7E7F003AECC6 /* TimeFund+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0005627624BA7E7F003AECC6 /* TimeFund+CoreDataProperties.swift */; };
 		0005627B24BA7E7F003AECC6 /* TimeBudget+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0005627724BA7E7F003AECC6 /* TimeBudget+CoreDataProperties.swift */; };
+		0005627D24BAE1A7003AECC6 /* BudgetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0005627C24BAE1A7003AECC6 /* BudgetView.swift */; };
 		00113D0A24B920180028AB57 /* UserData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00113D0924B920180028AB57 /* UserData.swift */; };
 		002590DE24B90F0E00F703C5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 002590DD24B90F0E00F703C5 /* AppDelegate.swift */; };
 		002590E024B90F0E00F703C5 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 002590DF24B90F0E00F703C5 /* SceneDelegate.swift */; };
@@ -28,6 +29,7 @@
 		0005627524BA7E7F003AECC6 /* TimeFund+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "TimeFund+CoreDataClass.swift"; path = "TimeGuardian/Model/TimeFund+CoreDataClass.swift"; sourceTree = SOURCE_ROOT; };
 		0005627624BA7E7F003AECC6 /* TimeFund+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "TimeFund+CoreDataProperties.swift"; path = "TimeGuardian/Model/TimeFund+CoreDataProperties.swift"; sourceTree = SOURCE_ROOT; };
 		0005627724BA7E7F003AECC6 /* TimeBudget+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "TimeBudget+CoreDataProperties.swift"; path = "TimeGuardian/Model/TimeBudget+CoreDataProperties.swift"; sourceTree = SOURCE_ROOT; };
+		0005627C24BAE1A7003AECC6 /* BudgetView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BudgetView.swift; sourceTree = "<group>"; };
 		00113D0924B920180028AB57 /* UserData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserData.swift; sourceTree = "<group>"; };
 		002590DA24B90F0E00F703C5 /* TimeGuardian.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TimeGuardian.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		002590DD24B90F0E00F703C5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -95,6 +97,7 @@
 				002590DD24B90F0E00F703C5 /* AppDelegate.swift */,
 				002590DF24B90F0E00F703C5 /* SceneDelegate.swift */,
 				002590E424B90F0E00F703C5 /* MainView.swift */,
+				0005627C24BAE1A7003AECC6 /* BudgetView.swift */,
 				002590E624B90F1000F703C5 /* Assets.xcassets */,
 				002590EB24B90F1000F703C5 /* LaunchScreen.storyboard */,
 				002590EE24B90F1000F703C5 /* Info.plist */,
@@ -193,6 +196,7 @@
 				002590E024B90F0E00F703C5 /* SceneDelegate.swift in Sources */,
 				0005627924BA7E7F003AECC6 /* TimeFund+CoreDataClass.swift in Sources */,
 				0005627B24BA7E7F003AECC6 /* TimeBudget+CoreDataProperties.swift in Sources */,
+				0005627D24BAE1A7003AECC6 /* BudgetView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
