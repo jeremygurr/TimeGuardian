@@ -26,13 +26,19 @@ struct MainView: View {
 						Text(budget.name)
 					}
 				}
-				.onMove(perform: move)
 				.onDelete { indexSet in
 					for index in indexSet {
 						self.budgetFrontModel.deleteBudget(index: index)
 					}
 				}
+				.onMove(perform: move)
+				.onLongPressGesture {
+					withAnimation {
+						self.isEditable = true
+					}
+				}
 			}
+			.environment(\.editMode, isEditable ? .constant(.active) : .constant(.inactive))
 			.navigationBarTitle(Text("Budget List"), displayMode: .inline)
 		}
 	}
