@@ -12,34 +12,31 @@ func errorLog(_ message: String) {
 
 
 struct MainView: View {
+	@Environment(\.editMode) var mode
 	@EnvironmentObject private var budgetFrontModel: BudgetFrontModel
-	@State private var isEditable = false
 	
 	var body: some View {
 		NavigationView {
-			List {
-				ForEach(budgetFrontModel.budgetList, id: \.self) { budget in
-					NavigationLink(
-						destination: Text("Stub")
-						//						BudgetView(budget: budget)
-					) {
-						Text(budget.name)
+			VStack {
+				List {
+					ForEach(budgetFrontModel.budgetList, id: \.self) { budget in
+						NavigationLink(
+							destination: Text("Stub")
+							//						BudgetView(budget: budget)
+						) {
+							Text(budget.name)
+						}
 					}
-				}
-				.onDelete { indexSet in
-					for index in indexSet {
-						self.budgetFrontModel.deleteBudget(index: index)
+					.onDelete { indexSet in
+						for index in indexSet {
+							self.budgetFrontModel.deleteBudget(index: index)
+						}
 					}
+					.onMove(perform: move)
 				}
-				.onMove(perform: move)
-				.onLongPressGesture {
-					withAnimation {
-						self.isEditable = true
-					}
-				}
+				.navigationBarTitle("Budget List", displayMode: .inline)
+				.navigationBarItems(trailing: EditButton())
 			}
-			.environment(\.editMode, isEditable ? .constant(.active) : .constant(.inactive))
-			.navigationBarTitle(Text("Budget List"), displayMode: .inline)
 		}
 	}
 	
