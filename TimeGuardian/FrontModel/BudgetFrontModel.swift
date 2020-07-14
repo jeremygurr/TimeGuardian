@@ -13,12 +13,10 @@ import CoreData
 class BudgetFrontModel: ObservableObject {
 
 	let dataContext: NSManagedObjectContext
-	@Published var editingBudget : TimeBudget? = nil
 	@Published var budgetList: [TimeBudget] = []
 	
 	init(dataContext: NSManagedObjectContext, testData: TestDataBuilder? = nil) throws {
 		self.dataContext = dataContext
-//		TestDataBuilder(context: dataContext).createTestData()
 		try load()
 		if let t = testData {
 			t.createTestData()

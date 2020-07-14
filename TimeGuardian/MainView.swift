@@ -12,21 +12,22 @@ func errorLog(_ message: String) {
 
 struct MainView: View {
 	//	@Environment(\.editMode) var editMode
-	@State private var editMode = EditMode.inactive
-	@EnvironmentObject private var frontModel: BudgetFrontModel
-	@State private var budgetList: [TimeBudget] = []
-	
-	init(budgetList: [TimeBudget]) {
-		self.budgetList = budgetList
-		debugLog("Created a new MainView")
-	}
+	@EnvironmentObject var frontModel: BudgetFrontModel
+	@State var budgetList: [TimeBudget]
+	@State var editMode = EditMode.inactive
+	@State var editingBudget : TimeBudget? = nil
+//
+//	init(budgetList: [TimeBudget]) {
+//		self.budgetList = budgetList
+//		debugLog("Created a new MainView")
+//	}
 	
 	var body: some View {
 		NavigationView {
 			VStack {
 				List {
 					ForEach(frontModel.budgetList, id: \.self) { budget in
-						BudgetRow(budget: budget)
+						BudgetRow(budget: budget, editingBudget: self.$editingBudget)
 					}
 					.onDelete { indexSet in
 						for index in indexSet {
@@ -36,28 +37,15 @@ struct MainView: View {
 					.onMove(perform: move)
 				}
 				.navigationBarTitle("Budget List", displayMode: .inline)
-				.navigationBarItems(leading: EditButton(), trailing: addButton)
+				.navigationBarItems(
+					leading: MyEditButton(editMode: $editMode),
+					trailing: MyAddButton(
+						editMode: editMode,
+						editingBudget: $editingBudget
+					)
+				)
 			}
 			.environment(\.editMode, $editMode)
-		}
-	}
-	
-	func onAdd() {
-		debugLog("onAdd executed")
-		do {
-			frontModel.editingBudget = try frontModel.addBudget()
-		} catch {
-			let nserror = error as NSError
-			fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
-		}
-	}
-	
-	var addButton: some View {
-		switch self.editMode {
-			case .active:
-				return AnyView(Button(action: self.onAdd) { Image(systemName: "plus") })
-			default:
-				return AnyView(EmptyView())
 		}
 	}
 	
@@ -70,12 +58,12 @@ struct MainView: View {
 	
 	struct BudgetRow: View {
 		@State var budget: TimeBudget
-		@EnvironmentObject private var frontModel: BudgetFrontModel
+		@Binding var editingBudget: TimeBudget?
+		@EnvironmentObject var frontModel: BudgetFrontModel
 
-		var isEditing: Bool { budget == frontModel.editingBudget }
+		var isEditing: Bool { budget == editingBudget }
 		
 		var body: some View {
-			debugLog("Created a new BudgetRow")
 			if isEditing {
 				return AnyView(
 					TextField("Budget Name", text: $budget.name, onCommit: {
@@ -83,7 +71,7 @@ struct MainView: View {
 						self.budget.managedObjectContext?.performAndWait {
 							self.budget.save()
 						}
-						self.frontModel.editingBudget = nil
+						self.editingBudget = nil
 					}).onDisappear(perform: {
 						debugLog("Disappeared")
 					})
@@ -95,6 +83,62 @@ struct MainView: View {
 					Text(budget.name)
 				})
 			}
+		}
+	}
+}
+
+struct MyEditButton: View {
+	@EnvironmentObject var frontModel: BudgetFrontModel
+	@Binding var editMode: EditMode
+	
+	var body: some View {
+		if editMode == .active {
+			return Button(action: {
+				self.editMode = .inactive
+			}) {
+				Text("Done")
+					.fontWeight(.medium)
+					.font(.headline)
+					.frame(minWidth: 100, minHeight: 40, alignment: .leading)
+				//				.border(Color.black, width: 2)
+			}
+		} else {
+			return Button(action: {
+				self.editMode = .active
+			}) {
+				Text("Edit")
+					.font(.headline)
+					.fontWeight(.medium)
+					.frame(minWidth: 100, minHeight: 40, alignment: .leading)
+				//				.border(Color.black, width: 2)
+			}
+		}
+	}
+}
+
+struct MyAddButton: View {
+	@EnvironmentObject var frontModel: BudgetFrontModel
+	let editMode: EditMode
+	@Binding var editingBudget : TimeBudget?
+
+	var body: some View {
+		if editMode == .active {
+			return AnyView(EmptyView())
+		} else {
+			return AnyView(Button(action: {
+				debugLog("onAdd executed")
+				do {
+					self.editingBudget = try self.frontModel.addBudget()
+				} catch {
+					let nserror = error as NSError
+					fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
+				}
+			}) {
+				Image(systemName: "plus")
+					.frame(minWidth: 100, minHeight: 40, alignment: .trailing)
+//								.border(Color.black, width: 2)
+				}
+			)
 		}
 	}
 }
