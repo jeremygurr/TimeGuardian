@@ -12,16 +12,10 @@ func errorLog(_ message: String) {
 }
 
 struct MainView: View {
-	//	@Environment(\.editMode) var editMode
 	@EnvironmentObject var frontModel: BudgetFrontModel
 	@State var budgetList: [TimeBudget]
 	@State var editMode = EditMode.inactive
 	@State var editingBudget : TimeBudget? = nil
-//
-//	init(budgetList: [TimeBudget]) {
-//		self.budgetList = budgetList
-//		debugLog("Created a new MainView")
-//	}
 	
 	var body: some View {
 		NavigationView {
@@ -39,7 +33,9 @@ struct MainView: View {
 							self.frontModel.deleteBudget(index: index)
 						}
 					}
-					.onMove(perform: move)
+					.onMove() { (source: IndexSet, destination: Int) in
+						self.frontModel.moveBudget(fromOffsets: source, toOffset: destination)
+					}
 				}
 				.navigationBarTitle("Budget List", displayMode: .inline)
 				.navigationBarItems(
@@ -53,13 +49,6 @@ struct MainView: View {
 			.environment(\.editMode, $editMode)
 		}
 	}
-	
-	func move(from source: IndexSet, to destination: Int) {
-		frontModel.moveBudget(fromOffsets: source, toOffset: destination)
-		//			withAnimation {
-		//				isEditable = false
-		//			}
-	}
 }
 
 struct MyEditButton: View {
@@ -67,25 +56,27 @@ struct MyEditButton: View {
 	@Binding var editMode: EditMode
 	
 	var body: some View {
-		if editMode == .active {
-			return Button(action: {
-				self.editMode = .inactive
-			}) {
-				Text("Done")
-					.fontWeight(.medium)
-					.font(.headline)
-					.frame(minWidth: 100, minHeight: 40, alignment: .leading)
-				//				.border(Color.black, width: 2)
-			}
-		} else {
-			return Button(action: {
-				self.editMode = .active
-			}) {
-				Text("Edit")
-					.font(.headline)
-					.fontWeight(.medium)
-					.frame(minWidth: 100, minHeight: 40, alignment: .leading)
-				//				.border(Color.black, width: 2)
+		VStack {
+			if editMode == .active {
+				Button(action: {
+					self.editMode = .inactive
+				}) {
+					Text("Done")
+						.fontWeight(.medium)
+						.font(.headline)
+						.frame(minWidth: 100, minHeight: 40, alignment: .leading)
+					//				.border(Color.black, width: 2)
+				}
+			} else {
+				Button(action: {
+					self.editMode = .active
+				}) {
+					Text("Edit")
+						.font(.headline)
+						.fontWeight(.medium)
+						.frame(minWidth: 100, minHeight: 40, alignment: .leading)
+					//				.border(Color.black, width: 2)
+				}
 			}
 		}
 	}

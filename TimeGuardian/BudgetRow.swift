@@ -17,9 +17,9 @@ struct BudgetRow: View {
 	var editingThisBudget: Bool { budget == editingBudget }
 	
 	var body: some View {
-		if editingThisBudget {
-			return AnyView(
-				TextField("Budget Name", text: $budget.name, onCommit: {
+		VStack {
+			if self.editingThisBudget {
+				TextField("Budget Name", text: self.$budget.name, onCommit: {
 					debugLog("Committed")
 					if self.budget.name != "" {
 						self.budget.managedObjectContext?.performAndWait {
@@ -29,53 +29,50 @@ struct BudgetRow: View {
 						self.frontModel.deleteBudget(budget: self.budget)
 					}
 					self.editingBudget = nil
-				}).onDisappear(perform: {
-					debugLog("Disappeared")
-				}).introspectTextField { textField in
-					textField.becomeFirstResponder()
+				}).font(.body)
+					.onDisappear(perform: {
+						debugLog("Disappeared")
+					}).introspectTextField { textField in
+						textField.becomeFirstResponder()
 				}
-			)
-		} else {
-			if editMode == .active {
-				return AnyView(
-					Text(budget.name)
+			} else {
+				if self.editMode == .active {
+					Text(self.budget.name)
+						.font(.body)
+						.frame(minWidth: 0, maxWidth: .infinity, minHeight: 40, alignment: .leading)
+						.contentShape(Rectangle())
 						.onTapGesture {
 							self.editingBudget = self.budget
 							self.editMode = .inactive
 					}
-				)
-			} else {
-				return AnyView(
+				} else {
 					NavigationLink(
-						destination: BudgetView(budget: budget)
+						destination: BudgetView(budget: self.budget)
 					) {
-						Text(budget.name)
+						Text(self.budget.name)
+							.font(.body)
 					}
-				)
+				}
 			}
 		}
 	}
 }
 
 struct BudgetRow_Previews: PreviewProvider {
-	@State static var editMode = EditMode.inactive
-	@State static var editingBudget : TimeBudget? = nil
-
-	static var previews: some View {
+	@State static var editMode = EditMode.active
+	@State static var editingBudget: TimeBudget? = nil
+	static var frontModel: BudgetFrontModel {
 		do {
 			let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-			let frontModel: BudgetFrontModel = try BudgetFrontModel(dataContext: context, testData: TestDataBuilder(context: context))
-			
-			return
-				NavigationView {
-					List {
-						BudgetRow(budget: frontModel.budgetList[0], editingBudget: $editingBudget, editMode: $editMode)
-					}
-				}
-				.environmentObject(frontModel)
+			return try BudgetFrontModel(dataContext: context, testData: TestDataBuilder(context: context))
 		} catch {
 			let nserror = error as NSError
 			fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
 		}
+	}
+	
+	static var previews: some View {
+		BudgetRow(budget: frontModel.budgetList[0], editingBudget: $editingBudget, editMode: $editMode).padding()
+			.environmentObject(frontModel)
 	}
 }

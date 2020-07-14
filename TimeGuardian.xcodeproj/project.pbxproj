@@ -26,7 +26,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		0005627224BA7B49003AECC6 /* BudgetFrontModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BudgetFrontModel.swift; sourceTree = "<group>"; };
+		0005627224BA7B49003AECC6 /* BudgetFrontModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BudgetFrontModel.swift; path = TimeGuardian/BudgetFrontModel.swift; sourceTree = SOURCE_ROOT; };
 		0005627424BA7E7F003AECC6 /* TimeBudget+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "TimeBudget+CoreDataClass.swift"; path = "TimeGuardian/Model/TimeBudget+CoreDataClass.swift"; sourceTree = SOURCE_ROOT; };
 		0005627524BA7E7F003AECC6 /* TimeFund+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "TimeFund+CoreDataClass.swift"; path = "TimeGuardian/Model/TimeFund+CoreDataClass.swift"; sourceTree = SOURCE_ROOT; };
 		0005627624BA7E7F003AECC6 /* TimeFund+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "TimeFund+CoreDataProperties.swift"; path = "TimeGuardian/Model/TimeFund+CoreDataProperties.swift"; sourceTree = SOURCE_ROOT; };
@@ -57,14 +57,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		0005627124BA7ACE003AECC6 /* FrontModel */ = {
-			isa = PBXGroup;
-			children = (
-				0005627224BA7B49003AECC6 /* BudgetFrontModel.swift */,
-			);
-			path = FrontModel;
-			sourceTree = "<group>";
-		};
 		00113D0824B913960028AB57 /* BackModel */ = {
 			isa = PBXGroup;
 			children = (
@@ -96,7 +88,7 @@
 			isa = PBXGroup;
 			children = (
 				00113D0824B913960028AB57 /* BackModel */,
-				0005627124BA7ACE003AECC6 /* FrontModel */,
+				0005627224BA7B49003AECC6 /* BudgetFrontModel.swift */,
 				00113D0924B920180028AB57 /* UserData.swift */,
 				002590DD24B90F0E00F703C5 /* AppDelegate.swift */,
 				002590DF24B90F0E00F703C5 /* SceneDelegate.swift */,
