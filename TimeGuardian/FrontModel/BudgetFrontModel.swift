@@ -28,6 +28,20 @@ class BudgetFrontModel: ObservableObject {
 		budgetList.remove(at: index)
 	}
 	
+	func deleteBudget(budget: TimeBudget) {
+		var indexFound = -1
+		
+		for (i, b) in budgetList.enumerated() {
+			if b == budget {
+				indexFound = i
+			}
+		}
+
+		if indexFound > -1 {
+			deleteBudget(index: indexFound)
+		}
+	}
+	
 	func moveBudget(fromOffsets: IndexSet, toOffset: Int) {
 		budgetList.move(fromOffsets: fromOffsets, toOffset: toOffset)
 		for (index, budget) in budgetList.enumerated() {

@@ -28,7 +28,11 @@ struct MainView: View {
 			VStack {
 				List {
 					ForEach(frontModel.budgetList, id: \.self) { budget in
-						BudgetRow(budget: budget, editingBudget: self.$editingBudget)
+						BudgetRow(
+							budget: budget,
+							editingBudget: self.$editingBudget,
+							editMode: self.$editMode
+						)
 					}
 					.onDelete { indexSet in
 						for index in indexSet {
@@ -55,38 +59,6 @@ struct MainView: View {
 		//			withAnimation {
 		//				isEditable = false
 		//			}
-	}	
-}
-
-struct BudgetRow: View {
-	@State var budget: TimeBudget
-	@Binding var editingBudget: TimeBudget?
-	@EnvironmentObject var frontModel: BudgetFrontModel
-	
-	var isEditing: Bool { budget == editingBudget }
-	
-	var body: some View {
-		if isEditing {
-			return AnyView(
-				TextField("Budget Name", text: $budget.name, onCommit: {
-					debugLog("Committed")
-					self.budget.managedObjectContext?.performAndWait {
-						self.budget.save()
-					}
-					self.editingBudget = nil
-				}).onDisappear(perform: {
-					debugLog("Disappeared")
-				}).introspectTextField { textField in
-					textField.becomeFirstResponder()
-				}
-			)
-		} else {
-			return AnyView(NavigationLink(
-				destination: BudgetView(budget: budget)
-			) {
-				Text(budget.name)
-			})
-		}
 	}
 }
 
