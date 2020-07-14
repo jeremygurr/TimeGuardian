@@ -13,11 +13,16 @@ import CoreData
 class BudgetFrontModel: ObservableObject {
 
 	let dataContext: NSManagedObjectContext
+	@Published var editingBudget : TimeBudget? = nil
+	@Published var budgetList: [TimeBudget] = []
 	
-	init(dataContext: NSManagedObjectContext) throws {
+	init(dataContext: NSManagedObjectContext, testData: TestDataBuilder? = nil) throws {
 		self.dataContext = dataContext
-		TestDataBuilder(context: dataContext).createTestData()
+//		TestDataBuilder(context: dataContext).createTestData()
 		try load()
+		if let t = testData {
+			t.createTestData()
+		}
 	}
 	
 	func deleteBudget(index: Int) {
@@ -32,8 +37,6 @@ class BudgetFrontModel: ObservableObject {
 		}
 	}
 
-	@Published var budgetList: [TimeBudget] = []
-	
 	func load() throws {
 		// We should not need to specify the type here, probably a bug
 		let request: NSFetchRequest<TimeBudget> = TimeBudget.fetchRequest()
@@ -44,6 +47,17 @@ class BudgetFrontModel: ObservableObject {
 		
 		budgetList = try dataContext.fetch(request)
 		
+	}
+	
+	func addBudget() throws -> TimeBudget {
+		debugLog("addBudget called")
+		let budget = TimeBudget(context: dataContext)
+		budget.name = ""
+		budget.order = Int16(budgetList.count)
+		dataContext.insert(budget)
+		try dataContext.save()
+		budgetList.append(budget)
+		return budget
 	}
 	
 	func getFunds(budget: TimeBudget) -> [TimeFund] {
