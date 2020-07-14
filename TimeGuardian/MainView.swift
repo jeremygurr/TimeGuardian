@@ -1,6 +1,7 @@
 import SwiftUI
 import os
 import CoreData
+import Introspect
 
 func debugLog(_ message: String) {
 	print(message)
@@ -74,7 +75,9 @@ struct MainView: View {
 						self.editingBudget = nil
 					}).onDisappear(perform: {
 						debugLog("Disappeared")
-					})
+					}).introspectTextField { textField in
+						textField.becomeFirstResponder()
+					}
 				)
 			} else {
 				return AnyView(NavigationLink(
