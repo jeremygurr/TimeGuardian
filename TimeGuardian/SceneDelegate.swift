@@ -25,7 +25,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 			let frontModel: BudgetFrontModel = try BudgetFrontModel(dataContext: context)
 			// Create the SwiftUI view and set the context as the value for the managedObjectContext environment keyPath.
 			// Add `@Environment(\.managedObjectContext)` in the views that will need the context.
-			let contentView = MainView(budgetList: frontModel.budgetList)
+			let contentView = BudgetList(budgetList: frontModel.budgetList)
 				.environmentObject(frontModel)
 			//			.environment(\.managedObjectContext, context)
 			

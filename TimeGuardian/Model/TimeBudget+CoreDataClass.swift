@@ -14,7 +14,7 @@ import CoreData
 public class TimeBudget: NSManagedObject {
 	
 	func save() {
-		debugLog("save called")
+		debugLog("save budget called")
 		if(hasChanges) {
 			do {
 				debugLog("has changes, call save on context")

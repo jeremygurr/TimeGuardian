@@ -14,6 +14,7 @@ class BudgetFrontModel: ObservableObject {
 
 	let dataContext: NSManagedObjectContext
 	@Published var budgetList: [TimeBudget] = []
+	@Published var fundList: [TimeFund] = []
 	
 	init(dataContext: NSManagedObjectContext, testData: TestDataBuilder? = nil) throws {
 		self.dataContext = dataContext
@@ -42,6 +43,25 @@ class BudgetFrontModel: ObservableObject {
 		}
 	}
 	
+	func deleteFund(index: Int) {
+		dataContext.delete(fundList[index])
+		fundList.remove(at: index)
+	}
+	
+	func deleteFund(fund: TimeFund) {
+		var indexFound = -1
+		
+		for (i, b) in fundList.enumerated() {
+			if b == fund {
+				indexFound = i
+			}
+		}
+		
+		if indexFound > -1 {
+			deleteFund(index: indexFound)
+		}
+	}
+	
 	func moveBudget(fromOffsets: IndexSet, toOffset: Int) {
 		budgetList.move(fromOffsets: fromOffsets, toOffset: toOffset)
 		for (index, budget) in budgetList.enumerated() {
@@ -49,6 +69,13 @@ class BudgetFrontModel: ObservableObject {
 		}
 	}
 
+	func moveFund(fromOffsets: IndexSet, toOffset: Int) {
+		fundList.move(fromOffsets: fromOffsets, toOffset: toOffset)
+		for (index, fund) in fundList.enumerated() {
+			fund.order = Int16(index)
+		}
+	}
+	
 	func load() throws {
 		// We should not need to specify the type here, probably a bug
 		let request: NSFetchRequest<TimeBudget> = TimeBudget.fetchRequest()
@@ -72,13 +99,28 @@ class BudgetFrontModel: ObservableObject {
 		return budget
 	}
 	
+	func addFund(budget: TimeBudget) throws -> TimeFund {
+		debugLog("addFund called")
+		let fund = TimeFund(context: dataContext)
+		fund.name = ""
+		fund.order = Int16(fundList.count)
+		fund.budget = budget
+		dataContext.insert(fund)
+		try dataContext.save()
+		fundList.append(fund)
+		return fund
+	}
+	
 	func getFunds(budget: TimeBudget) -> [TimeFund] {
-		guard let fundSet = budget.funds,
-			let funds = fundSet.allObjects as? [TimeFund]
-			else {
-				return []
+		var result: [TimeFund] = []
+		
+		if let fundSet = budget.funds,
+			let funds = fundSet.allObjects as? [TimeFund] {
+			result = funds
 		}
-		return funds
+
+		fundList = result
+		return result
 	}
 	
 	func hasSubBudget(fund: TimeFund) -> Bool {

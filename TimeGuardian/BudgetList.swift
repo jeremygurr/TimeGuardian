@@ -21,7 +21,7 @@ struct BudgetList: View {
 		NavigationView {
 			VStack {
 				List {
-					ForEach(frontModel.budgetList, id: \.self) { budget in
+					ForEach(budgetList, id: \.self) { budget in
 						BudgetRow(
 							budget: budget,
 							editingBudget: self.$editingBudget,
@@ -39,8 +39,8 @@ struct BudgetList: View {
 				}
 				.navigationBarTitle("Budget List", displayMode: .inline)
 				.navigationBarItems(
-					leading: MyEditButton(editMode: $editMode),
-					trailing: MyAddButton(
+					leading: EditBudgetListButton(editMode: $editMode),
+					trailing: CreateNewBudgetButton(
 						editMode: editMode,
 						editingBudget: $editingBudget
 					)
@@ -51,7 +51,7 @@ struct BudgetList: View {
 	}
 }
 
-struct MyEditButton: View {
+struct EditBudgetListButton: View {
 	@EnvironmentObject var frontModel: BudgetFrontModel
 	@Binding var editMode: EditMode
 	
@@ -82,38 +82,39 @@ struct MyEditButton: View {
 	}
 }
 
-struct MyAddButton: View {
+struct CreateNewBudgetButton: View {
 	@EnvironmentObject var frontModel: BudgetFrontModel
 	let editMode: EditMode
 	@Binding var editingBudget : TimeBudget?
-
+	
 	var body: some View {
-		if editMode == .active {
-			return AnyView(EmptyView())
-		} else {
-			return AnyView(Button(action: {
-				debugLog("onAdd executed")
-				do {
-					self.editingBudget = try self.frontModel.addBudget()
-				} catch {
-					let nserror = error as NSError
-					fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
-				}
-			}) {
-				Image(systemName: "plus")
-					.frame(minWidth: 100, minHeight: 40, alignment: .trailing)
-//								.border(Color.black, width: 2)
-				}
-			)
+		VStack {
+			if editMode == .active {
+				EmptyView()
+			} else {
+				Button(action: {
+					debugLog("onAdd executed")
+					do {
+						self.editingBudget = try self.frontModel.addBudget()
+					} catch {
+						let nserror = error as NSError
+						fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
+					}
+				}) {
+					Image(systemName: "plus")
+						.frame(minWidth: 100, minHeight: 40, alignment: .trailing)
+				}				
+			}
 		}
 	}
 }
 
-struct MainView_Previews: PreviewProvider {
+struct BudgetList_Previews: PreviewProvider {
 	static var previews: some View {
 		do {
 			let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-			let frontModel: BudgetFrontModel = try BudgetFrontModel(dataContext: context, testData: TestDataBuilder(context: context))
+//			let frontModel: BudgetFrontModel = try BudgetFrontModel(dataContext: context, testData: TestDataBuilder(context: context))
+			let frontModel: BudgetFrontModel = try BudgetFrontModel(dataContext: context)
 			return BudgetList(budgetList: frontModel.budgetList)
 				.environmentObject(frontModel)
 		} catch {

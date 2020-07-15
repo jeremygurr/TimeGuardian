@@ -12,5 +12,18 @@ import CoreData
 
 @objc(TimeFund)
 public class TimeFund: NSManagedObject {
-
+	
+	func save() {
+		debugLog("save fund called")
+		if(hasChanges) {
+			do {
+				debugLog("has changes, call save on context")
+				try managedObjectContext?.save()
+			} catch {
+				let nserror = error as NSError
+				fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
+			}
+		}
+	}
+	
 }

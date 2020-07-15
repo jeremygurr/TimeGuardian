@@ -14,11 +14,9 @@ struct BudgetRow: View {
 	@Binding var editMode: EditMode
 	@EnvironmentObject var frontModel: BudgetFrontModel
 	
-	var editingThisBudget: Bool { budget == editingBudget }
-	
 	var body: some View {
 		VStack {
-			if self.editingThisBudget {
+			if self.budget == self.editingBudget {
 				TextField("Budget Name", text: self.$budget.name, onCommit: {
 					debugLog("Committed")
 					if self.budget.name != "" {
@@ -47,7 +45,7 @@ struct BudgetRow: View {
 					}
 				} else {
 					NavigationLink(
-						destination: BudgetView(budget: self.budget)
+						destination: FundList(budget: self.budget, fundList: self.frontModel.getFunds(budget: self.budget))
 					) {
 						Text(self.budget.name)
 							.font(.body)
@@ -64,7 +62,8 @@ struct BudgetRow_Previews: PreviewProvider {
 	static var frontModel: BudgetFrontModel {
 		do {
 			let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-			return try BudgetFrontModel(dataContext: context, testData: TestDataBuilder(context: context))
+//			return try BudgetFrontModel(dataContext: context, testData: TestDataBuilder(context: context))
+			return try BudgetFrontModel(dataContext: context)
 		} catch {
 			let nserror = error as NSError
 			fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
