@@ -44,6 +44,7 @@ struct BudgetRow: View {
 							self.editMode = .inactive
 					}
 				} else {
+//					Text("not")
 					NavigationLink(
 						destination: FundList(budget: self.budget, fundList: self.frontModel.getFunds(budget: self.budget))
 					) {
@@ -59,16 +60,7 @@ struct BudgetRow: View {
 struct BudgetRow_Previews: PreviewProvider {
 	@State static var editMode = EditMode.active
 	@State static var editingBudget: TimeBudget? = nil
-	static var frontModel: BudgetFrontModel {
-		do {
-			let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-//			return try BudgetFrontModel(dataContext: context, testData: TestDataBuilder(context: context))
-			return try BudgetFrontModel(dataContext: context)
-		} catch {
-			let nserror = error as NSError
-			fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
-		}
-	}
+	static let frontModel = generateTestFrontModel(empty: false)
 	
 	static var previews: some View {
 		BudgetRow(budget: frontModel.budgetList[0], editingBudget: $editingBudget, editMode: $editMode).padding()

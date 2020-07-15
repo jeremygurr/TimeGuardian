@@ -110,17 +110,11 @@ struct CreateNewBudgetButton: View {
 }
 
 struct BudgetList_Previews: PreviewProvider {
+	static let frontModel = generateTestFrontModel(empty: false)
+
 	static var previews: some View {
-		do {
-			let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-//			let frontModel: BudgetFrontModel = try BudgetFrontModel(dataContext: context, testData: TestDataBuilder(context: context))
-			let frontModel: BudgetFrontModel = try BudgetFrontModel(dataContext: context)
-			return BudgetList(budgetList: frontModel.budgetList)
-				.environmentObject(frontModel)
-		} catch {
-			let nserror = error as NSError
-			fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
-		}
+		BudgetList(budgetList: frontModel.budgetList)
+			.environmentObject(frontModel)
 	}
 }
 

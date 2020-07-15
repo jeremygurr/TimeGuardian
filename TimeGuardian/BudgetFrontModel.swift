@@ -117,10 +117,17 @@ class BudgetFrontModel: ObservableObject {
 		if let fundSet = budget.funds,
 			let funds = fundSet.allObjects as? [TimeFund] {
 			result = funds
+			debugLog("fetched \(funds.count) funds from \(budget.name)")
 		}
 
-		fundList = result
-		return result
+		if result != fundList {
+			debugLog("result != fundList")
+			fundList = result
+		} else {
+			debugLog("result == fundList")
+		}
+		
+		return fundList
 	}
 	
 	func hasSubBudget(fund: TimeFund) -> Bool {

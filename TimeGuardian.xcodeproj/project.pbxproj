@@ -23,6 +23,7 @@
 		002590E724B90F1000F703C5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 002590E624B90F1000F703C5 /* Assets.xcassets */; };
 		002590EA24B90F1000F703C5 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 002590E924B90F1000F703C5 /* Preview Assets.xcassets */; };
 		002590ED24B90F1000F703C5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 002590EB24B90F1000F703C5 /* LaunchScreen.storyboard */; };
+		0058665524BF27BC004E4889 /* TestFrontModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0058665424BF27BC004E4889 /* TestFrontModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -43,6 +44,7 @@
 		002590E924B90F1000F703C5 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		002590EC24B90F1000F703C5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		002590EE24B90F1000F703C5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		0058665424BF27BC004E4889 /* TestFrontModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestFrontModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -93,6 +95,7 @@
 				002590DD24B90F0E00F703C5 /* AppDelegate.swift */,
 				002590DF24B90F0E00F703C5 /* SceneDelegate.swift */,
 				002590E424B90F0E00F703C5 /* BudgetList.swift */,
+				0058665424BF27BC004E4889 /* TestFrontModel.swift */,
 				0005628324BE5964003AECC6 /* BudgetRow.swift */,
 				0005627C24BAE1A7003AECC6 /* FundList.swift */,
 				002590E624B90F1000F703C5 /* Assets.xcassets */,
@@ -191,6 +194,7 @@
 			files = (
 				002590DE24B90F0E00F703C5 /* AppDelegate.swift in Sources */,
 				0005628424BE5964003AECC6 /* BudgetRow.swift in Sources */,
+				0058665524BF27BC004E4889 /* TestFrontModel.swift in Sources */,
 				002590E324B90F0E00F703C5 /* TimeGuardian.xcdatamodeld in Sources */,
 				00113D0A24B920180028AB57 /* TestDataBuilder.swift in Sources */,
 				002590E524B90F0E00F703C5 /* BudgetList.swift in Sources */,

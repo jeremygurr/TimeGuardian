@@ -118,21 +118,6 @@ struct CreateNewFundButton: View {
 	}
 }
 
-struct FundList_Previews: PreviewProvider {
-	static var previews: some View {
-		do {
-			let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-			let frontModel: BudgetFrontModel = try BudgetFrontModel(dataContext: context, testData: TestDataBuilder(context: context))
-			let budget = frontModel.budgetList[0]
-			return FundList(budget: budget, fundList: frontModel.fundList)
-				.environmentObject(frontModel)
-		} catch {
-			let nserror = error as NSError
-			fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
-		}
-	}
-}
-
 enum FundBalanceAction: CaseIterable {
 	case minus, zero, plus
 }
@@ -197,3 +182,14 @@ struct FundRow: View {
 		}
 	}
 }
+
+struct FundList_Previews: PreviewProvider {
+	static let frontModel = generateTestFrontModel(empty: false)
+	
+	static var previews: some View {
+		let budget = frontModel.budgetList[0]
+		return FundList(budget: budget, fundList: frontModel.fundList)
+			.environmentObject(frontModel)
+	}
+}
+
