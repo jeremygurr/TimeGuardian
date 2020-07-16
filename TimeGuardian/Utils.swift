@@ -10,11 +10,23 @@ import Foundation
 
 func arrayEquals<E: Equatable>(_ x: [E], _ y: [E]) -> Bool {
 	var result = true
-	for i in 0 ..< x.count {
-		if x[i] != y[i] {
-			result = false
-			break
+	if y.count != x.count {
+		result = false
+	} else {
+		for i in 0 ..< x.count {
+			if x[i] != y[i] {
+				result = false
+				break
+			}
 		}
 	}
 	return result
+}
+
+func debugLog(_ message: String) {
+	print(message)
+}
+
+func errorLog(_ message: String) {
+	print(message)
 }

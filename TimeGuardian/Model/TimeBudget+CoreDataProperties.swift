@@ -17,6 +17,15 @@ extension TimeBudget {
 		return NSFetchRequest<TimeBudget>(entityName: "TimeBudget")
 	}
 	
+	@nonobjc public class func sortedFetchRequest() -> NSFetchRequest<TimeBudget> {
+		debugLog("sortedFetchRequest()")
+		let request: NSFetchRequest<TimeBudget> = TimeBudget.fetchRequest()
+		request.sortDescriptors = [
+			NSSortDescriptor(keyPath: \TimeBudget.order, ascending: true)
+		]
+		return request
+	}
+	
 	@NSManaged public var name: String
 	@NSManaged public var funds: NSSet?
 	@NSManaged public var order: Int16

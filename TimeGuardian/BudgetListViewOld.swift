@@ -3,15 +3,8 @@ import os
 import CoreData
 import Introspect
 
-func debugLog(_ message: String) {
-	print(message)
-}
 
-func errorLog(_ message: String) {
-	print(message)
-}
-
-struct BudgetList: View {
+struct BudgetListViewOld: View {
 	@EnvironmentObject var frontModel: BudgetFrontModel
 	@State var budgetList: [TimeBudget]
 	@State var editMode = EditMode.inactive
@@ -113,7 +106,7 @@ struct BudgetList_Previews: PreviewProvider {
 	static let frontModel = generateTestFrontModel(empty: false)
 
 	static var previews: some View {
-		BudgetList(budgetList: frontModel.budgetList)
+		BudgetListViewOld(budgetList: frontModel.budgetList)
 			.environmentObject(frontModel)
 	}
 }
