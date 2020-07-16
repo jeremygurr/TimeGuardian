@@ -26,7 +26,12 @@ struct BudgetListView: View {
 					}
 					saveData(self.managedObjectContext)
 				}.onMove() { (source: IndexSet, destination: Int) in
-					debugLog("moved")
+					var newBudgets: [TimeBudget] = self.budgets.map() { $0 }
+					newBudgets.move(fromOffsets: source, toOffset: destination)
+					for (index, budget) in newBudgets.enumerated() {
+						budget.order = Int16(index)
+					}
+					saveData(self.managedObjectContext)
 				}
 				NewBudgetRowView(newBudgetName: $newBudgetBottom, budgets: budgets, posOfNewBudget: .after)
 			}
