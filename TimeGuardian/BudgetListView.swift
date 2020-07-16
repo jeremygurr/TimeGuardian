@@ -22,8 +22,9 @@ struct BudgetListView: View {
 					Text(budget.name)
 				}.onDelete { indexSet in
 					for index in indexSet {
-						debugLog("deleted")
+						self.managedObjectContext.delete(self.budgets[index])
 					}
+					saveData(self.managedObjectContext)
 				}.onMove() { (source: IndexSet, destination: Int) in
 					debugLog("moved")
 				}
@@ -61,12 +62,7 @@ struct NewBudgetRowView: View {
 						budget.order = Int16(index)
 						index += 1
 					}
-					do {
-						try self.managedObjectContext.save()
-					} catch {
-						let nserror = error as NSError
-						fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
-					}
+					saveData(self.managedObjectContext)
 					self.newBudgetName = ""
 				}
 			}) {

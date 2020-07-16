@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import CoreData
 
 func arrayEquals<E: Equatable>(_ x: [E], _ y: [E]) -> Bool {
 	var result = true
@@ -29,4 +30,13 @@ func debugLog(_ message: String) {
 
 func errorLog(_ message: String) {
 	print(message)
+}
+
+func saveData(_ managedObjectContext: NSManagedObjectContext) {
+	do {
+		try managedObjectContext.save()
+	} catch {
+		let nserror = error as NSError
+		fatalError("Unresolved error \(nserror)")
+	}
 }
