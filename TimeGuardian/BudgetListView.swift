@@ -17,16 +17,7 @@ struct BudgetListView: View {
 	var body: some View {
 		NavigationView {
 			List {
-				HStack {
-					TextField("New Budget", text: self.$newBudgetTop)
-					Button(action: {
-						
-					}) {
-						Image(systemName: "plus.circle.fill")
-							.foregroundColor(.green)
-							.imageScale(.large)
-					}
-				}
+				NewBudgetRowView(newBudgetName: $newBudgetTop, budgets: budgets, posOfNewBudget: .before)
 				ForEach(budgets, id: \.self) { budget in
 					Text(budget.name)
 				}.onDelete { indexSet in
@@ -36,9 +27,53 @@ struct BudgetListView: View {
 				}.onMove() { (source: IndexSet, destination: Int) in
 					debugLog("moved")
 				}
+				NewBudgetRowView(newBudgetName: $newBudgetBottom, budgets: budgets, posOfNewBudget: .after)
 			}
 			.navigationBarTitle("Budget List", displayMode: .inline)
 			.navigationBarItems(trailing: EditButton())
+		}
+	}
+}
+
+struct NewBudgetRowView: View {
+	@Environment(\.managedObjectContext) var managedObjectContext
+	@Binding var newBudgetName: String
+	var budgets: FetchedResults<TimeBudget>
+	let posOfNewBudget: ListPosition
+	
+	var body: some View {
+		HStack {
+			TextField("New Budget", text: self.$newBudgetName)
+			Button(action: {
+				if self.newBudgetName.count > 0 {
+					let budget = TimeBudget(context: self.managedObjectContext)
+					budget.name = self.newBudgetName
+					var index = 0
+					if self.posOfNewBudget == .before {
+						budget.order = 0
+						index += 1
+					}
+					for i in 0 ..< self.budgets.count {
+						self.budgets[i].order = Int16(i + index)
+					}
+					index += self.budgets.count
+					if self.posOfNewBudget == .after {
+						budget.order = Int16(index)
+						index += 1
+					}
+					do {
+						try self.managedObjectContext.save()
+					} catch {
+						let nserror = error as NSError
+						fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
+					}
+					self.newBudgetName = ""
+				}
+			}) {
+				Image(systemName: "plus.circle.fill")
+					.foregroundColor(.green)
+					.imageScale(.large)
+			}
 		}
 	}
 }
@@ -49,4 +84,8 @@ struct BudgetListView2_Previews: PreviewProvider {
 		return BudgetListView()
 			.environment(\.managedObjectContext, context)
 	}
+}
+
+enum ListPosition {
+	case before, after
 }
