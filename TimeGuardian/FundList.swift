@@ -159,13 +159,13 @@ struct FundRow: View {
 							self.editMode = .inactive
 					}
 				} else {
-					if frontModel.hasSubBudget(fund: fund) {
-						NavigationLink(
-							destination: FundList(budget: fund.subBudget!, fundList: self.frontModel.getFunds(budget: fund.subBudget!), action: self.action)
-						) {
-							Text(fund.name)
-						}
-					} else {
+//					if frontModel.hasSubBudget(fund: fund) {
+//						NavigationLink(
+//							destination: FundList(budget: fund.subBudget!, fundList: self.frontModel.getFunds(budget: fund.subBudget!), action: self.action)
+//						) {
+//							Text(fund.name)
+//						}
+//					} else {
 						Button(fund.name) {
 							switch self.action {
 								case .minus:
@@ -176,7 +176,7 @@ struct FundRow: View {
 									self.frontModel.adjustBalance(fund: self.fund, amount: 1)
 							}
 						}
-					}
+//					}
 				}
 			}
 		}
@@ -185,11 +185,13 @@ struct FundRow: View {
 
 struct FundList_Previews: PreviewProvider {
 	static let frontModel = generateTestFrontModel(empty: false)
+	static var budget = frontModel.budgetList[0]
 	
 	static var previews: some View {
-		let budget = frontModel.budgetList[0]
-		return FundList(budget: budget, fundList: frontModel.fundList)
-			.environmentObject(frontModel)
+		NavigationView {
+			FundList(budget: budget, fundList: frontModel.fundList)
+				.environmentObject(frontModel)
+		}
 	}
 }
 
