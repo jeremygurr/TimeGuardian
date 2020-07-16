@@ -9,6 +9,7 @@
 import SwiftUI
 
 struct BudgetListView: View {
+	@Environment(\.editMode) var editMode
 	@Environment(\.managedObjectContext) var managedObjectContext
 	@FetchRequest(fetchRequest: TimeBudget.sortedFetchRequest()) var budgets: FetchedResults<TimeBudget>
 	@State var newBudgetTop = ""
@@ -19,7 +20,7 @@ struct BudgetListView: View {
 			List {
 				NewBudgetRowView(newBudgetName: $newBudgetTop, budgets: budgets, posOfNewBudget: .before)
 				ForEach(budgets, id: \.self) { budget in
-					Text(budget.name)
+					BudgetRowView(budget: budget)
 				}.onDelete { indexSet in
 					for index in indexSet {
 						self.managedObjectContext.delete(self.budgets[index])
@@ -37,6 +38,40 @@ struct BudgetListView: View {
 			}
 			.navigationBarTitle("Budget List", displayMode: .inline)
 			.navigationBarItems(trailing: EditButton())
+		}
+	}
+}
+
+struct BudgetRowView: View {
+	@Environment(\.editMode) var editMode
+	@Environment(\.managedObjectContext) var managedObjectContext
+	@State var budget: TimeBudget
+	
+	var body: some View {
+		VStack {
+			if self.editMode?.wrappedValue == .active {
+				TextField("Budget Name", text: $budget.name, onCommit: {
+					if self.budget.name != "" {
+						self.budget.managedObjectContext?.performAndWait {
+							saveData(self.managedObjectContext)
+						}
+					} else {
+						self.budget.managedObjectContext?.performAndWait {
+							self.managedObjectContext.delete(self.budget)
+							saveData(self.managedObjectContext)
+						}
+					}
+				})
+			} else {
+				NavigationLink(
+					destination: FundListView(budget: budget)
+				) {
+					Text(budget.name)
+						.font(.body)
+						.frame(minWidth: 0, maxWidth: .infinity, minHeight: 40, alignment: .leading)
+						.contentShape(Rectangle())
+				}
+			}
 		}
 	}
 }
@@ -79,7 +114,11 @@ struct NewBudgetRowView: View {
 	}
 }
 
-struct BudgetListView2_Previews: PreviewProvider {
+enum ListPosition {
+	case before, after
+}
+
+struct BudgetListView_Previews: PreviewProvider {
 	static var previews: some View {
 		let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
 		return BudgetListView()
@@ -87,6 +126,3 @@ struct BudgetListView2_Previews: PreviewProvider {
 	}
 }
 
-enum ListPosition {
-	case before, after
-}

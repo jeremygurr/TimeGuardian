@@ -46,7 +46,7 @@ struct BudgetRow: View {
 				} else {
 //					Text("not")
 					NavigationLink(
-						destination: FundList(budget: self.budget, fundList: self.frontModel.getFunds(budget: self.budget))
+						destination: FundListOld(budget: self.budget, fundList: self.frontModel.getFunds(budget: self.budget))
 					) {
 						Text(self.budget.name)
 							.font(.body)

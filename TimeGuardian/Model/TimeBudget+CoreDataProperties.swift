@@ -18,7 +18,6 @@ extension TimeBudget {
 	}
 	
 	@nonobjc public class func sortedFetchRequest() -> NSFetchRequest<TimeBudget> {
-		debugLog("sortedFetchRequest()")
 		let request: NSFetchRequest<TimeBudget> = TimeBudget.fetchRequest()
 		request.sortDescriptors = [
 			NSSortDescriptor(keyPath: \TimeBudget.order, ascending: true)

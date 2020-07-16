@@ -12,7 +12,7 @@
 		0005627924BA7E7F003AECC6 /* TimeFund+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0005627524BA7E7F003AECC6 /* TimeFund+CoreDataClass.swift */; };
 		0005627A24BA7E7F003AECC6 /* TimeFund+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0005627624BA7E7F003AECC6 /* TimeFund+CoreDataProperties.swift */; };
 		0005627B24BA7E7F003AECC6 /* TimeBudget+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0005627724BA7E7F003AECC6 /* TimeBudget+CoreDataProperties.swift */; };
-		0005627D24BAE1A7003AECC6 /* FundList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0005627C24BAE1A7003AECC6 /* FundList.swift */; };
+		0005627D24BAE1A7003AECC6 /* FundListOld.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0005627C24BAE1A7003AECC6 /* FundListOld.swift */; };
 		0005628024BE52D3003AECC6 /* Introspect in Frameworks */ = {isa = PBXBuildFile; productRef = 0005627F24BE52D3003AECC6 /* Introspect */; };
 		0005628424BE5964003AECC6 /* BudgetRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0005628324BE5964003AECC6 /* BudgetRow.swift */; };
 		00113D0A24B920180028AB57 /* TestDataBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00113D0924B920180028AB57 /* TestDataBuilder.swift */; };
@@ -27,6 +27,7 @@
 		0058665724C05BBB004E4889 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0058665624C05BBB004E4889 /* Utils.swift */; };
 		0058665A24C06FB2004E4889 /* BudgetListModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0058665924C06FB2004E4889 /* BudgetListModel.swift */; };
 		0058665C24C074F3004E4889 /* BudgetListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0058665B24C074F3004E4889 /* BudgetListView.swift */; };
+		0058665E24C0FD88004E4889 /* FundListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0058665D24C0FD88004E4889 /* FundListView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -35,7 +36,7 @@
 		0005627524BA7E7F003AECC6 /* TimeFund+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "TimeFund+CoreDataClass.swift"; path = "TimeGuardian/Model/TimeFund+CoreDataClass.swift"; sourceTree = SOURCE_ROOT; };
 		0005627624BA7E7F003AECC6 /* TimeFund+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "TimeFund+CoreDataProperties.swift"; path = "TimeGuardian/Model/TimeFund+CoreDataProperties.swift"; sourceTree = SOURCE_ROOT; };
 		0005627724BA7E7F003AECC6 /* TimeBudget+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "TimeBudget+CoreDataProperties.swift"; path = "TimeGuardian/Model/TimeBudget+CoreDataProperties.swift"; sourceTree = SOURCE_ROOT; };
-		0005627C24BAE1A7003AECC6 /* FundList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FundList.swift; sourceTree = "<group>"; };
+		0005627C24BAE1A7003AECC6 /* FundListOld.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FundListOld.swift; sourceTree = "<group>"; };
 		0005628324BE5964003AECC6 /* BudgetRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BudgetRow.swift; sourceTree = "<group>"; };
 		00113D0924B920180028AB57 /* TestDataBuilder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestDataBuilder.swift; sourceTree = "<group>"; };
 		002590DA24B90F0E00F703C5 /* TimeGuardian.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TimeGuardian.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -51,6 +52,7 @@
 		0058665624C05BBB004E4889 /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		0058665924C06FB2004E4889 /* BudgetListModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BudgetListModel.swift; sourceTree = "<group>"; };
 		0058665B24C074F3004E4889 /* BudgetListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BudgetListView.swift; sourceTree = "<group>"; };
+		0058665D24C0FD88004E4889 /* FundListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FundListView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -102,10 +104,11 @@
 				002590DD24B90F0E00F703C5 /* AppDelegate.swift */,
 				002590DF24B90F0E00F703C5 /* SceneDelegate.swift */,
 				0058665B24C074F3004E4889 /* BudgetListView.swift */,
+				0058665D24C0FD88004E4889 /* FundListView.swift */,
 				0058665424BF27BC004E4889 /* TestFrontModel.swift */,
 				0005628324BE5964003AECC6 /* BudgetRow.swift */,
-				0005627C24BAE1A7003AECC6 /* FundList.swift */,
 				0058665624C05BBB004E4889 /* Utils.swift */,
+				0005627C24BAE1A7003AECC6 /* FundListOld.swift */,
 				002590E424B90F0E00F703C5 /* BudgetListViewOld.swift */,
 				002590E624B90F1000F703C5 /* Assets.xcassets */,
 				002590EB24B90F1000F703C5 /* LaunchScreen.storyboard */,
@@ -217,6 +220,7 @@
 				0058665A24C06FB2004E4889 /* BudgetListModel.swift in Sources */,
 				002590E324B90F0E00F703C5 /* TimeGuardian.xcdatamodeld in Sources */,
 				00113D0A24B920180028AB57 /* TestDataBuilder.swift in Sources */,
+				0058665E24C0FD88004E4889 /* FundListView.swift in Sources */,
 				002590E524B90F0E00F703C5 /* BudgetListViewOld.swift in Sources */,
 				0005627A24BA7E7F003AECC6 /* TimeFund+CoreDataProperties.swift in Sources */,
 				0005627324BA7B49003AECC6 /* BudgetFrontModel.swift in Sources */,
@@ -224,7 +228,7 @@
 				002590E024B90F0E00F703C5 /* SceneDelegate.swift in Sources */,
 				0005627924BA7E7F003AECC6 /* TimeFund+CoreDataClass.swift in Sources */,
 				0005627B24BA7E7F003AECC6 /* TimeBudget+CoreDataProperties.swift in Sources */,
-				0005627D24BAE1A7003AECC6 /* FundList.swift in Sources */,
+				0005627D24BAE1A7003AECC6 /* FundListOld.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

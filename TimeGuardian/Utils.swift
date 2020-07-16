@@ -33,10 +33,12 @@ func errorLog(_ message: String) {
 }
 
 func saveData(_ managedObjectContext: NSManagedObjectContext) {
-	do {
-		try managedObjectContext.save()
-	} catch {
-		let nserror = error as NSError
-		fatalError("Unresolved error \(nserror)")
+	managedObjectContext.performAndWait {
+		do {
+			try managedObjectContext.save()
+		} catch {
+			let nserror = error as NSError
+			fatalError("Unresolved error \(nserror)")
+		}
 	}
 }
