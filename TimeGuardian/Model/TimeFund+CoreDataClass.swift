@@ -11,7 +11,7 @@ import Foundation
 import CoreData
 
 @objc(TimeFund)
-public class TimeFund: NSManagedObject {
+public class TimeFund: NSManagedObject, Identifiable {
 	
 	func save() {
 		debugLog("save fund called")

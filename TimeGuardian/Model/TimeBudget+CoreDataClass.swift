@@ -11,7 +11,7 @@ import Foundation
 import CoreData
 
 @objc(TimeBudget)
-public class TimeBudget: NSManagedObject {
+public class TimeBudget: NSManagedObject, Identifiable {
 	
 	func save() {
 		debugLog("save budget called")

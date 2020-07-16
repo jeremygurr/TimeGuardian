@@ -120,7 +120,7 @@ class BudgetFrontModel: ObservableObject {
 			debugLog("fetched \(funds.count) funds from \(budget.name)")
 		}
 
-		if result != fundList {
+		if arrayEquals(result, fundList) {
 			debugLog("result != fundList")
 			fundList = result
 		} else {
@@ -135,11 +135,13 @@ class BudgetFrontModel: ObservableObject {
 	}
 	
 	func adjustBalance(fund: TimeFund, amount: Int) {
-		
+		fund.balance += Int16(amount)
+		fund.save()
 	}
 	
 	func zeroBalance(fund: TimeFund) {
-		
+		fund.balance = 0
+		fund.save()
 	}
 	
 }
