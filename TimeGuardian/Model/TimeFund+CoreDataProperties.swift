@@ -17,15 +17,27 @@ extension TimeFund {
 		return NSFetchRequest<TimeFund>(entityName: "TimeFund")
 	}
 	
-	@nonobjc public class func fetchRequest(budget: TimeBudget) -> FetchRequest<TimeFund> {
+	@nonobjc public class func fetchAvailableRequest(budget: TimeBudget) -> FetchRequest<TimeFund> {
 		let request = FetchRequest<TimeFund>(
 			entity: TimeFund.entity(),
 			sortDescriptors: [
 				NSSortDescriptor(keyPath: \TimeFund.order, ascending: true)
 			],
-			predicate: NSPredicate(format: "budget == %@", budget)
+			predicate: NSPredicate(format: "budget == %@ AND balance >= 0", budget)
 		)
 
+		return request
+	}
+	
+	@nonobjc public class func fetchSpentRequest(budget: TimeBudget) -> FetchRequest<TimeFund> {
+		let request = FetchRequest<TimeFund>(
+			entity: TimeFund.entity(),
+			sortDescriptors: [
+				NSSortDescriptor(keyPath: \TimeFund.order, ascending: true)
+			],
+			predicate: NSPredicate(format: "budget == %@ AND balance < 0", budget)
+		)
+		
 		return request
 	}
 	
