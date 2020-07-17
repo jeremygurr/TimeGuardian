@@ -2,7 +2,7 @@
 //  TimeFund+CoreDataProperties.swift
 //  TimeGuardian
 //
-//  Created by Jeremy Gurr on 7/10/20.
+//  Created by Jeremy Gurr on 7/17/20.
 //  Copyright © 2020 Pure Logic Enterprises. All rights reserved.
 //
 //
@@ -49,10 +49,10 @@ extension TimeFund {
 		self.balance = 1
 	}
 	
-	@NSManaged public var balance: Int16
-	@NSManaged public var name: String
-	@NSManaged public var budget: TimeBudget
-	@NSManaged public var order: Int16
-	@NSManaged public var subBudget: TimeBudget?
-	
+    @NSManaged public var balance: Int16
+    @NSManaged public var name: String
+    @NSManaged public var order: Int16
+    @NSManaged public var budget: TimeBudget?
+    @NSManaged public var subBudget: TimeBudget?
+
 }
