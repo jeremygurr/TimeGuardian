@@ -124,7 +124,7 @@ struct FundRow: View {
 	@Binding var editingFund: TimeFund?
 	@Binding var editMode: EditMode
 	@EnvironmentObject private var frontModel: BudgetFrontModel
-
+	
 	var body: some View {
 		VStack {
 			if self.fund == self.editingFund {
@@ -155,24 +155,27 @@ struct FundRow: View {
 							self.editMode = .inactive
 					}
 				} else {
-//					if frontModel.hasSubBudget(fund: fund) {
-//						NavigationLink(
-//							destination: FundList(budget: fund.subBudget!, fundList: self.frontModel.getFunds(budget: fund.subBudget!), action: self.action)
-//						) {
-//							Text(fund.name)
-//						}
-//					} else {
-						Button(fund.name) {
-							switch self.action {
-								case .minus:
-									self.frontModel.adjustBalance(fund: self.fund, amount: -1)
-								case .reset:
-									self.frontModel.zeroBalance(fund: self.fund)
-								case .plus:
-									self.frontModel.adjustBalance(fund: self.fund, amount: 1)
-							}
+					//					if frontModel.hasSubBudget(fund: fund) {
+					//						NavigationLink(
+					//							destination: FundList(budget: fund.subBudget!, fundList: self.frontModel.getFunds(budget: fund.subBudget!), action: self.action)
+					//						) {
+					//							Text(fund.name)
+					//						}
+					//					} else {
+					Button(fund.name) {
+						switch self.action {
+							case .minus:
+								self.frontModel.adjustBalance(fund: self.fund, amount: -1)
+							case .reset:
+								self.frontModel.zeroBalance(fund: self.fund)
+							case .plus:
+								self.frontModel.adjustBalance(fund: self.fund, amount: 1)
+							case .subBudget:
+								debugLog("Impossible")
+							
 						}
-//					}
+					}
+					//					}
 				}
 			}
 		}

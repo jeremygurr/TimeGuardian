@@ -25,41 +25,41 @@ struct FundListView: View {
 	}
 	
 	var body: some View {
-		NavigationView {
-			VStack {
-				Picker("Fund Action", selection: $action) {
-					Text("Spend")
-						.tag(FundBalanceAction.minus)
-					Text("Reset")
-						.tag(FundBalanceAction.reset)
-					Text("Earn")
-						.tag(FundBalanceAction.plus)
-				}
-				.font(.largeTitle)
-				.pickerStyle(SegmentedPickerStyle())
-				List {
-					FundSectionAllView(
-						budget: self.budget,
-						availableFunds: self.availableFunds,
-						spentFunds: self.spentFunds,
-						action: self.$action
-					)
-					FundSectionAvailableView(
-						budget: self.budget,
-						availableFunds: self.availableFunds,
-						newFundTop: self.$newFundTop,
-						newFundBottom: self.$newFundBottom,
-						action: self.$action
-					)
-					FundSectionSpentView(
-						budget: self.budget,
-						spentFunds: self.spentFunds,
-						action: self.$action
-					)
-				}
-				.navigationBarTitle("Funds of \(self.budget.name)", displayMode: .inline)
-				.navigationBarItems(trailing: EditButton())
+		VStack {
+			Picker("Fund Action", selection: $action) {
+				Text("Spend")
+					.tag(FundBalanceAction.minus)
+				Text("Reset")
+					.tag(FundBalanceAction.reset)
+				Text("Earn")
+					.tag(FundBalanceAction.plus)
+				Text("Sub Budget")
+					.tag(FundBalanceAction.subBudget)
 			}
+			.font(.largeTitle)
+			.pickerStyle(SegmentedPickerStyle())
+			List {
+				FundSectionAllView(
+					budget: self.budget,
+					availableFunds: self.availableFunds,
+					spentFunds: self.spentFunds,
+					action: self.$action
+				)
+				FundSectionAvailableView(
+					budget: self.budget,
+					availableFunds: self.availableFunds,
+					newFundTop: self.$newFundTop,
+					newFundBottom: self.$newFundBottom,
+					action: self.$action
+				)
+				FundSectionSpentView(
+					budget: self.budget,
+					spentFunds: self.spentFunds,
+					action: self.$action
+				)
+			}
+			.navigationBarTitle("\(self.budget.name)", displayMode: .inline)
+			.navigationBarItems(trailing: EditButton())
 		}
 	}
 }
@@ -96,9 +96,10 @@ struct FundSectionAllView: View {
 						for fund in self.spentFunds {
 							fund.adjustBalance(1)
 						}
+					case .subBudget:
+					  debugLog("Can't create subBudget on all")
 				}
 				saveData(self.managedObjectContext)
-				//				self.managedObjectContext.refresh(self.fund, mergeChanges: false)
 			}, label: {
 				HStack {
 					Text("All Funds")
@@ -191,25 +192,39 @@ struct FundRowView: View {
 					saveData(self.managedObjectContext)
 				})
 			} else {
-				Button(action: {
-					switch self.action {
-						case .minus:
-							self.fund.adjustBalance(-1)
-						case .reset:
-							self.fund.resetBalance()
-						case .plus:
-							self.fund.adjustBalance(1)
-					}
-					saveData(self.managedObjectContext)
-					//					self.managedObjectContext.refresh(self.fund, mergeChanges: false)
-				}, label: {
-					HStack {
+				if fund.subBudget != nil {
+					NavigationLink(
+						destination: FundListView(budget: fund.subBudget!)
+					) {
 						Text(fund.name)
 							.frame(minWidth: 20, maxWidth: .infinity, alignment: .leading)
 						Text("\(fund.balance)")
 							.frame(minWidth: 20, maxWidth: 40, alignment: .trailing)
 					}
-				})
+				} else {
+					Button(action: {
+						switch self.action {
+							case .minus:
+								self.fund.adjustBalance(-1)
+							case .reset:
+								self.fund.resetBalance()
+							case .plus:
+								self.fund.adjustBalance(1)
+							case .subBudget:
+								let subBudget = TimeBudget(context: self.managedObjectContext)
+								subBudget.name = self.fund.name
+								self.fund.subBudget = subBudget
+						}
+						saveData(self.managedObjectContext)
+					}, label: {
+						HStack {
+							Text(fund.name)
+								.frame(minWidth: 20, maxWidth: .infinity, alignment: .leading)
+							Text("\(fund.balance)")
+								.frame(minWidth: 20, maxWidth: 40, alignment: .trailing)
+						}
+					})
+				}
 			}
 		}
 	}
@@ -263,7 +278,7 @@ struct NewFundRowView: View {
 }
 
 enum FundBalanceAction: CaseIterable {
-	case minus, reset, plus
+	case minus, reset, plus, subBudget
 }
 
 struct FundListView_Previews: PreviewProvider {
