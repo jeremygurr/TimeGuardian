@@ -29,15 +29,13 @@ struct FundListView: View {
 			VStack {
 				Picker("Fund Action", selection: $action) {
 					Text("Spend")
-						.font(.largeTitle)
 						.tag(FundBalanceAction.minus)
 					Text("Zero")
-						.font(.largeTitle)
 						.tag(FundBalanceAction.zero)
 					Text("Recharge")
-						.font(.largeTitle)
 						.tag(FundBalanceAction.plus)
 				}
+				.font(.largeTitle)
 				.pickerStyle(SegmentedPickerStyle())
 				List {
 					FundSectionAllView(
@@ -186,6 +184,7 @@ struct FundRowView: View {
 		VStack {
 			if self.editMode?.wrappedValue == .active {
 				TextField("Fund Name", text: $fund.name, onCommit: {
+					self.fund.name = self.fund.name.trimmingCharacters(in: .whitespacesAndNewlines)
 					if self.fund.name == "" {
 						self.managedObjectContext.delete(self.fund)
 					}
@@ -227,23 +226,30 @@ struct NewFundRowView: View {
 		HStack {
 			TextField("New Fund", text: self.$newFundName)
 			Button(action: {
+				self.newFundName = self.newFundName.trimmingCharacters(in: .whitespacesAndNewlines)
+				
 				if self.newFundName.count > 0 {
 					let fund = TimeFund(context: self.managedObjectContext)
 					fund.name = self.newFundName
 					fund.budget = self.budget
 					var index = 0
+					
 					if self.posOfNewFund == .before {
 						fund.order = 0
 						index += 1
 					}
+					
 					for i in 0 ..< self.funds.count {
 						self.funds[i].order = Int16(i + index)
 					}
+					
 					index += self.funds.count
+					
 					if self.posOfNewFund == .after {
 						fund.order = Int16(index)
 						index += 1
 					}
+					
 					saveData(self.managedObjectContext)
 					self.newFundName = ""
 				}

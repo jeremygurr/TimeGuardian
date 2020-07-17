@@ -51,15 +51,12 @@ struct BudgetRowView: View {
 		VStack {
 			if self.editMode?.wrappedValue == .active {
 				TextField("Budget Name", text: $budget.name, onCommit: {
+					self.budget.name = self.budget.name.trimmingCharacters(in: .whitespacesAndNewlines)
 					if self.budget.name != "" {
-						self.budget.managedObjectContext?.performAndWait {
-							saveData(self.managedObjectContext)
-						}
+						saveData(self.managedObjectContext)
 					} else {
-						self.budget.managedObjectContext?.performAndWait {
-							self.managedObjectContext.delete(self.budget)
-							saveData(self.managedObjectContext)
-						}
+						self.managedObjectContext.delete(self.budget)
+						saveData(self.managedObjectContext)
 					}
 				})
 			} else {
@@ -96,22 +93,29 @@ struct NewBudgetRowView: View {
 	}
 	
 	func addBudget() {
+		self.newBudgetName = self.newBudgetName.trimmingCharacters(in: .whitespacesAndNewlines)
+		
 		if self.newBudgetName.count > 0 {
 			let budget = TimeBudget(context: self.managedObjectContext)
 			budget.name = self.newBudgetName
 			var index = 0
+			
 			if self.posOfNewBudget == .before {
 				budget.order = 0
 				index += 1
 			}
+			
 			for i in 0 ..< self.budgets.count {
 				self.budgets[i].order = Int16(i + index)
 			}
+			
 			index += self.budgets.count
+			
 			if self.posOfNewBudget == .after {
 				budget.order = Int16(index)
 				index += 1
 			}
+			
 			saveData(self.managedObjectContext)
 			self.newBudgetName = ""
 		}
