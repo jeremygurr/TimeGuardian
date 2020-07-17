@@ -9,12 +9,24 @@
 
 import Foundation
 import CoreData
-
+import SwiftUI
 
 extension TimeFund {
 	
 	@nonobjc public class func fetchRequest() -> NSFetchRequest<TimeFund> {
 		return NSFetchRequest<TimeFund>(entityName: "TimeFund")
+	}
+	
+	@nonobjc public class func fetchRequest(budget: TimeBudget) -> FetchRequest<TimeFund> {
+		let request = FetchRequest<TimeFund>(
+			entity: TimeFund.entity(),
+			sortDescriptors: [
+				NSSortDescriptor(keyPath: \TimeFund.order, ascending: true)
+			],
+			predicate: NSPredicate(format: "budget == %@", budget)
+		)
+
+		return request
 	}
 	
 	@NSManaged public var balance: Int16

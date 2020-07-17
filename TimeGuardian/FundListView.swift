@@ -12,25 +12,26 @@ struct FundListView: View {
 	@Environment(\.editMode) var editMode
 	@Environment(\.managedObjectContext) var managedObjectContext
 	let budget: TimeBudget
-	@State var funds: [TimeFund]
+	@FetchRequest var funds: FetchedResults<TimeFund>
 	@State var newFundTop = ""
 	@State var newFundBottom = ""
 	
 	init(budget: TimeBudget) {
 		self.budget = budget
-		if let fundSet = budget.funds,
-			let funds = fundSet.allObjects as? [TimeFund] {
-			_funds = State(initialValue: funds)
-			debugLog("fetched \(funds.count) funds from \(budget.name)")
-		} else {
-			_funds = State(initialValue: [])
-		}
+		_funds = TimeFund.fetchRequest(budget: budget)
+//		if let fundSet = budget.funds,
+//			let funds = fundSet.allObjects as? [TimeFund] {
+//			_funds = State(initialValue: funds)
+//			debugLog("fetched \(funds.count) funds from \(budget.name)")
+//		} else {
+//			_funds = State(initialValue: [])
+//		}
 	}
 	
 	var body: some View {
 		NavigationView {
 			List {
-				NewFundRowView(newFundName: $newFundTop, funds: $funds, posOfNewFund: .before, budget: self.budget)
+				NewFundRowView(newFundName: $newFundTop, funds: funds, posOfNewFund: .before, budget: self.budget)
 				ForEach(funds, id: \.self) { fund in
 					FundRowView(fund: fund, budget: self.budget)
 				}.onDelete { indexSet in
@@ -44,19 +45,15 @@ struct FundListView: View {
 						}
 					}
 					saveData(self.managedObjectContext)
-					self.funds = newFunds
-					self.managedObjectContext.refresh(self.budget, mergeChanges: false)
 				}.onMove() { (source: IndexSet, destination: Int) in
 					var newFunds: [TimeFund] = self.funds.map() { $0 }
 					newFunds.move(fromOffsets: source, toOffset: destination)
 					for (index, fund) in newFunds.enumerated() {
 						fund.order = Int16(index)
 					}
-					self.funds = newFunds
 					saveData(self.managedObjectContext)
-					self.managedObjectContext.refresh(self.budget, mergeChanges: false)
 				}
-				NewFundRowView(newFundName: $newFundBottom, funds: $funds, posOfNewFund: .after, budget: self.budget)
+				NewFundRowView(newFundName: $newFundBottom, funds: funds, posOfNewFund: .after, budget: self.budget)
 			}
 			.navigationBarTitle("Funds of \(self.budget.name)", displayMode: .inline)
 			.navigationBarItems(trailing: EditButton())
@@ -93,7 +90,7 @@ struct FundRowView: View {
 struct NewFundRowView: View {
 	@Environment(\.managedObjectContext) var managedObjectContext
 	@Binding var newFundName: String
-	@Binding var funds: [TimeFund]
+	var funds: FetchedResults<TimeFund>
 	let posOfNewFund: ListPosition
 	let budget: TimeBudget
 	
@@ -108,7 +105,6 @@ struct NewFundRowView: View {
 					var index = 0
 					if self.posOfNewFund == .before {
 						fund.order = 0
-						self.funds.insert(fund, at: index)
 						index += 1
 					}
 					for i in 0 ..< self.funds.count {
@@ -117,11 +113,9 @@ struct NewFundRowView: View {
 					index += self.funds.count
 					if self.posOfNewFund == .after {
 						fund.order = Int16(index)
-						self.funds.insert(fund, at: index)
 						index += 1
 					}
 					saveData(self.managedObjectContext)
-					self.managedObjectContext.refresh(self.budget, mergeChanges: false)
 					self.newFundName = ""
 				}
 			}) {
