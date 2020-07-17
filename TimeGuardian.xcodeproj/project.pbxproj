@@ -31,7 +31,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		0005627224BA7B49003AECC6 /* BudgetFrontModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BudgetFrontModel.swift; path = TimeGuardian/BudgetFrontModel.swift; sourceTree = SOURCE_ROOT; };
+		0005627224BA7B49003AECC6 /* BudgetFrontModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BudgetFrontModel.swift; path = TimeGuardian/Old/BudgetFrontModel.swift; sourceTree = SOURCE_ROOT; };
 		0005627424BA7E7F003AECC6 /* TimeBudget+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "TimeBudget+CoreDataClass.swift"; path = "TimeGuardian/Model/TimeBudget+CoreDataClass.swift"; sourceTree = SOURCE_ROOT; };
 		0005627524BA7E7F003AECC6 /* TimeFund+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "TimeFund+CoreDataClass.swift"; path = "TimeGuardian/Model/TimeFund+CoreDataClass.swift"; sourceTree = SOURCE_ROOT; };
 		0005627624BA7E7F003AECC6 /* TimeFund+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "TimeFund+CoreDataProperties.swift"; path = "TimeGuardian/Model/TimeFund+CoreDataProperties.swift"; sourceTree = SOURCE_ROOT; };
@@ -78,6 +78,19 @@
 			path = BackModel;
 			sourceTree = "<group>";
 		};
+		002531CD24C1A7DF00CB7FF0 /* Old */ = {
+			isa = PBXGroup;
+			children = (
+				002590E424B90F0E00F703C5 /* BudgetListViewOld.swift */,
+				0005627C24BAE1A7003AECC6 /* FundListOld.swift */,
+				0005628324BE5964003AECC6 /* BudgetRow.swift */,
+				0058665424BF27BC004E4889 /* TestFrontModel.swift */,
+				0005627224BA7B49003AECC6 /* BudgetFrontModel.swift */,
+				0058665924C06FB2004E4889 /* BudgetListModel.swift */,
+			);
+			path = Old;
+			sourceTree = "<group>";
+		};
 		002590D124B90F0E00F703C5 = {
 			isa = PBXGroup;
 			children = (
@@ -98,18 +111,13 @@
 			isa = PBXGroup;
 			children = (
 				00113D0824B913960028AB57 /* BackModel */,
-				0058665824C06D9E004E4889 /* FrontModel */,
-				0005627224BA7B49003AECC6 /* BudgetFrontModel.swift */,
 				00113D0924B920180028AB57 /* TestDataBuilder.swift */,
 				002590DD24B90F0E00F703C5 /* AppDelegate.swift */,
 				002590DF24B90F0E00F703C5 /* SceneDelegate.swift */,
 				0058665B24C074F3004E4889 /* BudgetListView.swift */,
 				0058665D24C0FD88004E4889 /* FundListView.swift */,
-				0058665424BF27BC004E4889 /* TestFrontModel.swift */,
-				0005628324BE5964003AECC6 /* BudgetRow.swift */,
 				0058665624C05BBB004E4889 /* Utils.swift */,
-				0005627C24BAE1A7003AECC6 /* FundListOld.swift */,
-				002590E424B90F0E00F703C5 /* BudgetListViewOld.swift */,
+				002531CD24C1A7DF00CB7FF0 /* Old */,
 				002590E624B90F1000F703C5 /* Assets.xcassets */,
 				002590EB24B90F1000F703C5 /* LaunchScreen.storyboard */,
 				002590EE24B90F1000F703C5 /* Info.plist */,
@@ -125,14 +133,6 @@
 				002590E924B90F1000F703C5 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
-			sourceTree = "<group>";
-		};
-		0058665824C06D9E004E4889 /* FrontModel */ = {
-			isa = PBXGroup;
-			children = (
-				0058665924C06FB2004E4889 /* BudgetListModel.swift */,
-			);
-			path = FrontModel;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
