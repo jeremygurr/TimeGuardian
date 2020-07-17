@@ -40,12 +40,15 @@ struct FundListView: View {
 				}
 				.pickerStyle(SegmentedPickerStyle())
 				List {
-					Section() {
-						Text("All funds")
-					}
+					FundSectionAllView(
+						budget: self.budget,
+						availableFunds: self.availableFunds,
+						spentFunds: self.spentFunds,
+						action: self.$action
+					)
 					FundSectionAvailableView(
 						budget: self.budget,
-						funds: self.availableFunds,
+						availableFunds: self.availableFunds,
 						newFundTop: self.$newFundTop,
 						newFundBottom: self.$newFundBottom,
 						action: self.$action
@@ -63,9 +66,54 @@ struct FundListView: View {
 	}
 }
 
+struct FundSectionAllView: View {
+	let budget: TimeBudget
+	var availableFunds: FetchedResults<TimeFund>
+	var spentFunds: FetchedResults<TimeFund>
+	@Binding var action : FundBalanceAction
+	@Environment(\.managedObjectContext) var managedObjectContext
+	
+	var body: some View {
+		Section(header: Text("Spent")) {
+			Button(action: {
+				switch self.action {
+					case .minus:
+						for fund in self.availableFunds {
+							fund.adjustBalance(-1)
+						}
+						for fund in self.spentFunds {
+							fund.adjustBalance(-1)
+						}
+					case .zero:
+						for fund in self.availableFunds {
+							fund.zeroBalance()
+						}
+						for fund in self.spentFunds {
+							fund.zeroBalance()
+						}
+					case .plus:
+						for fund in self.availableFunds {
+							fund.adjustBalance(1)
+						}
+						for fund in self.spentFunds {
+							fund.adjustBalance(1)
+						}
+				}
+				saveData(self.managedObjectContext)
+				//				self.managedObjectContext.refresh(self.fund, mergeChanges: false)
+			}, label: {
+				HStack {
+					Text("All Funds")
+						.frame(minWidth: 20, maxWidth: .infinity, alignment: .leading)
+				}
+			})
+		}
+	}
+}
+
 struct FundSectionAvailableView: View {
 	let budget: TimeBudget
-	var funds: FetchedResults<TimeFund>
+	var availableFunds: FetchedResults<TimeFund>
 	@Binding var newFundTop: String
 	@Binding var newFundBottom: String
 	@Binding var action : FundBalanceAction
@@ -73,26 +121,26 @@ struct FundSectionAvailableView: View {
 	
 	var body: some View {
 		Section(header: Text("Available")) {
-			NewFundRowView(newFundName: $newFundTop, funds: funds, posOfNewFund: .before, budget: self.budget)
-			ForEach(funds, id: \.self) { fund in
+			NewFundRowView(newFundName: $newFundTop, funds: availableFunds, posOfNewFund: .before, budget: self.budget)
+			ForEach(availableFunds, id: \.self) { fund in
 				FundRowView(action: self.$action, fund: fund, budget: self.budget)
 			}.onDelete { indexSet in
-				for index in 0 ..< self.funds.count {
-					let fund = self.funds[index]
+				for index in 0 ..< self.availableFunds.count {
+					let fund = self.availableFunds[index]
 					if indexSet.contains(index) {
 						self.managedObjectContext.delete(fund)
 					}
 				}
 				saveData(self.managedObjectContext)
 			}.onMove() { (source: IndexSet, destination: Int) in
-				var newFunds: [TimeFund] = self.funds.map() { $0 }
+				var newFunds: [TimeFund] = self.availableFunds.map() { $0 }
 				newFunds.move(fromOffsets: source, toOffset: destination)
 				for (index, fund) in newFunds.enumerated() {
 					fund.order = Int16(index)
 				}
 				saveData(self.managedObjectContext)
 			}
-			NewFundRowView(newFundName: $newFundBottom, funds: funds, posOfNewFund: .after, budget: self.budget)
+			NewFundRowView(newFundName: $newFundBottom, funds: availableFunds, posOfNewFund: .after, budget: self.budget)
 		}
 	}
 }
@@ -154,7 +202,7 @@ struct FundRowView: View {
 							self.fund.adjustBalance(1)
 					}
 					saveData(self.managedObjectContext)
-					self.managedObjectContext.refresh(self.fund, mergeChanges: false)
+					//					self.managedObjectContext.refresh(self.fund, mergeChanges: false)
 				}, label: {
 					HStack {
 						Text(fund.name)
@@ -163,11 +211,6 @@ struct FundRowView: View {
 							.frame(minWidth: 20, maxWidth: 40, alignment: .trailing)
 					}
 				})
-				
-				//				Text(fund.name)
-				//					.font(.body)
-				//					.frame(minWidth: 0, maxWidth: .infinity, minHeight: 40, alignment: .leading)
-				//					.contentShape(Rectangle())
 			}
 		}
 	}
