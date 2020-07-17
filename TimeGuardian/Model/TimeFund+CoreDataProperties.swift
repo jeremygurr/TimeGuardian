@@ -23,7 +23,7 @@ extension TimeFund {
 			sortDescriptors: [
 				NSSortDescriptor(keyPath: \TimeFund.order, ascending: true)
 			],
-			predicate: NSPredicate(format: "budget == %@ AND balance >= 0", budget)
+			predicate: NSPredicate(format: "budget == %@ AND balance > 0", budget)
 		)
 
 		return request
@@ -35,7 +35,7 @@ extension TimeFund {
 			sortDescriptors: [
 				NSSortDescriptor(keyPath: \TimeFund.order, ascending: true)
 			],
-			predicate: NSPredicate(format: "budget == %@ AND balance < 0", budget)
+			predicate: NSPredicate(format: "budget == %@ AND balance <= 0", budget)
 		)
 		
 		return request
@@ -45,8 +45,8 @@ extension TimeFund {
 		self.balance += Int16(amount)
 	}
 	
-	func zeroBalance() {
-		self.balance = 0
+	func resetBalance() {
+		self.balance = 1
 	}
 	
 	@NSManaged public var balance: Int16

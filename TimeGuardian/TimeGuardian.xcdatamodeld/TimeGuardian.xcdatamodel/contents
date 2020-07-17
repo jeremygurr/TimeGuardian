@@ -7,7 +7,7 @@
         <relationship name="superFund" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="TimeFund" inverseName="subBudget" inverseEntity="TimeFund"/>
     </entity>
     <entity name="TimeFund" representedClassName="TimeFund" syncable="YES">
-        <attribute name="balance" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="balance" attributeType="Integer 16" defaultValueString="1" usesScalarValueType="YES"/>
         <attribute name="name" attributeType="String"/>
         <attribute name="order" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <relationship name="budget" maxCount="1" deletionRule="Nullify" destinationEntity="TimeBudget" inverseName="funds" inverseEntity="TimeBudget"/>

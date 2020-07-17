@@ -22,7 +22,7 @@ struct FundListOld: View {
 				Text("-")
 					.tag(FundBalanceAction.minus)
 				Text("= 0")
-					.tag(FundBalanceAction.zero)
+					.tag(FundBalanceAction.reset)
 				Text("+")
 					.tag(FundBalanceAction.plus)
 			}
@@ -166,7 +166,7 @@ struct FundRow: View {
 							switch self.action {
 								case .minus:
 									self.frontModel.adjustBalance(fund: self.fund, amount: -1)
-								case .zero:
+								case .reset:
 									self.frontModel.zeroBalance(fund: self.fund)
 								case .plus:
 									self.frontModel.adjustBalance(fund: self.fund, amount: 1)

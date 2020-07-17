@@ -30,9 +30,9 @@ struct FundListView: View {
 				Picker("Fund Action", selection: $action) {
 					Text("Spend")
 						.tag(FundBalanceAction.minus)
-					Text("Zero")
-						.tag(FundBalanceAction.zero)
-					Text("Recharge")
+					Text("Reset")
+						.tag(FundBalanceAction.reset)
+					Text("Earn")
 						.tag(FundBalanceAction.plus)
 				}
 				.font(.largeTitle)
@@ -82,12 +82,12 @@ struct FundSectionAllView: View {
 						for fund in self.spentFunds {
 							fund.adjustBalance(-1)
 						}
-					case .zero:
+					case .reset:
 						for fund in self.availableFunds {
-							fund.zeroBalance()
+							fund.resetBalance()
 						}
 						for fund in self.spentFunds {
-							fund.zeroBalance()
+							fund.resetBalance()
 						}
 					case .plus:
 						for fund in self.availableFunds {
@@ -195,8 +195,8 @@ struct FundRowView: View {
 					switch self.action {
 						case .minus:
 							self.fund.adjustBalance(-1)
-						case .zero:
-							self.fund.zeroBalance()
+						case .reset:
+							self.fund.resetBalance()
 						case .plus:
 							self.fund.adjustBalance(1)
 					}
@@ -263,7 +263,7 @@ struct NewFundRowView: View {
 }
 
 enum FundBalanceAction: CaseIterable {
-	case minus, zero, plus
+	case minus, reset, plus
 }
 
 struct FundListView_Previews: PreviewProvider {
