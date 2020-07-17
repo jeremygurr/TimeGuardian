@@ -28,13 +28,13 @@ struct FundListView: View {
 		NavigationView {
 			VStack {
 				Picker("Fund Action", selection: $action) {
-					Text("-")
+					Text("Spend")
 						.font(.largeTitle)
 						.tag(FundBalanceAction.minus)
-					Text("0")
+					Text("Zero")
 						.font(.largeTitle)
 						.tag(FundBalanceAction.zero)
-					Text("+")
+					Text("Recharge")
 						.font(.largeTitle)
 						.tag(FundBalanceAction.plus)
 				}
@@ -74,7 +74,7 @@ struct FundSectionAllView: View {
 	@Environment(\.managedObjectContext) var managedObjectContext
 	
 	var body: some View {
-		Section(header: Text("Spent")) {
+		Section() {
 			Button(action: {
 				switch self.action {
 					case .minus:
