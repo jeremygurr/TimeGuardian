@@ -84,32 +84,36 @@ struct NewBudgetRowView: View {
 	
 	var body: some View {
 		HStack {
-			TextField("New Budget", text: self.$newBudgetName)
-			Button(action: {
-				if self.newBudgetName.count > 0 {
-					let budget = TimeBudget(context: self.managedObjectContext)
-					budget.name = self.newBudgetName
-					var index = 0
-					if self.posOfNewBudget == .before {
-						budget.order = 0
-						index += 1
-					}
-					for i in 0 ..< self.budgets.count {
-						self.budgets[i].order = Int16(i + index)
-					}
-					index += self.budgets.count
-					if self.posOfNewBudget == .after {
-						budget.order = Int16(index)
-						index += 1
-					}
-					saveData(self.managedObjectContext)
-					self.newBudgetName = ""
-				}
-			}) {
+			TextField("New Budget", text: self.$newBudgetName, onCommit: addBudget)
+				.frame(minWidth: 20, maxWidth: .infinity, alignment: .leading)
+				.contentShape(Rectangle())
+			Button(action: addBudget) {
 				Image(systemName: "plus.circle.fill")
 					.foregroundColor(.green)
 					.imageScale(.large)
 			}
+		}
+	}
+	
+	func addBudget() {
+		if self.newBudgetName.count > 0 {
+			let budget = TimeBudget(context: self.managedObjectContext)
+			budget.name = self.newBudgetName
+			var index = 0
+			if self.posOfNewBudget == .before {
+				budget.order = 0
+				index += 1
+			}
+			for i in 0 ..< self.budgets.count {
+				self.budgets[i].order = Int16(i + index)
+			}
+			index += self.budgets.count
+			if self.posOfNewBudget == .after {
+				budget.order = Int16(index)
+				index += 1
+			}
+			saveData(self.managedObjectContext)
+			self.newBudgetName = ""
 		}
 	}
 }

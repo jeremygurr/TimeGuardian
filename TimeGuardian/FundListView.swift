@@ -27,10 +27,13 @@ struct FundListView: View {
 			VStack {
 				Picker("Fund Action", selection: $action) {
 					Text("-")
+						.font(.largeTitle)
 						.tag(FundBalanceAction.minus)
-					Text("= 0")
+					Text("0")
+						.font(.largeTitle)
 						.tag(FundBalanceAction.zero)
 					Text("+")
+						.font(.largeTitle)
 						.tag(FundBalanceAction.plus)
 				}
 				.pickerStyle(SegmentedPickerStyle())
