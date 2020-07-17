@@ -15,56 +15,62 @@ struct FundListView: View {
 	@FetchRequest var funds: FetchedResults<TimeFund>
 	@State var newFundTop = ""
 	@State var newFundBottom = ""
+	@State var action : FundBalanceAction = .minus
 	
 	init(budget: TimeBudget) {
 		self.budget = budget
 		_funds = TimeFund.fetchRequest(budget: budget)
-//		if let fundSet = budget.funds,
-//			let funds = fundSet.allObjects as? [TimeFund] {
-//			_funds = State(initialValue: funds)
-//			debugLog("fetched \(funds.count) funds from \(budget.name)")
-//		} else {
-//			_funds = State(initialValue: [])
-//		}
 	}
 	
 	var body: some View {
 		NavigationView {
-			List {
-				NewFundRowView(newFundName: $newFundTop, funds: funds, posOfNewFund: .before, budget: self.budget)
-				ForEach(funds, id: \.self) { fund in
-					FundRowView(fund: fund, budget: self.budget)
-				}.onDelete { indexSet in
-					var newFunds: [TimeFund] = []
-					for index in 0 ..< self.funds.count {
-						let fund = self.funds[index]
-						if indexSet.contains(index) {
-							self.managedObjectContext.delete(fund)
-						} else {
-							newFunds.append(fund)
-						}
-					}
-					saveData(self.managedObjectContext)
-				}.onMove() { (source: IndexSet, destination: Int) in
-					var newFunds: [TimeFund] = self.funds.map() { $0 }
-					newFunds.move(fromOffsets: source, toOffset: destination)
-					for (index, fund) in newFunds.enumerated() {
-						fund.order = Int16(index)
-					}
-					saveData(self.managedObjectContext)
+			VStack {
+				Picker("Fund Action", selection: $action) {
+					Text("-")
+						.tag(FundBalanceAction.minus)
+					Text("= 0")
+						.tag(FundBalanceAction.zero)
+					Text("+")
+						.tag(FundBalanceAction.plus)
 				}
-				NewFundRowView(newFundName: $newFundBottom, funds: funds, posOfNewFund: .after, budget: self.budget)
+				.pickerStyle(SegmentedPickerStyle())
+				List {
+					NewFundRowView(newFundName: $newFundTop, funds: funds, posOfNewFund: .before, budget: self.budget)
+					ForEach(funds, id: \.self) { fund in
+						FundRowView(action: self.$action, fund: fund, budget: self.budget)
+					}.onDelete { indexSet in
+						var newFunds: [TimeFund] = []
+						for index in 0 ..< self.funds.count {
+							let fund = self.funds[index]
+							if indexSet.contains(index) {
+								self.managedObjectContext.delete(fund)
+							} else {
+								newFunds.append(fund)
+							}
+						}
+						saveData(self.managedObjectContext)
+					}.onMove() { (source: IndexSet, destination: Int) in
+						var newFunds: [TimeFund] = self.funds.map() { $0 }
+						newFunds.move(fromOffsets: source, toOffset: destination)
+						for (index, fund) in newFunds.enumerated() {
+							fund.order = Int16(index)
+						}
+						saveData(self.managedObjectContext)
+					}
+					NewFundRowView(newFundName: $newFundBottom, funds: funds, posOfNewFund: .after, budget: self.budget)
+				}
+				.navigationBarTitle("Funds of \(self.budget.name)", displayMode: .inline)
+				.navigationBarItems(trailing: EditButton())
 			}
-			.navigationBarTitle("Funds of \(self.budget.name)", displayMode: .inline)
-			.navigationBarItems(trailing: EditButton())
 		}
 	}
 }
 
 struct FundRowView: View {
+	@Binding var action: FundBalanceAction
 	@Environment(\.editMode) var editMode
 	@Environment(\.managedObjectContext) var managedObjectContext
-	@State var fund: TimeFund
+	@ObservedObject var fund: TimeFund
 	let budget: TimeBudget
 	
 	var body: some View {
@@ -75,13 +81,32 @@ struct FundRowView: View {
 						self.managedObjectContext.delete(self.fund)
 					}
 					saveData(self.managedObjectContext)
-					self.managedObjectContext.refresh(self.budget, mergeChanges: false)
 				})
 			} else {
-				Text(fund.name)
-					.font(.body)
-					.frame(minWidth: 0, maxWidth: .infinity, minHeight: 40, alignment: .leading)
-					.contentShape(Rectangle())
+				Button(action: {
+					switch self.action {
+						case .minus:
+							self.fund.adjustBalance(-1)
+						case .zero:
+							self.fund.zeroBalance()
+						case .plus:
+							self.fund.adjustBalance(1)
+					}
+					saveData(self.managedObjectContext)
+					self.managedObjectContext.refresh(self.fund, mergeChanges: false)
+				}, label: {
+					HStack {
+						Text(fund.name)
+							.frame(minWidth: 20, maxWidth: .infinity, alignment: .leading)
+						Text("\(fund.balance)")
+							.frame(minWidth: 20, maxWidth: 40, alignment: .trailing)
+					}
+				})
+
+//				Text(fund.name)
+//					.font(.body)
+//					.frame(minWidth: 0, maxWidth: .infinity, minHeight: 40, alignment: .leading)
+//					.contentShape(Rectangle())
 			}
 		}
 	}

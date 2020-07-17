@@ -29,6 +29,14 @@ extension TimeFund {
 		return request
 	}
 	
+	func adjustBalance(_ amount: Int) {
+		self.balance += Int16(amount)
+	}
+	
+	func zeroBalance() {
+		self.balance = 0
+	}
+	
 	@NSManaged public var balance: Int16
 	@NSManaged public var name: String
 	@NSManaged public var budget: TimeBudget
