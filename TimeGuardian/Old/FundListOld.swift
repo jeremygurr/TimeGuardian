@@ -118,10 +118,6 @@ struct CreateNewFundButton: View {
 	}
 }
 
-enum FundBalanceAction: CaseIterable {
-	case minus, zero, plus
-}
-
 struct FundRow: View {
 	let action: FundBalanceAction
 	@State var fund: TimeFund

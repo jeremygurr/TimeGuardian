@@ -40,6 +40,9 @@ struct FundListView: View {
 				}
 				.pickerStyle(SegmentedPickerStyle())
 				List {
+					Section() {
+						Text("All funds")
+					}
 					FundSectionAvailableView(
 						budget: self.budget,
 						funds: self.availableFunds,
@@ -208,6 +211,10 @@ struct NewFundRowView: View {
 			}
 		}
 	}
+}
+
+enum FundBalanceAction: CaseIterable {
+	case minus, zero, plus
 }
 
 struct FundListView_Previews: PreviewProvider {
