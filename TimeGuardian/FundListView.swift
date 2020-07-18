@@ -282,13 +282,12 @@ enum FundBalanceAction: CaseIterable {
 }
 
 struct FundListView_Previews: PreviewProvider {
-	@FetchRequest(fetchRequest: TimeBudget.sortedFetchRequest()) static var budgets: FetchedResults<TimeBudget>
-	
 	static var previews: some View {
+		let mainBudgets = TimeBudget.fetchRequestMain()
 		let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
 		let testDataBuilder = TestDataBuilder(context: context)
 		testDataBuilder.createTestData()
-		let budget = self.budgets.first!
+		let budget = mainBudgets.wrappedValue.first!
 		return FundListView(budget: budget)
 			.environment(\.managedObjectContext, context)
 	}

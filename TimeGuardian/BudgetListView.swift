@@ -11,35 +11,56 @@ import SwiftUI
 struct BudgetListView: View {
 	@Environment(\.editMode) var editMode
 	@Environment(\.managedObjectContext) var managedObjectContext
-	@FetchRequest(fetchRequest: TimeBudget.sortedFetchRequest()) var budgets: FetchedResults<TimeBudget>
+	@FetchRequest var mainBudgets: FetchedResults<TimeBudget>
+	@FetchRequest var subBudgets: FetchedResults<TimeBudget>
 	@State var newBudgetTop = ""
 	@State var newBudgetBottom = ""
-	
+
+	init() {
+		_mainBudgets = TimeBudget.fetchRequestMain()
+		_subBudgets = TimeBudget.fetchRequestSub()
+	}
+
 	var body: some View {
 		NavigationView {
 			List {
-				NewBudgetRowView(newBudgetName: $newBudgetTop, budgets: budgets, posOfNewBudget: .before)
-				ForEach(budgets, id: \.self) { budget in
-					BudgetRowView(budget: budget)
-				}.onDelete { indexSet in
-					for index in indexSet {
-						self.managedObjectContext.delete(self.budgets[index])
-					}
-					saveData(self.managedObjectContext)
-				}.onMove() { (source: IndexSet, destination: Int) in
-					var newBudgets: [TimeBudget] = self.budgets.map() { $0 }
-					newBudgets.move(fromOffsets: source, toOffset: destination)
-					for (index, budget) in newBudgets.enumerated() {
-						budget.order = Int16(index)
-					}
-					saveData(self.managedObjectContext)
+				Section(header: Text("Top Level Budgets")) {
+					NewBudgetRowView(newBudgetName: $newBudgetTop, budgets: mainBudgets, posOfNewBudget: .before)
+					BudgetListSection(budgets: self.mainBudgets)
+					NewBudgetRowView(newBudgetName: $newBudgetBottom, budgets: mainBudgets, posOfNewBudget: .after)
 				}
-				NewBudgetRowView(newBudgetName: $newBudgetBottom, budgets: budgets, posOfNewBudget: .after)
+				Section(header: Text("Sub Budgets")) {
+					BudgetListSection(budgets: self.subBudgets)
+				}
 			}
 			.navigationBarTitle("Budget List", displayMode: .inline)
 			.navigationBarItems(trailing: EditButton())
 		}
 	}
+}
+
+struct BudgetListSection: View {
+	var budgets: FetchedResults<TimeBudget>
+	@Environment(\.managedObjectContext) var managedObjectContext
+
+	var body: some View {
+		ForEach(budgets, id: \.self) { budget in
+			BudgetRowView(budget: budget)
+		}.onDelete { indexSet in
+			for index in indexSet {
+				self.managedObjectContext.delete(self.budgets[index])
+			}
+			saveData(self.managedObjectContext)
+		}.onMove() { (source: IndexSet, destination: Int) in
+			var newBudgets: [TimeBudget] = self.budgets.map() { $0 }
+			newBudgets.move(fromOffsets: source, toOffset: destination)
+			for (index, budget) in newBudgets.enumerated() {
+				budget.order = Int16(index)
+			}
+			saveData(self.managedObjectContext)
+		}
+	}
+	
 }
 
 struct BudgetRowView: View {
