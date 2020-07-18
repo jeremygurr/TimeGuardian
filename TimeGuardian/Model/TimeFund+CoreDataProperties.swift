@@ -43,6 +43,9 @@ extension TimeFund {
 	
 	func adjustBalance(_ amount: Int) {
 		self.balance += Int16(amount)
+		if amount < 0, let superFund = budget?.superFund {
+			superFund.adjustBalance(amount)
+		}
 	}
 	
 	func resetBalance() {

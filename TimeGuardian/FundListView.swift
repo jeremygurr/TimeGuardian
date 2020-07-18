@@ -205,7 +205,7 @@ struct FundRowView: View {
 					saveData(self.managedObjectContext)
 				})
 			} else {
-				if fund.subBudget != nil {
+				if fund.subBudget != nil && self.action != .reset {
 					NavigationLink(
 						destination: FundListView(budget: fund.subBudget!)
 					) {
