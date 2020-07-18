@@ -29,10 +29,10 @@ struct FundListView: View {
 			Picker("Fund Action", selection: $action) {
 				Text("Spend")
 					.tag(FundBalanceAction.minus)
-				Text("Reset")
-					.tag(FundBalanceAction.reset)
 				Text("Earn")
 					.tag(FundBalanceAction.plus)
+				Text("Reset")
+					.tag(FundBalanceAction.reset)
 				Text("Sub Budget")
 					.tag(FundBalanceAction.subBudget)
 			}
