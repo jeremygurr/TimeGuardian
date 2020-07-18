@@ -14,17 +14,17 @@ struct FundListOld: View {
 	@State var fundList: [TimeFund]
 	@State var editMode = EditMode.inactive
 	@State var editingFund : TimeFund? = nil
-	@State var action : FundBalanceAction = .minus
+	@State var action : FundBalanceAction = .spend
 	
 	var body: some View {
 		VStack {
 			Picker("Fund Action", selection: $action) {
 				Text("-")
-					.tag(FundBalanceAction.minus)
+					.tag(FundBalanceAction.spend)
 				Text("= 0")
 					.tag(FundBalanceAction.reset)
 				Text("+")
-					.tag(FundBalanceAction.plus)
+					.tag(FundBalanceAction.earn)
 			}
 			.pickerStyle(SegmentedPickerStyle())
 			List {
@@ -164,11 +164,11 @@ struct FundRow: View {
 					//					} else {
 					Button(fund.name) {
 						switch self.action {
-							case .minus:
+							case .spend:
 								self.frontModel.adjustBalance(fund: self.fund, amount: -1)
 							case .reset:
 								self.frontModel.zeroBalance(fund: self.fund)
-							case .plus:
+							case .earn:
 								self.frontModel.adjustBalance(fund: self.fund, amount: 1)
 							case .subBudget:
 								debugLog("Impossible")

@@ -16,7 +16,7 @@ struct FundListView: View {
 	@FetchRequest var spentFunds: FetchedResults<TimeFund>
 	@State var newFundTop = ""
 	@State var newFundBottom = ""
-	@State var action : FundBalanceAction = .minus
+	@State var action : FundBalanceAction = .spend
 	
 	init(budget: TimeBudget) {
 		self.budget = budget
@@ -28,9 +28,9 @@ struct FundListView: View {
 		VStack {
 			Picker("Fund Action", selection: $action) {
 				Text("Spend")
-					.tag(FundBalanceAction.minus)
+					.tag(FundBalanceAction.spend)
 				Text("Earn")
-					.tag(FundBalanceAction.plus)
+					.tag(FundBalanceAction.earn)
 				Text("Reset")
 					.tag(FundBalanceAction.reset)
 				Text("Sub Budget")
@@ -85,7 +85,7 @@ struct FundSectionAllView: View {
 		Section() {
 			Button(action: {
 				switch self.action {
-					case .minus:
+					case .spend:
 						for fund in self.availableFunds {
 							fund.adjustBalance(-1)
 						}
@@ -99,7 +99,7 @@ struct FundSectionAllView: View {
 						for fund in self.spentFunds {
 							fund.resetBalance()
 						}
-					case .plus:
+					case .earn:
 						for fund in self.availableFunds {
 							fund.adjustBalance(1)
 						}
@@ -205,7 +205,7 @@ struct FundRowView: View {
 					saveData(self.managedObjectContext)
 				})
 			} else {
-				if fund.subBudget != nil && self.action != .reset {
+				if fund.subBudget != nil && self.action != .reset && self.action != .earn {
 					NavigationLink(
 						destination: FundListView(budget: fund.subBudget!)
 					) {
@@ -218,11 +218,11 @@ struct FundRowView: View {
 				} else {
 					Button(action: {
 						switch self.action {
-							case .minus:
+							case .spend:
 								self.fund.adjustBalance(-1)
 							case .reset:
 								self.fund.resetBalance()
-							case .plus:
+							case .earn:
 								self.fund.adjustBalance(1)
 							case .subBudget:
 								let subBudget = TimeBudget(context: self.managedObjectContext)
@@ -293,7 +293,7 @@ struct NewFundRowView: View {
 }
 
 enum FundBalanceAction: CaseIterable {
-	case minus, reset, plus, subBudget
+	case spend, reset, earn, subBudget
 }
 
 struct FundListView_Previews: PreviewProvider {
