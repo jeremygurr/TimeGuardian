@@ -68,8 +68,18 @@ struct FundSectionAllView: View {
 	let budget: TimeBudget
 	var availableFunds: FetchedResults<TimeFund>
 	var spentFunds: FetchedResults<TimeFund>
-	@Binding var action : FundBalanceAction
+	@Binding var action: FundBalanceAction
 	@Environment(\.managedObjectContext) var managedObjectContext
+	var allFundBalance: Int16 {
+		var total: Int16 = 0
+		for fund in self.availableFunds {
+			total += fund.balance
+		}
+		for fund in self.spentFunds {
+			total += fund.balance
+		}
+		return total
+	}
 	
 	var body: some View {
 		Section() {
@@ -102,6 +112,9 @@ struct FundSectionAllView: View {
 				saveData(self.managedObjectContext)
 			}, label: {
 				HStack {
+					Text("\(allFundBalance)")
+						.frame(width: 40, alignment: .trailing)
+					Divider()
 					Text("All Funds")
 						.frame(minWidth: 20, maxWidth: .infinity, alignment: .leading)
 				}
