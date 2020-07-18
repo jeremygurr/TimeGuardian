@@ -196,10 +196,11 @@ struct FundRowView: View {
 					NavigationLink(
 						destination: FundListView(budget: fund.subBudget!)
 					) {
+						Text("\(fund.balance)")
+							.frame(width: 40, alignment: .trailing)
+						Divider()
 						Text(fund.name)
 							.frame(minWidth: 20, maxWidth: .infinity, alignment: .leading)
-						Text("\(fund.balance)")
-							.frame(minWidth: 20, maxWidth: 40, alignment: .trailing)
 					}
 				} else {
 					Button(action: {
@@ -218,10 +219,11 @@ struct FundRowView: View {
 						saveData(self.managedObjectContext)
 					}, label: {
 						HStack {
+							Text("\(fund.balance)")
+								.frame(width: 40, alignment: .trailing)
+							Divider()
 							Text(fund.name)
 								.frame(minWidth: 20, maxWidth: .infinity, alignment: .leading)
-							Text("\(fund.balance)")
-								.frame(minWidth: 20, maxWidth: 40, alignment: .trailing)
 						}
 					})
 				}
