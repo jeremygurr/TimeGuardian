@@ -9,27 +9,27 @@
 import SwiftUI
 
 struct TopView: View {
-	@State var budgetStack: [TimeBudget] = []
+	@EnvironmentObject var budgetStack: BudgetStack
 	
 	var body: some View {
 		VStack {
-			if self.budgetStack.count == 0 {
+			if self.budgetStack.isEmpty() {
 				VStack {
 					Text("Budgets")
 						.font(.largeTitle)
 						.frame(maxWidth: .infinity, alignment: .center)
-					BudgetListView(budgetStack: self.$budgetStack)
+					BudgetListView()
 				}
 			} else {
 				VStack {
 					ZStack {
-						Text("\(budgetStack.last!.name)")
+						Text("\(budgetStack.getTopBudget().name)")
 							.font(.title)
 							.frame(maxWidth: .infinity, alignment: .center)
 						HStack {
 							Button(
 								action: {
-									debugLog("not done")
+									_ = self.budgetStack.removeLastBudget()
 							},
 								label: {
 									Text("< Back")
@@ -40,7 +40,7 @@ struct TopView: View {
 						}
 						.frame(maxWidth: .infinity, alignment: .leading)
 					}
-					FundListView(budget: budgetStack.last!)
+					FundListView(budgetStack: self.budgetStack)
 				}
 			}
 		}
@@ -52,7 +52,8 @@ struct TopView_Previews: PreviewProvider {
 		let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
 		let tdb = TestDataBuilder(context: context)
 		tdb.createTestData()
-		return TopView(budgetStack: [tdb.budgets.first!])
+		return TopView()
 			.environment(\.managedObjectContext, context)
+			.environmentObject(BudgetStack().push(budget: tdb.budgets.first!))
 	}
 }

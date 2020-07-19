@@ -15,6 +15,7 @@
 		00113D0A24B920180028AB57 /* TestDataBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00113D0924B920180028AB57 /* TestDataBuilder.swift */; };
 		002531D024C1B76400CB7FF0 /* IQKeyboardManagerSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 002531CF24C1B76400CB7FF0 /* IQKeyboardManagerSwift */; };
 		002531DA24C4614A00CB7FF0 /* TopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 002531D924C4614A00CB7FF0 /* TopView.swift */; };
+		002531DC24C497EC00CB7FF0 /* BudgetStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 002531DB24C497EC00CB7FF0 /* BudgetStack.swift */; };
 		002590DE24B90F0E00F703C5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 002590DD24B90F0E00F703C5 /* AppDelegate.swift */; };
 		002590E024B90F0E00F703C5 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 002590DF24B90F0E00F703C5 /* SceneDelegate.swift */; };
 		002590E324B90F0E00F703C5 /* TimeGuardian.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 002590E124B90F0E00F703C5 /* TimeGuardian.xcdatamodeld */; };
@@ -33,6 +34,7 @@
 		0005627724BA7E7F003AECC6 /* TimeBudget+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "TimeBudget+CoreDataProperties.swift"; path = "TimeGuardian/Model/TimeBudget+CoreDataProperties.swift"; sourceTree = SOURCE_ROOT; };
 		00113D0924B920180028AB57 /* TestDataBuilder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestDataBuilder.swift; sourceTree = "<group>"; };
 		002531D924C4614A00CB7FF0 /* TopView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopView.swift; sourceTree = "<group>"; };
+		002531DB24C497EC00CB7FF0 /* BudgetStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BudgetStack.swift; sourceTree = "<group>"; };
 		002590DA24B90F0E00F703C5 /* TimeGuardian.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TimeGuardian.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		002590DD24B90F0E00F703C5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		002590DF24B90F0E00F703C5 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -96,6 +98,7 @@
 				002531D924C4614A00CB7FF0 /* TopView.swift */,
 				0058665B24C074F3004E4889 /* BudgetListView.swift */,
 				0058665D24C0FD88004E4889 /* FundListView.swift */,
+				002531DB24C497EC00CB7FF0 /* BudgetStack.swift */,
 				0058665624C05BBB004E4889 /* Utils.swift */,
 				002590E624B90F1000F703C5 /* Assets.xcassets */,
 				002590EB24B90F1000F703C5 /* LaunchScreen.storyboard */,
@@ -194,6 +197,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				002590DE24B90F0E00F703C5 /* AppDelegate.swift in Sources */,
+				002531DC24C497EC00CB7FF0 /* BudgetStack.swift in Sources */,
 				0058665724C05BBB004E4889 /* Utils.swift in Sources */,
 				0058665C24C074F3004E4889 /* BudgetListView.swift in Sources */,
 				002590E324B90F0E00F703C5 /* TimeGuardian.xcdatamodeld in Sources */,

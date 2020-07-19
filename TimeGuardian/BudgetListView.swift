@@ -15,23 +15,21 @@ struct BudgetListView: View {
 	@FetchRequest var subBudgets: FetchedResults<TimeBudget>
 	@State var newBudgetTop = ""
 	@State var newBudgetBottom = ""
-	@Binding var budgetStack: [TimeBudget]
 
-	init(budgetStack: Binding<[TimeBudget]>) {
+	init() {
 		_mainBudgets = TimeBudget.fetchRequestMain()
 		_subBudgets = TimeBudget.fetchRequestSub()
-		_budgetStack = budgetStack
 	}
 
 	var body: some View {
 		List {
 			Section(header: Text("Top Level Budgets")) {
 				NewBudgetRowView(newBudgetName: $newBudgetTop, budgets: mainBudgets, posOfNewBudget: .before)
-				BudgetListSection(budgets: self.mainBudgets, budgetStack: self.$budgetStack)
+				BudgetListSection(budgets: self.mainBudgets)
 				NewBudgetRowView(newBudgetName: $newBudgetBottom, budgets: mainBudgets, posOfNewBudget: .after)
 			}
 			Section(header: Text("Sub Budgets")) {
-				BudgetListSection(budgets: self.subBudgets, budgetStack: self.$budgetStack)
+				BudgetListSection(budgets: self.subBudgets)
 			}
 		}
 	}
@@ -39,12 +37,11 @@ struct BudgetListView: View {
 
 struct BudgetListSection: View {
 	var budgets: FetchedResults<TimeBudget>
-	@Binding var budgetStack: [TimeBudget]
 	@Environment(\.managedObjectContext) var managedObjectContext
 
 	var body: some View {
 		ForEach(budgets, id: \.self) { budget in
-			BudgetRowView(budget: budget, budgetStack: self.$budgetStack)
+			BudgetRowView(budget: budget)
 		}.onDelete { indexSet in
 			for index in indexSet {
 				self.managedObjectContext.delete(self.budgets[index])
@@ -66,7 +63,7 @@ struct BudgetRowView: View {
 	@Environment(\.editMode) var editMode
 	@Environment(\.managedObjectContext) var managedObjectContext
 	@State var budget: TimeBudget
-	@Binding var budgetStack: [TimeBudget]
+	@EnvironmentObject var budgetStack: BudgetStack
 	
 	var body: some View {
 		VStack {
@@ -83,7 +80,7 @@ struct BudgetRowView: View {
 			} else {
 				Button(
 					action: {
-						self.budgetStack.append(self.budget)
+						_ = self.budgetStack.push(budget: self.budget)
 					},
 					label: {
 						Text(budget.name)
@@ -153,9 +150,9 @@ enum ListPosition {
 struct BudgetListView_Previews: PreviewProvider {
 	static var previews: some View {
 		let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-		let budgetStack: State<[TimeBudget]> = State(initialValue: [])
-		return BudgetListView(budgetStack: budgetStack.projectedValue)
+		return BudgetListView()
 			.environment(\.managedObjectContext, context)
+			.environmentObject(BudgetStack())
 	}
 }
 
