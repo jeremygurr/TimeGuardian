@@ -27,7 +27,7 @@ struct FundListView: View {
 	
 	var body: some View {
 		VStack {
-			SegmentedPickerView(choices: FundAction.allCasesAsStrings)
+			MultiRowSegmentedPickerView(choices: FundAction.allCasesAsStrings)
 //			Picker("Fund Action", selection: $action) {
 //				Text("Spend")
 //					.tag(FundBalanceAction.spend)
@@ -320,8 +320,11 @@ struct NewFundRowView: View {
 
 enum FundAction: CaseIterable {
 	case spend, reset, earn, subBudget, clone
-	static var allCasesAsStrings: [String] {
-		 ["Spend", "Earn", "Reset", "Sub", "Clone", "Edit", "Delete"]
+	static var allCasesAsStrings: [[String]] {
+		[
+			["Spend", "Earn", "Reset"],
+			["Sub", "Clone", "Edit", "Delete"]
+		]
 	}
 }
 
