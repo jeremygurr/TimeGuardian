@@ -36,6 +36,7 @@ struct FundListView: View {
 						self.editMode?.wrappedValue = .active
 					} else {
 						self.editMode?.wrappedValue = .inactive
+						UIApplication.shared.endEditing(true)
 					}
 			}
 				)
@@ -186,16 +187,42 @@ struct FundRowView: View {
 	@ObservedObject var fund: TimeFund
 	var funds: FetchedResults<TimeFund>
 	
+	func commitRenameFund() {
+		self.fund.name = self.fund.name.trimmingCharacters(in: .whitespacesAndNewlines)
+		let newName = self.fund.name
+		if newName == "" {
+			self.managedObjectContext.delete(self.fund)
+		} else if self.fund.subBudget != nil {
+			let subBudget = self.fund.subBudget!
+			if subBudget.name != newName {
+				subBudget.name = newName
+				if let funds = subBudget.superFund {
+					for fundToRename in funds {
+						if (fundToRename as! TimeFund).name != newName {
+							(fundToRename as! TimeFund).name = newName
+						}
+					}
+				}
+			}
+		}
+		saveData(self.managedObjectContext)
+	}
+	
 	var body: some View {
 		VStack {
 			if self.editMode?.wrappedValue == .active {
-				TextField("Fund Name", text: $fund.name, onCommit: {
-					self.fund.name = self.fund.name.trimmingCharacters(in: .whitespacesAndNewlines)
-					if self.fund.name == "" {
-						self.managedObjectContext.delete(self.fund)
-					}
-					saveData(self.managedObjectContext)
-				})
+				TextField(
+					"Fund Name",
+					text: $fund.name,
+					onEditingChanged: { value in
+						if !value {
+							self.commitRenameFund()
+						}
+				},
+					onCommit: {
+						self.commitRenameFund()
+				}
+				)
 			} else {
 				if fund.subBudget != nil && self.action == .spend {
 					Button(action: {
@@ -253,7 +280,7 @@ struct FundRowView: View {
 								newFund.order = Int16(self.funds.count)
 								newFund.subBudget = self.fund.subBudget
 							case .edit:
-								debugLog("Not implemented yet")
+								errorLog("Impossible")
 							case .delete:
 								debugLog("Not implemented yet")
 						}

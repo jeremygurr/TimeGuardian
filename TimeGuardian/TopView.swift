@@ -11,6 +11,7 @@ import SwiftUI
 struct TopView: View {
 	@EnvironmentObject var budgetStack: BudgetStack
 	@Environment(\.editMode) var editMode
+	@Environment(\.managedObjectContext) var managedObjectContext
 	
 	var body: some View {
 		VStack {
@@ -33,6 +34,7 @@ struct TopView: View {
 									self.budgetStack.removeLastBudget()
 									self.budgetStack.removeLastFund()
 									self.editMode?.wrappedValue = .inactive
+									self.managedObjectContext.rollback()
 							},
 								label: {
 									Text("< Back")

@@ -8,6 +8,7 @@
 
 import Foundation
 import CoreData
+import SwiftUI
 
 func arrayEquals<E: Equatable>(_ x: [E], _ y: [E]) -> Bool {
 	var result = true
@@ -40,5 +41,14 @@ func saveData(_ managedObjectContext: NSManagedObjectContext) {
 			let nserror = error as NSError
 			fatalError("Unresolved error \(nserror)")
 		}
+	}
+}
+
+extension UIApplication {
+	func endEditing(_ force: Bool) {
+		self.windows
+			.filter{$0.isKeyWindow}
+			.first?
+			.endEditing(force)
 	}
 }
