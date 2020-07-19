@@ -42,7 +42,7 @@ struct MultiRowSegmentedPickerView<T: Stringable>: View {
 	private let cornerRadius: CGFloat = 8
 	private let selectorStrokeWidth: CGFloat = 4
 	private let selectorInset: CGFloat = 4
-	private let backgroundColor = Color(UIColor.lightGray)
+	private let backgroundColor = Color(white: 0.9)
 	
 	private let choices: [[T]]
 	private let choicesFlat: [T]
@@ -51,7 +51,6 @@ struct MultiRowSegmentedPickerView<T: Stringable>: View {
 	init(choices: [[T]], selectedIndex: Binding<T>) {
 		self.choices = choices
 		_selectedIndex = selectedIndex
-		var i = 0
 		var newElements: [[SegmentedPickerElementView<Text, T>]] = []
 		var newChoicesFlat: [T] = []
 		for r in choices.indices {
@@ -64,7 +63,6 @@ struct MultiRowSegmentedPickerView<T: Stringable>: View {
 						.font(.body)
 				})
 				newChoicesFlat.append(choice)
-				i += 1
 			}
 			newElements.append(rowElements)
 		}
@@ -115,26 +113,26 @@ struct MultiRowSegmentedPickerView<T: Stringable>: View {
 						.position(x: self.selectionOffsetX, y: self.selectionOffsetY)
 						.animation(.easeInOut(duration: 0.2))
 				}
-				.frame(maxWidth: .infinity, minHeight: self.height, maxHeight: self.height)
 				.background(self.backgroundColor)
 				.cornerRadius(self.cornerRadius)
 //				.padding()
 				
-				Text(
-					"selected element: "
-						+ String(self.selectedIndex.asInt)
-						+ " -> "
-						+ self.selectedIndex.asString
-				)
+//				Text(
+//					"selected element: "
+//						+ String(self.selectedIndex.asInt)
+//						+ " -> "
+//						+ self.selectedIndex.asString
+//				)
 			}
 			.onAppear(
 				perform: {
 					self.width = geo.size.width
-//					self.height = geo.size.height
+					self.height = geo.size.height
 					self.updateSelectionOffset(id: self.choicesFlat[0], row: 0, col: 0)
 			}
 			)
 		}
+		.frame(maxWidth: .infinity, maxHeight: CGFloat(60 * self.choices.count), alignment: .top)
 	}
 }
 
