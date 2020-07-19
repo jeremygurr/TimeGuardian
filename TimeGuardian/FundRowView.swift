@@ -112,7 +112,8 @@ struct FundRowView: View {
 							case .edit:
 								errorLog("Impossible")
 							case .delete:
-								debugLog("Not implemented yet")
+								self.managedObjectContext.delete(self.fund)
+								saveData(self.managedObjectContext)
 						}
 						saveData(self.managedObjectContext)
 					}, label: {

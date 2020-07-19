@@ -163,14 +163,6 @@ struct FundSectionSpentView: View {
 		Section(header: Text("Spent")) {
 			ForEach(spentFunds, id: \.self) { fund in
 				FundRowView(action: self.$action, fund: fund, funds: self.allFunds)
-			}.onDelete { indexSet in
-				for index in 0 ..< self.spentFunds.count {
-					let fund = self.spentFunds[index]
-					if indexSet.contains(index) {
-						self.managedObjectContext.delete(fund)
-					}
-				}
-				saveData(self.managedObjectContext)
 			}.onMove() { (source: IndexSet, destination: Int) in
 				var newFunds: [TimeFund] = self.spentFunds.map() { $0 }
 				newFunds.move(fromOffsets: source, toOffset: destination)
