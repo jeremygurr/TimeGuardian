@@ -39,7 +39,8 @@ struct SegmentedPickerView: View {
 		self.choices = choices
 		for i in choices.indices {
 			self.elements.append(SegmentedPickerElementView(id: i) {
-				Text(choices[i]).font(.system(.title))
+				Text(choices[i])
+					.font(.body)
 			})
 		}
 		self.selectedIndex = 0
@@ -57,7 +58,7 @@ struct SegmentedPickerView: View {
 			ZStack(alignment: .leading) {
 				HStack(alignment: .center, spacing: 0) {
 					ForEach(self.elements) { item in
-						(item as SegmentedPickerElementView )
+						(item as SegmentedPickerElementView)
 							.onTapGesture(perform: {
 								withAnimation {
 									self.updateSelectionOffset(id: item.id)
