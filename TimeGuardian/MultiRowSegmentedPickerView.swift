@@ -92,6 +92,7 @@ struct MultiRowSegmentedPickerView<T: Stringable>: View {
 							HStack(alignment: .center, spacing: 0) {
 								ForEach(row, id: \.self) { item in
 									(item as SegmentedPickerElementView)
+										.contentShape(Rectangle())
 										.onTapGesture(
 											perform: {
 												withAnimation {
