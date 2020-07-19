@@ -7,55 +7,39 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0005627324BA7B49003AECC6 /* BudgetFrontModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0005627224BA7B49003AECC6 /* BudgetFrontModel.swift */; };
 		0005627824BA7E7F003AECC6 /* TimeBudget+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0005627424BA7E7F003AECC6 /* TimeBudget+CoreDataClass.swift */; };
 		0005627924BA7E7F003AECC6 /* TimeFund+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0005627524BA7E7F003AECC6 /* TimeFund+CoreDataClass.swift */; };
 		0005627A24BA7E7F003AECC6 /* TimeFund+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0005627624BA7E7F003AECC6 /* TimeFund+CoreDataProperties.swift */; };
 		0005627B24BA7E7F003AECC6 /* TimeBudget+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0005627724BA7E7F003AECC6 /* TimeBudget+CoreDataProperties.swift */; };
-		0005627D24BAE1A7003AECC6 /* FundListOld.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0005627C24BAE1A7003AECC6 /* FundListOld.swift */; };
 		0005628024BE52D3003AECC6 /* Introspect in Frameworks */ = {isa = PBXBuildFile; productRef = 0005627F24BE52D3003AECC6 /* Introspect */; };
-		0005628424BE5964003AECC6 /* BudgetRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0005628324BE5964003AECC6 /* BudgetRow.swift */; };
 		00113D0A24B920180028AB57 /* TestDataBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00113D0924B920180028AB57 /* TestDataBuilder.swift */; };
 		002531D024C1B76400CB7FF0 /* IQKeyboardManagerSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 002531CF24C1B76400CB7FF0 /* IQKeyboardManagerSwift */; };
-		002531D724C3C84400CB7FF0 /* TimeBudget+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 002531D524C3C84400CB7FF0 /* TimeBudget+CoreDataProperties.swift */; };
-		002531D824C3C84400CB7FF0 /* TimeFund+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 002531D624C3C84400CB7FF0 /* TimeFund+CoreDataProperties.swift */; };
 		002590DE24B90F0E00F703C5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 002590DD24B90F0E00F703C5 /* AppDelegate.swift */; };
 		002590E024B90F0E00F703C5 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 002590DF24B90F0E00F703C5 /* SceneDelegate.swift */; };
 		002590E324B90F0E00F703C5 /* TimeGuardian.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 002590E124B90F0E00F703C5 /* TimeGuardian.xcdatamodeld */; };
-		002590E524B90F0E00F703C5 /* BudgetListViewOld.swift in Sources */ = {isa = PBXBuildFile; fileRef = 002590E424B90F0E00F703C5 /* BudgetListViewOld.swift */; };
 		002590E724B90F1000F703C5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 002590E624B90F1000F703C5 /* Assets.xcassets */; };
 		002590EA24B90F1000F703C5 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 002590E924B90F1000F703C5 /* Preview Assets.xcassets */; };
 		002590ED24B90F1000F703C5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 002590EB24B90F1000F703C5 /* LaunchScreen.storyboard */; };
-		0058665524BF27BC004E4889 /* TestFrontModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0058665424BF27BC004E4889 /* TestFrontModel.swift */; };
 		0058665724C05BBB004E4889 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0058665624C05BBB004E4889 /* Utils.swift */; };
-		0058665A24C06FB2004E4889 /* BudgetListModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0058665924C06FB2004E4889 /* BudgetListModel.swift */; };
 		0058665C24C074F3004E4889 /* BudgetListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0058665B24C074F3004E4889 /* BudgetListView.swift */; };
 		0058665E24C0FD88004E4889 /* FundListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0058665D24C0FD88004E4889 /* FundListView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		0005627224BA7B49003AECC6 /* BudgetFrontModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BudgetFrontModel.swift; path = TimeGuardian/Old/BudgetFrontModel.swift; sourceTree = SOURCE_ROOT; };
 		0005627424BA7E7F003AECC6 /* TimeBudget+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "TimeBudget+CoreDataClass.swift"; path = "TimeGuardian/Model/TimeBudget+CoreDataClass.swift"; sourceTree = SOURCE_ROOT; };
 		0005627524BA7E7F003AECC6 /* TimeFund+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "TimeFund+CoreDataClass.swift"; path = "TimeGuardian/Model/TimeFund+CoreDataClass.swift"; sourceTree = SOURCE_ROOT; };
 		0005627624BA7E7F003AECC6 /* TimeFund+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "TimeFund+CoreDataProperties.swift"; path = "TimeGuardian/Model/TimeFund+CoreDataProperties.swift"; sourceTree = SOURCE_ROOT; };
 		0005627724BA7E7F003AECC6 /* TimeBudget+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "TimeBudget+CoreDataProperties.swift"; path = "TimeGuardian/Model/TimeBudget+CoreDataProperties.swift"; sourceTree = SOURCE_ROOT; };
-		0005627C24BAE1A7003AECC6 /* FundListOld.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FundListOld.swift; sourceTree = "<group>"; };
-		0005628324BE5964003AECC6 /* BudgetRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BudgetRow.swift; sourceTree = "<group>"; };
 		00113D0924B920180028AB57 /* TestDataBuilder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestDataBuilder.swift; sourceTree = "<group>"; };
-		002531D524C3C84400CB7FF0 /* TimeBudget+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "TimeBudget+CoreDataProperties.swift"; path = "TimeGuardian/Model/TimeBudget+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		002531D624C3C84400CB7FF0 /* TimeFund+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "TimeFund+CoreDataProperties.swift"; path = "TimeGuardian/Model/TimeFund+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		002590DA24B90F0E00F703C5 /* TimeGuardian.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TimeGuardian.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		002590DD24B90F0E00F703C5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		002590DF24B90F0E00F703C5 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		002590E224B90F0E00F703C5 /* TimeGuardian.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = TimeGuardian.xcdatamodel; sourceTree = "<group>"; };
-		002590E424B90F0E00F703C5 /* BudgetListViewOld.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BudgetListViewOld.swift; sourceTree = "<group>"; };
 		002590E624B90F1000F703C5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		002590E924B90F1000F703C5 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		002590EC24B90F1000F703C5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		002590EE24B90F1000F703C5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		0058665424BF27BC004E4889 /* TestFrontModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestFrontModel.swift; sourceTree = "<group>"; };
 		0058665624C05BBB004E4889 /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
-		0058665924C06FB2004E4889 /* BudgetListModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BudgetListModel.swift; sourceTree = "<group>"; };
 		0058665B24C074F3004E4889 /* BudgetListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BudgetListView.swift; sourceTree = "<group>"; };
 		0058665D24C0FD88004E4889 /* FundListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FundListView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -84,24 +68,9 @@
 			path = BackModel;
 			sourceTree = "<group>";
 		};
-		002531CD24C1A7DF00CB7FF0 /* Old */ = {
-			isa = PBXGroup;
-			children = (
-				002590E424B90F0E00F703C5 /* BudgetListViewOld.swift */,
-				0005627C24BAE1A7003AECC6 /* FundListOld.swift */,
-				0005628324BE5964003AECC6 /* BudgetRow.swift */,
-				0058665424BF27BC004E4889 /* TestFrontModel.swift */,
-				0005627224BA7B49003AECC6 /* BudgetFrontModel.swift */,
-				0058665924C06FB2004E4889 /* BudgetListModel.swift */,
-			);
-			path = Old;
-			sourceTree = "<group>";
-		};
 		002590D124B90F0E00F703C5 = {
 			isa = PBXGroup;
 			children = (
-				002531D524C3C84400CB7FF0 /* TimeBudget+CoreDataProperties.swift */,
-				002531D624C3C84400CB7FF0 /* TimeFund+CoreDataProperties.swift */,
 				002590DC24B90F0E00F703C5 /* TimeGuardian */,
 				002590DB24B90F0E00F703C5 /* Products */,
 			);
@@ -125,7 +94,6 @@
 				0058665B24C074F3004E4889 /* BudgetListView.swift */,
 				0058665D24C0FD88004E4889 /* FundListView.swift */,
 				0058665624C05BBB004E4889 /* Utils.swift */,
-				002531CD24C1A7DF00CB7FF0 /* Old */,
 				002590E624B90F1000F703C5 /* Assets.xcassets */,
 				002590EB24B90F1000F703C5 /* LaunchScreen.storyboard */,
 				002590EE24B90F1000F703C5 /* Info.plist */,
@@ -223,24 +191,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				002590DE24B90F0E00F703C5 /* AppDelegate.swift in Sources */,
-				0005628424BE5964003AECC6 /* BudgetRow.swift in Sources */,
-				0058665524BF27BC004E4889 /* TestFrontModel.swift in Sources */,
 				0058665724C05BBB004E4889 /* Utils.swift in Sources */,
 				0058665C24C074F3004E4889 /* BudgetListView.swift in Sources */,
-				0058665A24C06FB2004E4889 /* BudgetListModel.swift in Sources */,
 				002590E324B90F0E00F703C5 /* TimeGuardian.xcdatamodeld in Sources */,
 				00113D0A24B920180028AB57 /* TestDataBuilder.swift in Sources */,
 				0058665E24C0FD88004E4889 /* FundListView.swift in Sources */,
-				002531D724C3C84400CB7FF0 /* TimeBudget+CoreDataProperties.swift in Sources */,
-				002590E524B90F0E00F703C5 /* BudgetListViewOld.swift in Sources */,
 				0005627A24BA7E7F003AECC6 /* TimeFund+CoreDataProperties.swift in Sources */,
-				0005627324BA7B49003AECC6 /* BudgetFrontModel.swift in Sources */,
 				0005627824BA7E7F003AECC6 /* TimeBudget+CoreDataClass.swift in Sources */,
 				002590E024B90F0E00F703C5 /* SceneDelegate.swift in Sources */,
 				0005627924BA7E7F003AECC6 /* TimeFund+CoreDataClass.swift in Sources */,
-				002531D824C3C84400CB7FF0 /* TimeFund+CoreDataProperties.swift in Sources */,
 				0005627B24BA7E7F003AECC6 /* TimeBudget+CoreDataProperties.swift in Sources */,
-				0005627D24BAE1A7003AECC6 /* FundListOld.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

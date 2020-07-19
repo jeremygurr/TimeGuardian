@@ -41,11 +41,20 @@ extension TimeFund {
 		return request
 	}
 	
+	@nonobjc public class func fetchRequest(name: String) -> FetchRequest<TimeFund> {
+		let request = FetchRequest<TimeFund>(
+			entity: TimeFund.entity(),
+			sortDescriptors: [
+				NSSortDescriptor(keyPath: \TimeFund.order, ascending: true)
+			],
+			predicate: NSPredicate(format: "name == %@", name)
+		)
+		
+		return request
+	}
+	
 	func adjustBalance(_ amount: Int) {
 		self.balance += Int16(amount)
-		if amount < 0, let superFund = budget?.superFund {
-			superFund.adjustBalance(amount)
-		}
 	}
 	
 	func resetBalance() {
