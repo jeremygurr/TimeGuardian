@@ -46,7 +46,7 @@ struct FundListView: View {
 					|| self.action == .earn
 					|| self.action == .delete
 				{
-					FundSectionAllView(
+					FundAllRowView(
 						allFunds: self.allFunds,
 						action: self.$action
 					)
@@ -68,7 +68,7 @@ struct FundListView: View {
 	}
 }
 
-struct FundSectionAllView: View {
+struct FundAllRowView: View {
 	var allFunds: FetchedResults<TimeFund>
 	@Binding var action: FundAction
 	@Environment(\.managedObjectContext) var managedObjectContext
@@ -101,9 +101,11 @@ struct FundSectionAllView: View {
 					case .clone:
 						debugLog("Can't clone all")
 					case .edit:
-						debugLog("Not implemented yet")
+						debugLog("Can't edit all")
 					case .delete:
-						debugLog("Not implemented yet")
+						for fund in self.allFunds {
+							self.managedObjectContext.delete(fund)
+					}
 				}
 				saveData(self.managedObjectContext)
 			}, label: {
