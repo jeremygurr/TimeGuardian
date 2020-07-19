@@ -16,7 +16,7 @@ struct FundListView: View {
 	@FetchRequest var allFunds: FetchedResults<TimeFund>
 	@State var newFundTop = ""
 	@State var newFundBottom = ""
-	@State var action: FundBalanceAction = .spend
+	@State var action: FundAction = .spend
 	
 	init(budgetStack: BudgetStack) {
 		let budget = budgetStack.getTopBudget()
@@ -27,20 +27,20 @@ struct FundListView: View {
 	
 	var body: some View {
 		VStack {
-			Picker("Fund Action", selection: $action) {
-				Text("Spend")
-					.tag(FundBalanceAction.spend)
-				Text("Earn")
-					.tag(FundBalanceAction.earn)
-				Text("Reset")
-					.tag(FundBalanceAction.reset)
-				Text("Sub")
-					.tag(FundBalanceAction.subBudget)
-				Text("Clone")
-					.tag(FundBalanceAction.clone)
-			}
-			.font(.largeTitle)
-			.pickerStyle(SegmentedPickerStyle())
+			SegmentedPickerView(choices: FundAction.allCasesAsStrings)
+//			Picker("Fund Action", selection: $action) {
+//				Text("Spend")
+//					.tag(FundBalanceAction.spend)
+//				Text("Earn")
+//					.tag(FundBalanceAction.earn)
+//				Text("Reset")
+//					.tag(FundBalanceAction.reset)
+//				Text("Sub")
+//					.tag(FundBalanceAction.subBudget)
+//				Text("Clone")
+//					.tag(FundBalanceAction.clone)
+//			}
+//			.font(.largeTitle)
 			List {
 				if self.action != .clone && self.action != .subBudget {
 					FundSectionAllView(
@@ -67,7 +67,7 @@ struct FundListView: View {
 
 struct FundSectionAllView: View {
 	var allFunds: FetchedResults<TimeFund>
-	@Binding var action: FundBalanceAction
+	@Binding var action: FundAction
 	@Environment(\.managedObjectContext) var managedObjectContext
 	var allFundBalance: Int16 {
 		var total: Int16 = 0
@@ -117,7 +117,7 @@ struct FundSectionAvailableView: View {
 	var allFunds: FetchedResults<TimeFund>
 	@Binding var newFundTop: String
 	@Binding var newFundBottom: String
-	@Binding var action : FundBalanceAction
+	@Binding var action : FundAction
 	@Environment(\.managedObjectContext) var managedObjectContext
 	
 	var body: some View {
@@ -149,7 +149,7 @@ struct FundSectionAvailableView: View {
 struct FundSectionSpentView: View {
 	var spentFunds: FetchedResults<TimeFund>
 	var allFunds: FetchedResults<TimeFund>
-	@Binding var action : FundBalanceAction
+	@Binding var action : FundAction
 	@Environment(\.managedObjectContext) var managedObjectContext
 	
 	var body: some View {
@@ -177,7 +177,7 @@ struct FundSectionSpentView: View {
 }
 
 struct FundRowView: View {
-	@Binding var action: FundBalanceAction
+	@Binding var action: FundAction
 	@Environment(\.editMode) var editMode
 	@Environment(\.managedObjectContext) var managedObjectContext
 	@EnvironmentObject var budgetStack: BudgetStack
@@ -318,17 +318,19 @@ struct NewFundRowView: View {
 	}
 }
 
-enum FundBalanceAction: CaseIterable {
+enum FundAction: CaseIterable {
 	case spend, reset, earn, subBudget, clone
+	static var allCasesAsStrings: [String] {
+		 ["Spend", "Earn", "Reset", "Sub", "Clone", "Edit", "Delete"]
+	}
 }
 
 struct FundListView_Previews: PreviewProvider {
 	static var previews: some View {
-		let mainBudgets = TimeBudget.fetchRequestMain()
 		let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
 		let testDataBuilder = TestDataBuilder(context: context)
 		testDataBuilder.createTestData()
-		let budget = mainBudgets.wrappedValue.first!
+		let budget = testDataBuilder.budgets.first!
 		let budgetStack = BudgetStack()
 		budgetStack.push(budget: budget)
 		return FundListView(budgetStack: budgetStack)
