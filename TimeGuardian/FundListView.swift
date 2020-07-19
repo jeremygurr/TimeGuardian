@@ -32,18 +32,20 @@ struct FundListView: View {
 	
 	var body: some View {
 		VStack {
-			Picker("Fund Action", selection: $action) {
-				Text("Spend")
-					.tag(FundBalanceAction.spend)
-				Text("Earn")
-					.tag(FundBalanceAction.earn)
-				Text("Reset")
-					.tag(FundBalanceAction.reset)
-				Text("Sub Budget")
-					.tag(FundBalanceAction.subBudget)
+			if self.editMode?.wrappedValue == .inactive {
+				Picker("Fund Action", selection: $action) {
+					Text("Spend")
+						.tag(FundBalanceAction.spend)
+					Text("Earn")
+						.tag(FundBalanceAction.earn)
+					Text("Reset")
+						.tag(FundBalanceAction.reset)
+					Text("Sub Budget")
+						.tag(FundBalanceAction.subBudget)
+				}
+				.font(.largeTitle)
+				.pickerStyle(SegmentedPickerStyle())
 			}
-			.font(.largeTitle)
-			.pickerStyle(SegmentedPickerStyle())
 			List {
 				FundSectionAllView(
 					budget: self.budget,
