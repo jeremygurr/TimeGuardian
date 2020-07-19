@@ -13,6 +13,7 @@ import CoreData
 
 class TestDataBuilder {
 	let context: NSManagedObjectContext
+	var budgets: [TimeBudget] = []
 	
 	init(context: NSManagedObjectContext) {
 		self.context = context
@@ -54,5 +55,6 @@ class TestDataBuilder {
 	func createBudget(name: String) {
 		let budget = TimeBudget(context: context)
 		budget.name = name
+		budgets.append(budget)
 	}
 }
