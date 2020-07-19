@@ -27,6 +27,7 @@
 		0058665724C05BBB004E4889 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0058665624C05BBB004E4889 /* Utils.swift */; };
 		0058665C24C074F3004E4889 /* BudgetListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0058665B24C074F3004E4889 /* BudgetListView.swift */; };
 		0058665E24C0FD88004E4889 /* FundListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0058665D24C0FD88004E4889 /* FundListView.swift */; };
+		00659F0924C511F800670CF0 /* FundRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00659F0824C511F800670CF0 /* FundRowView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -50,6 +51,7 @@
 		0058665624C05BBB004E4889 /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		0058665B24C074F3004E4889 /* BudgetListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BudgetListView.swift; sourceTree = "<group>"; };
 		0058665D24C0FD88004E4889 /* FundListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FundListView.swift; sourceTree = "<group>"; };
+		00659F0824C511F800670CF0 /* FundRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FundRowView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -103,6 +105,7 @@
 				003E0C9D24C4BDDD00AAC6C0 /* MultiRowSegmentedPickerView.swift */,
 				0058665B24C074F3004E4889 /* BudgetListView.swift */,
 				0058665D24C0FD88004E4889 /* FundListView.swift */,
+				00659F0824C511F800670CF0 /* FundRowView.swift */,
 				003E0C9F24C4D58200AAC6C0 /* FundAction.swift */,
 				002531DB24C497EC00CB7FF0 /* BudgetStack.swift */,
 				0058665624C05BBB004E4889 /* Utils.swift */,
@@ -214,6 +217,7 @@
 				0005627824BA7E7F003AECC6 /* TimeBudget+CoreDataClass.swift in Sources */,
 				002590E024B90F0E00F703C5 /* SceneDelegate.swift in Sources */,
 				0005627924BA7E7F003AECC6 /* TimeFund+CoreDataClass.swift in Sources */,
+				00659F0924C511F800670CF0 /* FundRowView.swift in Sources */,
 				002531DA24C4614A00CB7FF0 /* TopView.swift in Sources */,
 				003E0C9E24C4BDDE00AAC6C0 /* MultiRowSegmentedPickerView.swift in Sources */,
 				0005627B24BA7E7F003AECC6 /* TimeBudget+CoreDataProperties.swift in Sources */,
