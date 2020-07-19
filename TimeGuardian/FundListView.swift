@@ -27,20 +27,7 @@ struct FundListView: View {
 	
 	var body: some View {
 		VStack {
-			MultiRowSegmentedPickerView(choices: FundAction.allCasesAsStrings)
-//			Picker("Fund Action", selection: $action) {
-//				Text("Spend")
-//					.tag(FundBalanceAction.spend)
-//				Text("Earn")
-//					.tag(FundBalanceAction.earn)
-//				Text("Reset")
-//					.tag(FundBalanceAction.reset)
-//				Text("Sub")
-//					.tag(FundBalanceAction.subBudget)
-//				Text("Clone")
-//					.tag(FundBalanceAction.clone)
-//			}
-//			.font(.largeTitle)
+			MultiRowSegmentedPickerView(choices: FundAction.allCasesInRows, selectedIndex: self.$action)
 			List {
 				if self.action != .clone && self.action != .subBudget {
 					FundSectionAllView(
@@ -97,6 +84,10 @@ struct FundSectionAllView: View {
 					  debugLog("Can't create subBudget on all")
 					case .clone:
 						debugLog("Can't clone all")
+					case .edit:
+						debugLog("Not implemented yet")
+					case .delete:
+						debugLog("Not implemented yet")
 				}
 				saveData(self.managedObjectContext)
 			}, label: {
@@ -250,6 +241,10 @@ struct FundRowView: View {
 								}
 								newFund.order = Int16(self.funds.count)
 								newFund.subBudget = self.fund.subBudget
+							case .edit:
+								debugLog("Not implemented yet")
+							case .delete:
+								debugLog("Not implemented yet")
 						}
 						saveData(self.managedObjectContext)
 					}, label: {
@@ -315,16 +310,6 @@ struct NewFundRowView: View {
 					.imageScale(.large)
 			}
 		}
-	}
-}
-
-enum FundAction: CaseIterable {
-	case spend, reset, earn, subBudget, clone
-	static var allCasesAsStrings: [[String]] {
-		[
-			["Spend", "Earn", "Reset"],
-			["Sub", "Clone", "Edit", "Delete"]
-		]
 	}
 }
 
