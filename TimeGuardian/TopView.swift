@@ -17,9 +17,15 @@ struct TopView: View {
 		VStack {
 			if self.budgetStack.isEmpty() {
 				VStack {
-					Text("Budgets")
-						.font(.largeTitle)
-						.frame(maxWidth: .infinity, alignment: .center)
+					ZStack {
+						Text("Budgets")
+							.font(.largeTitle)
+							.frame(maxWidth: .infinity, alignment: .center)
+						EditButton()
+							.padding()
+							.font(.title)
+							.frame(maxWidth: .infinity, alignment: .trailing)
+					}
 					BudgetListView()
 				}
 			} else {
@@ -58,7 +64,7 @@ struct TopView_Previews: PreviewProvider {
 		let tdb = TestDataBuilder(context: context)
 		tdb.createTestData()
 		let budgetStack = BudgetStack()
-		budgetStack.push(budget: tdb.budgets.first!)
+//		budgetStack.push(budget: tdb.budgets.first!)
 		return TopView()
 			.environment(\.managedObjectContext, context)
 			.environmentObject(budgetStack)

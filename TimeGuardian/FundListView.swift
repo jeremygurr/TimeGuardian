@@ -191,7 +191,7 @@ struct FundRowView: View {
 		self.fund.name = self.fund.name.trimmingCharacters(in: .whitespacesAndNewlines)
 		let newName = self.fund.name
 		if newName == "" {
-			self.managedObjectContext.delete(self.fund)
+			self.managedObjectContext.rollback()
 		} else if self.fund.subBudget != nil {
 			let subBudget = self.fund.subBudget!
 			if subBudget.name != newName {
@@ -204,8 +204,8 @@ struct FundRowView: View {
 					}
 				}
 			}
+			saveData(self.managedObjectContext)
 		}
-		saveData(self.managedObjectContext)
 	}
 	
 	var body: some View {

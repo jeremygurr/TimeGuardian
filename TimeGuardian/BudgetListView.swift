@@ -65,18 +65,36 @@ struct BudgetRowView: View {
 	@State var budget: TimeBudget
 	@EnvironmentObject var budgetStack: BudgetStack
 	
+	func commitRenameBudget() {
+		self.budget.name = self.budget.name.trimmingCharacters(in: .whitespacesAndNewlines)
+		let newName = self.budget.name
+		if newName == "" {
+			self.managedObjectContext.rollback()
+		} else if let superFundSet = self.budget.superFund, superFundSet.count > 0 {
+			for superFund in superFundSet {
+				if (superFund as! TimeFund).name != newName {
+					(superFund as! TimeFund).name = newName
+				}
+			}
+			saveData(self.managedObjectContext)
+		}
+	}
+	
 	var body: some View {
 		VStack {
 			if self.editMode?.wrappedValue == .active {
-				TextField("Budget Name", text: $budget.name, onCommit: {
-					self.budget.name = self.budget.name.trimmingCharacters(in: .whitespacesAndNewlines)
-					if self.budget.name != "" {
-						saveData(self.managedObjectContext)
-					} else {
-						self.managedObjectContext.delete(self.budget)
-						saveData(self.managedObjectContext)
-					}
-				})
+				TextField(
+					"Budget Name",
+					text: $budget.name,
+					onEditingChanged: { value in
+						if !value {
+							self.commitRenameBudget()
+						}
+				},
+					onCommit: {
+						self.commitRenameBudget()
+				}
+			)
 			} else {
 				Button(
 					action: {
