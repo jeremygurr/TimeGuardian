@@ -9,6 +9,7 @@
 import SwiftUI
 
 struct FundListView: View {
+	@Environment(\.editMode) var editMode
 	@Environment(\.managedObjectContext) var managedObjectContext
 	@EnvironmentObject var budgetStack: BudgetStack
 	@FetchRequest var availableFunds: FetchedResults<TimeFund>
@@ -27,7 +28,17 @@ struct FundListView: View {
 	
 	var body: some View {
 		VStack {
-			MultiRowSegmentedPickerView(choices: FundAction.allCasesInRows, selectedIndex: self.$action)
+			MultiRowSegmentedPickerView(
+				choices: FundAction.allCasesInRows,
+				selectedIndex: self.$action,
+				onChange: { (newValue: FundAction) in
+					if newValue == .edit {
+						self.editMode?.wrappedValue = .active
+					} else {
+						self.editMode?.wrappedValue = .inactive
+					}
+			}
+				)
 			List {
 				if self.action != .clone && self.action != .subBudget {
 					FundSectionAllView(

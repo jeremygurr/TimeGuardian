@@ -48,8 +48,15 @@ struct MultiRowSegmentedPickerView<T: Stringable>: View {
 	private let choicesFlat: [T]
 	private let elements: [[SegmentedPickerElementView<Text, T>]]
 	
-	init(choices: [[T]], selectedIndex: Binding<T>) {
+	private let onChange: (_ newValue: T) -> Void
+	
+	init(
+		choices: [[T]],
+		selectedIndex: Binding<T>,
+		onChange: @escaping (_ newValue: T) -> Void = { _ in }
+	) {
 		self.choices = choices
+		self.onChange = onChange
 		_selectedIndex = selectedIndex
 		var newElements: [[SegmentedPickerElementView<Text, T>]] = []
 		var newChoicesFlat: [T] = []
@@ -75,12 +82,15 @@ struct MultiRowSegmentedPickerView<T: Stringable>: View {
 	@State var selectionOffsetY: CGFloat = 0
 	@State var selectionWidth: CGFloat = 0
 	@State var selectionHeight: CGFloat = 0
-	func updateSelectionOffset(id: T, row: Int, col: Int) {
-		selectionWidth = self.width/CGFloat(self.elements[row].count)
-		selectionHeight = self.height/CGFloat(self.elements.count)
-		selectedIndex = id
-		selectionOffsetX = CGFloat((selectionWidth * CGFloat(col)) + selectionWidth/2.0)
-		selectionOffsetY = CGFloat((selectionHeight * CGFloat(row)) + selectionHeight/2.0)
+	func updateSelectionOffset(id: T, row: Int, col: Int, force: Bool = false) {
+		if id != selectedIndex || force {
+			selectedIndex = id
+			selectionWidth = self.width/CGFloat(self.elements[row].count)
+			selectionHeight = self.height/CGFloat(self.elements.count)
+			selectionOffsetX = CGFloat((selectionWidth * CGFloat(col)) + selectionWidth/2.0)
+			selectionOffsetY = CGFloat((selectionHeight * CGFloat(row)) + selectionHeight/2.0)
+			onChange(id)
+		}
 	}
 	
 	var body: some View {
@@ -129,7 +139,7 @@ struct MultiRowSegmentedPickerView<T: Stringable>: View {
 				perform: {
 					self.width = geo.size.width
 					self.height = geo.size.height
-					self.updateSelectionOffset(id: self.choicesFlat[0], row: 0, col: 0)
+					self.updateSelectionOffset(id: self.choicesFlat[0], row: 0, col: 0, force: true)
 			}
 			)
 		}
