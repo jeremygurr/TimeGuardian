@@ -26,24 +26,24 @@ class BudgetStack: ObservableObject {
 		return budgetStack.count == 0
 	}
 	
-	func push(budget: TimeBudget) -> BudgetStack {
+	func push(budget: TimeBudget) {
 		budgetStack.append(budget)
-		return self
 	}
 	
-	func push(fund: TimeFund) -> BudgetStack {
+	func push(fund: TimeFund) {
 		fundStack.append(fund)
-		return self
 	}
 	
-	func removeLastBudget() -> BudgetStack {
-		budgetStack.removeLast()
-		return self
+	func removeLastBudget() {
+		if budgetStack.count > 0 {
+			budgetStack.removeLast()
+		}
 	}
 	
-	func removeLastFund() -> BudgetStack {
-		fundStack.removeLast()
-		return self
+	func removeLastFund() {
+		if fundStack.count > 0 {
+			fundStack.removeLast()
+		}
 	}
 	
 	func getTopBudget() -> TimeBudget {

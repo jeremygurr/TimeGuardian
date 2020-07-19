@@ -196,16 +196,21 @@ struct FundRowView: View {
 				})
 			} else {
 				if fund.subBudget != nil && self.action == .spend {
-//					-------- won't work
-//					NavigationLink(
-//						destination: FundListView()
-//					) {
-						Text("\(fund.balance)")
-							.frame(width: 40, alignment: .trailing)
-						Divider()
-						Text(fund.name)
-							.frame(minWidth: 20, maxWidth: .infinity, alignment: .leading)
-//					}
+					Button(action: {
+						self.budgetStack.push(budget: self.fund.subBudget!)
+						self.budgetStack.push(fund: self.fund)
+					}, label: {
+						HStack {
+							Text("\(fund.balance)")
+								.frame(width: 40, alignment: .trailing)
+							Divider()
+							Text(fund.name)
+								.frame(minWidth: 20, maxWidth: .infinity, alignment: .leading)
+							Image(systemName: "list.bullet")
+								.imageScale(.large)
+						}
+					}
+					)
 				} else {
 					Button(action: {
 						switch self.action {
@@ -221,7 +226,8 @@ struct FundRowView: View {
 							case .subBudget:
 								do {
 									var subBudget: TimeBudget
-									if let budgetWithSameName = try self.managedObjectContext.fetch(TimeBudget.fetchRequest(name: self.fund.name)).first {
+									let request = TimeBudget.fetchRequest(name: self.fund.name)
+									if let budgetWithSameName = try self.managedObjectContext.fetch(request).first {
 										subBudget = budgetWithSameName
 									} else {
 										subBudget = TimeBudget(context: self.managedObjectContext)
@@ -323,7 +329,8 @@ struct FundListView_Previews: PreviewProvider {
 		let testDataBuilder = TestDataBuilder(context: context)
 		testDataBuilder.createTestData()
 		let budget = mainBudgets.wrappedValue.first!
-		let budgetStack = BudgetStack().push(budget: budget)
+		let budgetStack = BudgetStack()
+		budgetStack.push(budget: budget)
 		return FundListView(budgetStack: budgetStack)
 			.environment(\.managedObjectContext, context)
 			.environmentObject(budgetStack)

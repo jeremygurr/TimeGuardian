@@ -29,7 +29,8 @@ struct TopView: View {
 						HStack {
 							Button(
 								action: {
-									_ = self.budgetStack.removeLastBudget()
+									self.budgetStack.removeLastBudget()
+									self.budgetStack.removeLastFund()
 							},
 								label: {
 									Text("< Back")
@@ -52,8 +53,10 @@ struct TopView_Previews: PreviewProvider {
 		let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
 		let tdb = TestDataBuilder(context: context)
 		tdb.createTestData()
+		let budgetStack = BudgetStack()
+		budgetStack.push(budget: tdb.budgets.first!)
 		return TopView()
 			.environment(\.managedObjectContext, context)
-			.environmentObject(BudgetStack().push(budget: tdb.budgets.first!))
+			.environmentObject(budgetStack)
 	}
 }
