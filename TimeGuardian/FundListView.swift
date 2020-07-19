@@ -15,6 +15,7 @@ struct FundListView: View {
 	let fundStack: [TimeFund]
 	@FetchRequest var availableFunds: FetchedResults<TimeFund>
 	@FetchRequest var spentFunds: FetchedResults<TimeFund>
+	@FetchRequest var allFunds: FetchedResults<TimeFund>
 	@State var newFundTop = ""
 	@State var newFundBottom = ""
 	@State var action: FundBalanceAction = .spend
@@ -28,6 +29,7 @@ struct FundListView: View {
 		self.fundStack = newFundStack
 		_availableFunds = TimeFund.fetchAvailableRequest(budget: budget)
 		_spentFunds = TimeFund.fetchSpentRequest(budget: budget)
+		_allFunds = TimeFund.fetchAllRequest(budget: budget)
 	}
 	
 	var body: some View {
@@ -40,29 +42,36 @@ struct FundListView: View {
 						.tag(FundBalanceAction.earn)
 					Text("Reset")
 						.tag(FundBalanceAction.reset)
-					Text("Sub Budget")
+					Text("Sub")
 						.tag(FundBalanceAction.subBudget)
+					Text("Clone")
+						.tag(FundBalanceAction.clone)
 				}
 				.font(.largeTitle)
 				.pickerStyle(SegmentedPickerStyle())
 			}
 			List {
-				FundSectionAllView(
-					budget: self.budget,
-					availableFunds: self.availableFunds,
-					spentFunds: self.spentFunds,
-					action: self.$action
-				)
+				if self.action != .clone && self.action != .subBudget {
+					FundSectionAllView(
+						budget: self.budget,
+						allFunds: self.allFunds,
+						action: self.$action
+					)
+				}
 				FundSectionAvailableView(
-					budget: self.budget, fundStack: self.fundStack,
+					budget: self.budget,
+					fundStack: self.fundStack,
 					availableFunds: self.availableFunds,
+					allFunds: self.allFunds,
 					newFundTop: self.$newFundTop,
 					newFundBottom: self.$newFundBottom,
 					action: self.$action
 				)
 				FundSectionSpentView(
-					budget: self.budget, fundStack: self.fundStack,
+					budget: self.budget,
+					fundStack: self.fundStack,
 					spentFunds: self.spentFunds,
+					allFunds: self.allFunds,
 					action: self.$action
 				)
 			}
@@ -74,16 +83,12 @@ struct FundListView: View {
 
 struct FundSectionAllView: View {
 	let budget: TimeBudget
-	var availableFunds: FetchedResults<TimeFund>
-	var spentFunds: FetchedResults<TimeFund>
+	var allFunds: FetchedResults<TimeFund>
 	@Binding var action: FundBalanceAction
 	@Environment(\.managedObjectContext) var managedObjectContext
 	var allFundBalance: Int16 {
 		var total: Int16 = 0
-		for fund in self.availableFunds {
-			total += fund.balance
-		}
-		for fund in self.spentFunds {
+		for fund in self.allFunds {
 			total += fund.balance
 		}
 		return total
@@ -94,28 +99,21 @@ struct FundSectionAllView: View {
 			Button(action: {
 				switch self.action {
 					case .spend:
-						for fund in self.availableFunds {
-							fund.adjustBalance(-1)
-						}
-						for fund in self.spentFunds {
+						for fund in self.allFunds {
 							fund.adjustBalance(-1)
 						}
 					case .reset:
-						for fund in self.availableFunds {
-							fund.resetBalance()
-						}
-						for fund in self.spentFunds {
+						for fund in self.allFunds {
 							fund.resetBalance()
 						}
 					case .earn:
-						for fund in self.availableFunds {
-							fund.adjustBalance(1)
-						}
-						for fund in self.spentFunds {
+						for fund in self.allFunds {
 							fund.adjustBalance(1)
 						}
 					case .subBudget:
 					  debugLog("Can't create subBudget on all")
+					case .clone:
+						debugLog("Can't clone all")
 				}
 				saveData(self.managedObjectContext)
 			}, label: {
@@ -135,6 +133,7 @@ struct FundSectionAvailableView: View {
 	let budget: TimeBudget
 	let fundStack: [TimeFund]
 	var availableFunds: FetchedResults<TimeFund>
+	var allFunds: FetchedResults<TimeFund>
 	@Binding var newFundTop: String
 	@Binding var newFundBottom: String
 	@Binding var action : FundBalanceAction
@@ -144,7 +143,7 @@ struct FundSectionAvailableView: View {
 		Section(header: Text("Available")) {
 			NewFundRowView(newFundName: $newFundTop, funds: availableFunds, posOfNewFund: .before, budget: self.budget)
 			ForEach(availableFunds, id: \.self) { fund in
-				FundRowView(action: self.$action, fund: fund, budget: self.budget, fundStack: self.fundStack)
+				FundRowView(action: self.$action, fund: fund, budget: self.budget, fundStack: self.fundStack, funds: self.allFunds)
 			}.onDelete { indexSet in
 				for index in 0 ..< self.availableFunds.count {
 					let fund = self.availableFunds[index]
@@ -170,13 +169,14 @@ struct FundSectionSpentView: View {
 	let budget: TimeBudget
 	let fundStack: [TimeFund]
 	var spentFunds: FetchedResults<TimeFund>
+	var allFunds: FetchedResults<TimeFund>
 	@Binding var action : FundBalanceAction
 	@Environment(\.managedObjectContext) var managedObjectContext
 	
 	var body: some View {
 		Section(header: Text("Spent")) {
 			ForEach(spentFunds, id: \.self) { fund in
-				FundRowView(action: self.$action, fund: fund, budget: self.budget, fundStack: self.fundStack)
+				FundRowView(action: self.$action, fund: fund, budget: self.budget, fundStack: self.fundStack, funds: self.allFunds)
 			}.onDelete { indexSet in
 				for index in 0 ..< self.spentFunds.count {
 					let fund = self.spentFunds[index]
@@ -204,6 +204,7 @@ struct FundRowView: View {
 	@ObservedObject var fund: TimeFund
 	let budget: TimeBudget
 	let fundStack: [TimeFund]
+	var funds: FetchedResults<TimeFund>
 	
 	var body: some View {
 		VStack {
@@ -255,12 +256,15 @@ struct FundRowView: View {
 								} catch {
 									errorLog("\(error)")
 							}
-//								let fundsWithSameName = TimeFund.fetchRequest(name: self.fund.name).wrappedValue.enumerated()
-//								for (_, fund) in fundsWithSameName {
-//									if fund.subBudget == nil {
-//										fund.subBudget = subBudget
-//									}
-//							}
+							case .clone:
+								let newFund = TimeFund(context: self.managedObjectContext)
+								newFund.name = self.fund.name
+								newFund.budget = self.budget
+								for i in 0 ..< self.funds.count {
+									self.funds[i].order = Int16(i)
+								}
+								newFund.order = Int16(self.funds.count)
+								newFund.subBudget = self.fund.subBudget
 						}
 						saveData(self.managedObjectContext)
 					}, label: {
@@ -330,7 +334,7 @@ struct NewFundRowView: View {
 }
 
 enum FundBalanceAction: CaseIterable {
-	case spend, reset, earn, subBudget
+	case spend, reset, earn, subBudget, clone
 }
 
 struct FundListView_Previews: PreviewProvider {
