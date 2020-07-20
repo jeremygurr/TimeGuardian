@@ -189,14 +189,6 @@ struct FundSectionAvailableView: View {
 			NewFundRowView(newFundName: $newFundTop, funds: availableFunds, posOfNewFund: .before)
 			ForEach(availableFunds, id: \.self) { fund in
 				FundRowView(action: self.$action, fund: fund, funds: self.allFunds)
-			}.onDelete { indexSet in
-				for index in 0 ..< self.availableFunds.count {
-					let fund = self.availableFunds[index]
-					if indexSet.contains(index) {
-						self.managedObjectContext.delete(fund)
-					}
-				}
-				saveData(self.managedObjectContext)
 			}.onMove() { (source: IndexSet, destination: Int) in
 				var newFunds: [TimeFund] = self.availableFunds.map() { $0 }
 				newFunds.move(fromOffsets: source, toOffset: destination)

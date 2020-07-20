@@ -19,11 +19,11 @@ struct TopView: View {
 				VStack {
 					ZStack {
 						Text("Budgets")
-							.font(.largeTitle)
+							.font(.title)
 							.frame(maxWidth: .infinity, alignment: .center)
 						EditButton()
 							.padding()
-							.font(.title)
+							.font(.body)
 							.frame(maxWidth: .infinity, alignment: .trailing)
 					}
 					BudgetListView()
@@ -44,7 +44,7 @@ struct TopView: View {
 							},
 								label: {
 									Text("< Back")
-										.font(.headline)
+										.font(.body)
 									.padding()
 							}
 							)
