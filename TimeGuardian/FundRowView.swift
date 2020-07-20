@@ -133,7 +133,7 @@ struct FundRowLabel: View {
 				.frame(width: 30, alignment: .trailing)
 			Divider()
 			Text("\(percentage)")
-				.frame(width: 30, alignment: .trailing)
+				.frame(width: 40, alignment: .trailing)
 			Divider()
 			Text(fund.name)
 				.frame(minWidth: 20, maxWidth: .infinity, alignment: .leading)
@@ -149,11 +149,11 @@ func formatPercentage(_ x: Float) -> String {
 	let y = x*100
 	var result: String
 	if y >= 10 {
-		result = String(format: "%2.0f", y)
+		result = String(format: "%2.0f%%", y)
 	} else if y >= 1 {
-		result = String(format: "%1.1f", y)
+		result = String(format: "%1.1f%%", y)
 	} else {
-		result = String(format: "%.2f", y)
+		result = String(format: "%.2f%%", y)
 	}
 	
 	return result
