@@ -68,6 +68,10 @@ struct FundListView: View {
 	}
 }
 
+func fundInsets() -> EdgeInsets {
+	return EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 20)
+}
+
 struct FundSectionAvailableView: View {
 	var availableFunds: FetchedResults<TimeFund>
 	var allFunds: FetchedResults<TimeFund>
@@ -88,7 +92,7 @@ struct FundSectionAvailableView: View {
 					fund.order = Int16(index)
 				}
 				saveData(self.managedObjectContext)
-			}
+			}.listRowInsets(fundInsets())
 			NewFundRowView(newFundName: $newFundBottom, funds: availableFunds, posOfNewFund: .after)
 		}
 	}
@@ -118,7 +122,7 @@ struct FundSectionSpentView: View {
 					fund.order = Int16(index)
 				}
 				saveData(self.managedObjectContext)
-			}
+			}.listRowInsets(fundInsets())
 		}
 	}
 }
