@@ -65,18 +65,25 @@ extension TimeFund {
 		return request
 	}
 	
-	func adjustBalance(_ amount: Int) {
-		self.balance += Int16(amount)
+	func adjustBalance(_ amount: Float) {
+		self.balance += amount
+		if self.balance < -1.5 {
+			// charge interest on time debt
+			self.balance *= 1.1
+		}
 	}
 	
 	func resetBalance() {
 		self.balance = 1
 	}
 	
+	public var roundedBalance: Int {
+		return Int(balance.rounded(.up))
+	}
+	
 	@NSManaged public var name: String
 	@NSManaged public var order: Int16
 	@NSManaged public var budget: TimeBudget?
 	@NSManaged public var subBudget: TimeBudget?
-	
-    @NSManaged public var balance: Float
+	@NSManaged public var balance: Float
 }

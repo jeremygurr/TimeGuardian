@@ -28,6 +28,7 @@
 		00659F1124C5213200670CF0 /* TimeBudget+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00659F0D24C5213200670CF0 /* TimeBudget+CoreDataProperties.swift */; };
 		00659F1224C5213200670CF0 /* TimeFund+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00659F0E24C5213200670CF0 /* TimeFund+CoreDataClass.swift */; };
 		00659F1324C5213200670CF0 /* TimeBudget+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00659F0F24C5213200670CF0 /* TimeBudget+CoreDataClass.swift */; };
+		00659F1624C5227000670CF0 /* FundAllRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00659F1524C5227000670CF0 /* FundAllRowView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -52,6 +53,7 @@
 		00659F0D24C5213200670CF0 /* TimeBudget+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "TimeBudget+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		00659F0E24C5213200670CF0 /* TimeFund+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "TimeFund+CoreDataClass.swift"; sourceTree = "<group>"; };
 		00659F0F24C5213200670CF0 /* TimeBudget+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "TimeBudget+CoreDataClass.swift"; sourceTree = "<group>"; };
+		00659F1524C5227000670CF0 /* FundAllRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FundAllRowView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -106,6 +108,7 @@
 				0058665B24C074F3004E4889 /* BudgetListView.swift */,
 				0058665D24C0FD88004E4889 /* FundListView.swift */,
 				00659F0824C511F800670CF0 /* FundRowView.swift */,
+				00659F1524C5227000670CF0 /* FundAllRowView.swift */,
 				003E0C9F24C4D58200AAC6C0 /* FundAction.swift */,
 				002531DB24C497EC00CB7FF0 /* BudgetStack.swift */,
 				0058665624C05BBB004E4889 /* Utils.swift */,
@@ -205,6 +208,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				00659F1624C5227000670CF0 /* FundAllRowView.swift in Sources */,
 				003E0CA024C4D58200AAC6C0 /* FundAction.swift in Sources */,
 				002590DE24B90F0E00F703C5 /* AppDelegate.swift in Sources */,
 				002531DC24C497EC00CB7FF0 /* BudgetStack.swift in Sources */,

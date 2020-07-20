@@ -60,7 +60,7 @@ struct FundRowView: View {
 						self.budgetStack.push(fund: self.fund)
 					}, label: {
 						HStack {
-							Text("\(fund.balance)")
+							Text("\(fund.roundedBalance)")
 								.frame(width: 40, alignment: .trailing)
 							Divider()
 							Text(fund.name)
@@ -118,7 +118,7 @@ struct FundRowView: View {
 						saveData(self.managedObjectContext)
 					}, label: {
 						HStack {
-							Text("\(fund.balance)")
+							Text("\(fund.roundedBalance)")
 								.frame(width: 40, alignment: .trailing)
 							Divider()
 							Text(fund.name)
