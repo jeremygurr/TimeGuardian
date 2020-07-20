@@ -39,7 +39,7 @@ struct FundListView: View {
 						UIApplication.shared.endEditing(true)
 					}
 			}
-				)
+			)
 			List {
 				if self.action == .spend
 					|| self.action == .reset
@@ -87,17 +87,17 @@ struct FundAllRowView: View {
 					case .spend:
 						for fund in self.allFunds {
 							fund.adjustBalance(-1)
-						}
+					}
 					case .reset:
 						for fund in self.allFunds {
 							fund.resetBalance()
-						}
+					}
 					case .earn:
 						for fund in self.allFunds {
 							fund.adjustBalance(1)
-						}
+					}
 					case .subBudget:
-					  debugLog("Can't create subBudget on all")
+						debugLog("Can't create subBudget on all")
 					case .clone:
 						debugLog("Can't clone all")
 					case .edit:
@@ -114,6 +114,59 @@ struct FundAllRowView: View {
 						.frame(width: 40, alignment: .trailing)
 					Divider()
 					Text("All Funds")
+						.frame(minWidth: 20, maxWidth: .infinity, alignment: .leading)
+				}
+			})
+		}
+	}
+}
+
+struct FundAllSpentRowView: View {
+	var spentFunds: FetchedResults<TimeFund>
+	@Binding var action: FundAction
+	@Environment(\.managedObjectContext) var managedObjectContext
+	var allSpentFundBalance: Int16 {
+		var total: Int16 = 0
+		for fund in self.spentFunds {
+			total += fund.balance
+		}
+		return total
+	}
+	
+	var body: some View {
+		Section() {
+			Button(action: {
+				switch self.action {
+					case .spend:
+						for fund in self.spentFunds {
+							fund.adjustBalance(-1)
+					}
+					case .reset:
+						for fund in self.spentFunds {
+							fund.resetBalance()
+					}
+					case .earn:
+						for fund in self.spentFunds {
+							fund.adjustBalance(1)
+					}
+					case .subBudget:
+						debugLog("Can't create subBudget on all")
+					case .clone:
+						debugLog("Can't clone all")
+					case .edit:
+						debugLog("Can't edit all")
+					case .delete:
+						for fund in self.spentFunds {
+							self.managedObjectContext.delete(fund)
+					}
+				}
+				saveData(self.managedObjectContext)
+			}, label: {
+				HStack {
+					Text("\(allSpentFundBalance)")
+						.frame(width: 40, alignment: .trailing)
+					Divider()
+					Text("All Spent Funds")
 						.frame(minWidth: 20, maxWidth: .infinity, alignment: .leading)
 				}
 			})
@@ -163,7 +216,8 @@ struct FundSectionSpentView: View {
 	
 	var body: some View {
 		Section(header: Text("Spent")) {
-			ForEach(spentFunds, id: \.self) { fund in
+			FundAllSpentRowView(spentFunds: self.spentFunds, action: self.$action)
+			ForEach(self.spentFunds, id: \.self) { fund in
 				FundRowView(action: self.$action, fund: fund, funds: self.allFunds)
 			}.onMove() { (source: IndexSet, destination: Int) in
 				var newFunds: [TimeFund] = self.spentFunds.map() { $0 }
@@ -190,6 +244,7 @@ struct FundListView_Previews: PreviewProvider {
 			.environmentObject(budgetStack)
 	}
 }
+
 
 
 
