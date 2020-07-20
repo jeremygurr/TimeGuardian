@@ -29,7 +29,7 @@ extension TimeBudget {
 		let request = FetchRequest<TimeBudget>(
 			entity: TimeBudget.entity(),
 			sortDescriptors: [
-				NSSortDescriptor(keyPath: \TimeBudget.order, ascending: true)
+				NSSortDescriptor(keyPath: \TimeBudget.name, ascending: true)
 			],
 			predicate: NSPredicate(format: "superFund.@count > 0")
 		)
