@@ -20,7 +20,7 @@ enum FundAction: Int, CaseIterable, Stringable {
 	case reset
 	case earn
 	case subBudget
-	case clone
+	case copy
 	case edit
 	case delete
 	
@@ -36,7 +36,7 @@ enum FundAction: Int, CaseIterable, Stringable {
 			case .reset: return "Reset"
 			case .earn: return "Earn"
 			case .subBudget: return "Sub"
-			case .clone: return "Clone"
+			case .copy: return "Copy"
 			case .edit: return "Edit"
 			case .delete: return "Delete"
 		}
@@ -45,7 +45,7 @@ enum FundAction: Int, CaseIterable, Stringable {
 	static var allCasesInRows: [[FundAction]] {
 		[
 			[.view, .spend, .qspend, .earn, .reset],
-			[.subBudget, .clone, .edit, .delete]
+			[.subBudget, .copy, .edit, .delete]
 		]
 	}
 	

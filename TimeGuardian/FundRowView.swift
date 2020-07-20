@@ -93,14 +93,11 @@ struct FundRowView: View {
 								} catch {
 									errorLog("\(error)")
 							}
-							case .clone:
+							case .copy:
 								let newFund = TimeFund(context: self.managedObjectContext)
 								newFund.name = self.fund.name
+								newFund.order = self.fund.order
 								newFund.budget = self.budgetStack.getTopBudget()
-								for i in 0 ..< self.funds.count {
-									self.funds[i].order = Int16(i)
-								}
-								newFund.order = Int16(self.funds.count)
 								newFund.subBudget = self.fund.subBudget
 							case .edit:
 								errorLog("Impossible")

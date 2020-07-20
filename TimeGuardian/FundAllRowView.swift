@@ -35,8 +35,8 @@ struct FundAllRowView: View {
 					}
 					case .subBudget:
 						debugLog("Can't create subBudget on all")
-					case .clone:
-						debugLog("Can't clone all")
+					case .copy:
+						debugLog("Can't copy all")
 					case .edit:
 						debugLog("Can't edit all")
 					case .delete:
@@ -89,8 +89,8 @@ struct FundAllSpentRowView: View {
 					}
 					case .subBudget:
 						debugLog("Can't create subBudget on all")
-					case .clone:
-						debugLog("Can't clone all")
+					case .copy:
+						debugLog("Can't copy all")
 					case .edit:
 						debugLog("Can't edit all")
 					case .delete:
