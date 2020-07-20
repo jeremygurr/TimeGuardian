@@ -28,6 +28,7 @@
 		0058665C24C074F3004E4889 /* BudgetListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0058665B24C074F3004E4889 /* BudgetListView.swift */; };
 		0058665E24C0FD88004E4889 /* FundListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0058665D24C0FD88004E4889 /* FundListView.swift */; };
 		00659F0924C511F800670CF0 /* FundRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00659F0824C511F800670CF0 /* FundRowView.swift */; };
+		00659F0B24C5205F00670CF0 /* TimeFund+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00659F0A24C5205F00670CF0 /* TimeFund+CoreDataProperties.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -52,6 +53,7 @@
 		0058665B24C074F3004E4889 /* BudgetListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BudgetListView.swift; sourceTree = "<group>"; };
 		0058665D24C0FD88004E4889 /* FundListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FundListView.swift; sourceTree = "<group>"; };
 		00659F0824C511F800670CF0 /* FundRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FundRowView.swift; sourceTree = "<group>"; };
+		00659F0A24C5205F00670CF0 /* TimeFund+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "TimeFund+CoreDataProperties.swift"; path = "TimeGuardian/Model/TimeFund+CoreDataProperties.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,6 +83,7 @@
 		002590D124B90F0E00F703C5 = {
 			isa = PBXGroup;
 			children = (
+				00659F0A24C5205F00670CF0 /* TimeFund+CoreDataProperties.swift */,
 				002590DC24B90F0E00F703C5 /* TimeGuardian */,
 				002590DB24B90F0E00F703C5 /* Products */,
 			);
@@ -221,6 +224,7 @@
 				002531DA24C4614A00CB7FF0 /* TopView.swift in Sources */,
 				003E0C9E24C4BDDE00AAC6C0 /* MultiRowSegmentedPickerView.swift in Sources */,
 				0005627B24BA7E7F003AECC6 /* TimeBudget+CoreDataProperties.swift in Sources */,
+				00659F0B24C5205F00670CF0 /* TimeFund+CoreDataProperties.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

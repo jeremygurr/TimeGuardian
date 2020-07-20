@@ -73,10 +73,10 @@ extension TimeFund {
 		self.balance = 1
 	}
 	
-	@NSManaged public var balance: Int16
 	@NSManaged public var name: String
 	@NSManaged public var order: Int16
 	@NSManaged public var budget: TimeBudget?
 	@NSManaged public var subBudget: TimeBudget?
 	
+    @NSManaged public var balance: Float
 }
