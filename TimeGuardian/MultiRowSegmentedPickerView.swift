@@ -42,7 +42,7 @@ struct MultiRowSegmentedPickerView<T: Stringable>: View {
 	private let cornerRadius: CGFloat = 8
 	private let selectorStrokeWidth: CGFloat = 4
 	private let selectorInset: CGFloat = 4
-	private let backgroundColor = Color(white: 0.9)
+	private let backgroundColor = Color.gray
 	
 	private let choices: [[T]]
 	private let choicesFlat: [T]
@@ -67,7 +67,7 @@ struct MultiRowSegmentedPickerView<T: Stringable>: View {
 				let choice = rowChoices[c]
 				rowElements.append(SegmentedPickerElementView(id: choice, row: r, col: c) {
 					Text(choice.asString)
-						.font(.body)
+						.font(Font.system(size: 20))
 				})
 				newChoicesFlat.append(choice)
 			}
@@ -115,7 +115,7 @@ struct MultiRowSegmentedPickerView<T: Stringable>: View {
 						}
 					}
 					RoundedRectangle(cornerRadius: self.cornerRadius)
-						.stroke(Color.gray, lineWidth: self.selectorStrokeWidth)
+						.stroke(Color.white, lineWidth: self.selectorStrokeWidth)
 						.foregroundColor(Color.clear)
 						.frame(
 							width: self.selectionWidth - 2.0 * self.selectorInset,
@@ -150,6 +150,12 @@ struct MultiRowSegmentedPickerView<T: Stringable>: View {
 struct SegmentedPickerView_Previews: PreviewProvider {
 	@State static var selectedAction: FundAction = .spend
 	static var previews: some View {
-		MultiRowSegmentedPickerView(choices: FundAction.allCasesInRows, selectedIndex: $selectedAction)
+		Group {
+			MultiRowSegmentedPickerView(choices: FundAction.allCasesInRows, selectedIndex: $selectedAction)
+				.environment(\.colorScheme, .light)
+			
+			MultiRowSegmentedPickerView(choices: FundAction.allCasesInRows, selectedIndex: $selectedAction)
+				.environment(\.colorScheme, .dark)
+		}
 	}
 }
