@@ -60,15 +60,7 @@ struct FundRowView: View {
 						self.budgetStack.push(budget: self.fund.subBudget!)
 						self.budgetStack.push(fund: self.fund)
 					}, label: {
-						HStack {
-							Text("\(fund.roundedBalance)")
-								.frame(width: 40, alignment: .trailing)
-							Divider()
-							Text(fund.name)
-								.frame(minWidth: 20, maxWidth: .infinity, alignment: .leading)
-							Image(systemName: "list.bullet")
-								.imageScale(.large)
-						}
+						FundRowLabel(fund: self.fund)
 					}
 					)
 				} else {
@@ -82,7 +74,7 @@ struct FundRowView: View {
 									f.adjustBalance(-1)
 							}
 								while self.budgetStack.getFunds().count > 0 {
-									self.budgetStack.toTopBudget()
+									self.budgetStack.toFirstBudget()
 							}
 							case .reset:
 								self.fund.resetBalance()
@@ -123,19 +115,30 @@ struct FundRowView: View {
 						}
 						saveData(self.managedObjectContext)
 					}, label: {
-						HStack {
-							Text("\(fund.roundedBalance)")
-								.frame(width: 40, alignment: .trailing)
-							Divider()
-							Text(fund.name)
-								.frame(minWidth: 20, maxWidth: .infinity, alignment: .leading)
-							if self.fund.subBudget != nil {
-								Image(systemName: "list.bullet")
-									.imageScale(.large)
-							}
-						}
+						FundRowLabel(fund: self.fund)
 					})
 				}
+			}
+		}
+	}
+}
+
+struct FundRowLabel: View {
+	@ObservedObject var fund: TimeFund
+	
+	var body: some View {
+		HStack {
+			Text("\(fund.roundedBalance)")
+				.frame(width: 30, alignment: .trailing)
+			Divider()
+			Text("\(fund.getRatio()*100)%")
+				.frame(width: 30, alignment: .trailing)
+			Divider()
+			Text(fund.name)
+				.frame(minWidth: 20, maxWidth: .infinity, alignment: .leading)
+			if self.fund.subBudget != nil {
+				Image(systemName: "list.bullet")
+					.imageScale(.large)
 			}
 		}
 	}
@@ -188,3 +191,19 @@ struct NewFundRowView: View {
 	}
 }
 
+struct FundRowView_Previews: PreviewProvider {
+	@State static var action: FundAction = .spend
+	static var previews: some View {
+		let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+		let testDataBuilder = TestDataBuilder(context: context)
+		testDataBuilder.createTestData()
+		let budget = testDataBuilder.budgets.first!
+		let allFunds = TimeFund.fetchAllRequest(budget: budget).wrappedValue
+		let fund = testDataBuilder.funds.first!
+		let budgetStack = BudgetStack()
+		budgetStack.push(budget: budget)
+		return FundRowView(action: $action, fund: fund, funds: allFunds)
+			.environment(\.managedObjectContext, context)
+			.environmentObject(budgetStack)
+	}
+}

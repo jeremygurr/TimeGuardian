@@ -13,7 +13,8 @@ class BudgetStack: ObservableObject {
 	// fundStack will typically be one element shorter than budgetStack,
 	//   unless budgetStack is empty
 	@Published private var fundStack: [TimeFund] = []
-
+	private var fundRatioStack: [Float] = []
+	
 	func getBudgets() -> [TimeBudget] {
 		return budgetStack
 	}
@@ -31,7 +32,9 @@ class BudgetStack: ObservableObject {
 	}
 	
 	func push(fund: TimeFund) {
+		let ratio = fund.getRatio()
 		fundStack.append(fund)
+		fundRatioStack.append(ratio)
 	}
 	
 	func removeLastBudget() {
@@ -43,11 +46,13 @@ class BudgetStack: ObservableObject {
 	func removeLastFund() {
 		if fundStack.count > 0 {
 			fundStack.removeLast()
+			fundRatioStack.removeLast()
 		}
 	}
 	
-	func toTopBudget() {
+	func toFirstBudget() {
 		fundStack.removeAll()
+		fundRatioStack.removeAll()
 		var s = budgetStack
 		while s.count > 1 {
 			s.removeLast()
@@ -58,4 +63,13 @@ class BudgetStack: ObservableObject {
 	func getTopBudget() -> TimeBudget {
 		return budgetStack.last!
 	}
+	
+	func getCurrentRatio() -> Float {
+		var p: Float = 1
+		for r in fundRatioStack {
+			p *= r
+		}
+		return p
+	}
 }
+

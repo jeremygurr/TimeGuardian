@@ -81,9 +81,22 @@ extension TimeFund {
 		return Int(balance.rounded(.up))
 	}
 	
+	func getRatio() -> Float {
+		let funds = self.budget.funds!
+		var totalFunds: Float = 0.0
+		var fundsWithSameName: Float = 0.0
+		for fund in funds {
+			totalFunds += 1
+			if (fund as! TimeFund).name == self.name {
+				fundsWithSameName += 1
+			}
+		}
+		return fundsWithSameName / totalFunds
+	}
+	
 	@NSManaged public var name: String
 	@NSManaged public var order: Int16
-	@NSManaged public var budget: TimeBudget?
+	@NSManaged public var budget: TimeBudget
 	@NSManaged public var subBudget: TimeBudget?
 	@NSManaged public var balance: Float
 }
