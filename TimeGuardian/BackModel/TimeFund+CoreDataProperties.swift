@@ -67,7 +67,7 @@ extension TimeFund {
 	
 	func adjustBalance(_ amount: Float) {
 		self.balance += amount
-		if self.balance < -1.5 {
+		if self.balance < -0.5 && amount < 0 {
 			// charge interest on time debt
 			self.balance *= 1.1
 		}
