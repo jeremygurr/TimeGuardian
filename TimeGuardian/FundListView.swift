@@ -73,11 +73,11 @@ struct FundAllRowView: View {
 	@Binding var action: FundAction
 	@Environment(\.managedObjectContext) var managedObjectContext
 	var allFundBalance: Int16 {
-		var total: Int16 = 0
-		for fund in self.allFunds {
-			total += fund.balance
-		}
-		return total
+//		var total: Int16 = 0
+//		for fund in self.allFunds {
+//			total += fund.balance
+//		}
+		return Int16(self.allFunds.count)
 	}
 	
 	var body: some View {
@@ -114,6 +114,7 @@ struct FundAllRowView: View {
 						.frame(width: 40, alignment: .trailing)
 					Divider()
 					Text("All Funds")
+						.fontWeight(.heavy)
 						.frame(minWidth: 20, maxWidth: .infinity, alignment: .leading)
 				}
 			})
@@ -126,11 +127,11 @@ struct FundAllSpentRowView: View {
 	@Binding var action: FundAction
 	@Environment(\.managedObjectContext) var managedObjectContext
 	var allSpentFundBalance: Int16 {
-		var total: Int16 = 0
-		for fund in self.spentFunds {
-			total += fund.balance
-		}
-		return total
+//		var total: Int16 = 0
+//		for fund in self.spentFunds {
+//			total += fund.balance
+//		}
+		return Int16(self.spentFunds.count)
 	}
 	
 	var body: some View {
@@ -167,6 +168,7 @@ struct FundAllSpentRowView: View {
 						.frame(width: 40, alignment: .trailing)
 					Divider()
 					Text("All Spent Funds")
+						.fontWeight(.heavy)
 						.frame(minWidth: 20, maxWidth: .infinity, alignment: .leading)
 				}
 			})
