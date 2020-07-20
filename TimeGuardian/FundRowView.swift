@@ -205,12 +205,16 @@ struct NewFundRowView: View {
 
 struct FundRowView_Previews: PreviewProvider {
 	@State static var action: FundAction = .spend
+	@FetchRequest(
+		entity: TimeFund.entity(),
+		sortDescriptors: [NSSortDescriptor(keyPath: \TimeFund.order, ascending: true)]
+	) static var allFunds: FetchedResults<TimeFund>
+	
 	static var previews: some View {
 		let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
 		let testDataBuilder = TestDataBuilder(context: context)
 		testDataBuilder.createTestData()
 		let budget = testDataBuilder.budgets.first!
-		let allFunds = TimeFund.fetchAllRequest(budget: budget).wrappedValue
 		let fund = testDataBuilder.funds.first!
 		let budgetStack = BudgetStack()
 		budgetStack.push(budget: budget)
