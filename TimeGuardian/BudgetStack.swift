@@ -46,6 +46,15 @@ class BudgetStack: ObservableObject {
 		}
 	}
 	
+	func toTopBudget() {
+		fundStack.removeAll()
+		var s = budgetStack
+		while s.count > 1 {
+			s.removeLast()
+		}
+		budgetStack = s
+	}
+	
 	func getTopBudget() -> TimeBudget {
 		return budgetStack.last!
 	}

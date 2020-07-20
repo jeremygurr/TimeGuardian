@@ -78,6 +78,9 @@ struct FundRowView: View {
 								for f in self.budgetStack.getFunds() {
 									f.adjustBalance(-1)
 							}
+								while self.budgetStack.getFunds().count > 0 {
+									self.budgetStack.toTopBudget()
+							}
 							case .reset:
 								self.fund.resetBalance()
 							case .earn:
