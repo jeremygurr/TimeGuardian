@@ -102,7 +102,13 @@ struct FundSectionSpentView: View {
 	
 	var body: some View {
 		Section(header: Text("Spent")) {
-			FundAllSpentRowView(spentFunds: self.spentFunds, action: self.$action)
+			if self.action == .spend
+				|| self.action == .reset
+				|| self.action == .earn
+				|| self.action == .delete
+			{
+				FundAllSpentRowView(spentFunds: self.spentFunds, action: self.$action)
+			}
 			ForEach(self.spentFunds, id: \.self) { fund in
 				FundRowView(action: self.$action, fund: fund, funds: self.allFunds)
 			}.onMove() { (source: IndexSet, destination: Int) in

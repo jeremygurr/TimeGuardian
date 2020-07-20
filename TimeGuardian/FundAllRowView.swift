@@ -21,6 +21,8 @@ struct FundAllRowView: View {
 		Section() {
 			Button(action: {
 				switch self.action {
+					case .view:
+						debugLog("Can't view all")
 					case .spend:
 						for fund in self.allFunds {
 							fund.adjustBalance(-1)
@@ -71,6 +73,8 @@ struct FundAllSpentRowView: View {
 		Section() {
 			Button(action: {
 				switch self.action {
+					case .view:
+						debugLog("Can't view all")
 					case .spend:
 						for fund in self.spentFunds {
 							fund.adjustBalance(-1)

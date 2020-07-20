@@ -54,7 +54,8 @@ struct FundRowView: View {
 				}
 				)
 			} else {
-				if fund.subBudget != nil && self.action == .spend {
+				if fund.subBudget != nil
+					&& (self.action == .spend || self.action == .view) {
 					Button(action: {
 						self.budgetStack.push(budget: self.fund.subBudget!)
 						self.budgetStack.push(fund: self.fund)
@@ -73,6 +74,8 @@ struct FundRowView: View {
 				} else {
 					Button(action: {
 						switch self.action {
+							case .view:
+								debugLog("Viewing doesn't do anything here")
 							case .spend:
 								self.fund.adjustBalance(-1)
 								for f in self.budgetStack.getFunds() {
