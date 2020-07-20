@@ -69,10 +69,7 @@ struct FundRowView: View {
 							case .view:
 								debugLog("Viewing doesn't do anything here")
 							case .spend:
-								self.fund.adjustBalance(-1)
-								for f in self.budgetStack.getFunds() {
-									f.adjustBalance(-1)
-							}
+								self.fund.deepSpend(budgetStack: self.budgetStack)
 								self.budgetStack.toFirstBudget()
 							case .reset:
 								self.fund.resetBalance()

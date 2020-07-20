@@ -65,6 +65,15 @@ extension TimeFund {
 		return request
 	}
 	
+	func deepSpend(budgetStack: BudgetStack) {
+		adjustBalance(-1)
+		budget.earnIfSpent()
+		for f in budgetStack.getFunds().reversed() {
+			f.adjustBalance(-1)
+			f.budget.earnIfSpent()
+		}
+	}
+	
 	func adjustBalance(_ amount: Float) {
 		self.balance += amount
 		if self.balance < -0.5 && amount < 0 {
@@ -82,16 +91,19 @@ extension TimeFund {
 	}
 	
 	func getRatio() -> Float {
-		let funds = self.budget.funds!
-		var totalFunds: Float = 0.0
-		var fundsWithSameName: Float = 0.0
-		for fund in funds {
-			totalFunds += 1
-			if (fund as! TimeFund).name == self.name {
-				fundsWithSameName += 1
+		var result: Float = 0
+		if let funds = self.budget.funds {
+			var totalFunds: Float = 0.0
+			var fundsWithSameName: Float = 0.0
+			for fund in funds {
+				totalFunds += 1
+				if (fund as! TimeFund).name == self.name {
+					fundsWithSameName += 1
+				}
 			}
+			result = fundsWithSameName / totalFunds
 		}
-		return fundsWithSameName / totalFunds
+		return result
 	}
 	
 	@NSManaged public var name: String
