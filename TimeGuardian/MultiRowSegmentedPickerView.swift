@@ -42,7 +42,7 @@ struct MultiRowSegmentedPickerView<T: Stringable>: View {
 	private let cornerRadius: CGFloat = 8
 	private let selectorStrokeWidth: CGFloat = 4
 	private let selectorInset: CGFloat = 4
-	private let backgroundColor = Color.gray
+	private let backgroundColor = Color("ActionButtonBackground")
 	
 	private let choices: [[T]]
 	private let choicesFlat: [T]
