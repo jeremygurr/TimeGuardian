@@ -134,6 +134,7 @@ struct FundListView_Previews: PreviewProvider {
 		return FundListView(budgetStack: budgetStack)
 			.environment(\.managedObjectContext, context)
 			.environmentObject(budgetStack)
+//			.environment(\.colorScheme, .dark)
 	}
 }
 

@@ -125,13 +125,15 @@ struct FundRowView: View {
 
 struct FundRowLabel: View {
 	@ObservedObject var fund: TimeFund
+	@EnvironmentObject var budgetStack: BudgetStack
 	
 	var body: some View {
-		HStack {
+		let percentage = formatPercentage(fund.getRatio() * budgetStack.getCurrentRatio())
+		return HStack {
 			Text("\(fund.roundedBalance)")
 				.frame(width: 30, alignment: .trailing)
 			Divider()
-			Text("\(fund.getRatio()*100)%")
+			Text("\(percentage)")
 				.frame(width: 30, alignment: .trailing)
 			Divider()
 			Text(fund.name)
@@ -142,6 +144,20 @@ struct FundRowLabel: View {
 			}
 		}
 	}
+}
+
+func formatPercentage(_ x: Float) -> String {
+	let y = x*100
+	var result: String
+	if y > 10 {
+		result = String(format: "%2.0f", y)
+	} else if y > 1 {
+		result = String(format: "%1.1f", y)
+	} else {
+		result = String(format: "%.2f", y)
+	}
+	
+	return result
 }
 
 struct NewFundRowView: View {
