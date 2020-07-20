@@ -7,10 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0005627824BA7E7F003AECC6 /* TimeBudget+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0005627424BA7E7F003AECC6 /* TimeBudget+CoreDataClass.swift */; };
-		0005627924BA7E7F003AECC6 /* TimeFund+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0005627524BA7E7F003AECC6 /* TimeFund+CoreDataClass.swift */; };
-		0005627A24BA7E7F003AECC6 /* TimeFund+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0005627624BA7E7F003AECC6 /* TimeFund+CoreDataProperties.swift */; };
-		0005627B24BA7E7F003AECC6 /* TimeBudget+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0005627724BA7E7F003AECC6 /* TimeBudget+CoreDataProperties.swift */; };
 		0005628024BE52D3003AECC6 /* Introspect in Frameworks */ = {isa = PBXBuildFile; productRef = 0005627F24BE52D3003AECC6 /* Introspect */; };
 		00113D0A24B920180028AB57 /* TestDataBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00113D0924B920180028AB57 /* TestDataBuilder.swift */; };
 		002531D024C1B76400CB7FF0 /* IQKeyboardManagerSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 002531CF24C1B76400CB7FF0 /* IQKeyboardManagerSwift */; };
@@ -28,14 +24,13 @@
 		0058665C24C074F3004E4889 /* BudgetListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0058665B24C074F3004E4889 /* BudgetListView.swift */; };
 		0058665E24C0FD88004E4889 /* FundListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0058665D24C0FD88004E4889 /* FundListView.swift */; };
 		00659F0924C511F800670CF0 /* FundRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00659F0824C511F800670CF0 /* FundRowView.swift */; };
-		00659F0B24C5205F00670CF0 /* TimeFund+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00659F0A24C5205F00670CF0 /* TimeFund+CoreDataProperties.swift */; };
+		00659F1024C5213200670CF0 /* TimeFund+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00659F0C24C5213200670CF0 /* TimeFund+CoreDataProperties.swift */; };
+		00659F1124C5213200670CF0 /* TimeBudget+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00659F0D24C5213200670CF0 /* TimeBudget+CoreDataProperties.swift */; };
+		00659F1224C5213200670CF0 /* TimeFund+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00659F0E24C5213200670CF0 /* TimeFund+CoreDataClass.swift */; };
+		00659F1324C5213200670CF0 /* TimeBudget+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00659F0F24C5213200670CF0 /* TimeBudget+CoreDataClass.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		0005627424BA7E7F003AECC6 /* TimeBudget+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "TimeBudget+CoreDataClass.swift"; path = "TimeGuardian/Model/TimeBudget+CoreDataClass.swift"; sourceTree = SOURCE_ROOT; };
-		0005627524BA7E7F003AECC6 /* TimeFund+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "TimeFund+CoreDataClass.swift"; path = "TimeGuardian/Model/TimeFund+CoreDataClass.swift"; sourceTree = SOURCE_ROOT; };
-		0005627624BA7E7F003AECC6 /* TimeFund+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "TimeFund+CoreDataProperties.swift"; path = "TimeGuardian/Model/TimeFund+CoreDataProperties.swift"; sourceTree = SOURCE_ROOT; };
-		0005627724BA7E7F003AECC6 /* TimeBudget+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "TimeBudget+CoreDataProperties.swift"; path = "TimeGuardian/Model/TimeBudget+CoreDataProperties.swift"; sourceTree = SOURCE_ROOT; };
 		00113D0924B920180028AB57 /* TestDataBuilder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestDataBuilder.swift; sourceTree = "<group>"; };
 		002531D924C4614A00CB7FF0 /* TopView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopView.swift; sourceTree = "<group>"; };
 		002531DB24C497EC00CB7FF0 /* BudgetStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BudgetStack.swift; sourceTree = "<group>"; };
@@ -53,7 +48,10 @@
 		0058665B24C074F3004E4889 /* BudgetListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BudgetListView.swift; sourceTree = "<group>"; };
 		0058665D24C0FD88004E4889 /* FundListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FundListView.swift; sourceTree = "<group>"; };
 		00659F0824C511F800670CF0 /* FundRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FundRowView.swift; sourceTree = "<group>"; };
-		00659F0A24C5205F00670CF0 /* TimeFund+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "TimeFund+CoreDataProperties.swift"; path = "TimeGuardian/Model/TimeFund+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		00659F0C24C5213200670CF0 /* TimeFund+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "TimeFund+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		00659F0D24C5213200670CF0 /* TimeBudget+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "TimeBudget+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		00659F0E24C5213200670CF0 /* TimeFund+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "TimeFund+CoreDataClass.swift"; sourceTree = "<group>"; };
+		00659F0F24C5213200670CF0 /* TimeBudget+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "TimeBudget+CoreDataClass.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -72,10 +70,10 @@
 		00113D0824B913960028AB57 /* BackModel */ = {
 			isa = PBXGroup;
 			children = (
-				0005627424BA7E7F003AECC6 /* TimeBudget+CoreDataClass.swift */,
-				0005627724BA7E7F003AECC6 /* TimeBudget+CoreDataProperties.swift */,
-				0005627524BA7E7F003AECC6 /* TimeFund+CoreDataClass.swift */,
-				0005627624BA7E7F003AECC6 /* TimeFund+CoreDataProperties.swift */,
+				00659F0F24C5213200670CF0 /* TimeBudget+CoreDataClass.swift */,
+				00659F0D24C5213200670CF0 /* TimeBudget+CoreDataProperties.swift */,
+				00659F0E24C5213200670CF0 /* TimeFund+CoreDataClass.swift */,
+				00659F0C24C5213200670CF0 /* TimeFund+CoreDataProperties.swift */,
 			);
 			path = BackModel;
 			sourceTree = "<group>";
@@ -83,7 +81,6 @@
 		002590D124B90F0E00F703C5 = {
 			isa = PBXGroup;
 			children = (
-				00659F0A24C5205F00670CF0 /* TimeFund+CoreDataProperties.swift */,
 				002590DC24B90F0E00F703C5 /* TimeGuardian */,
 				002590DB24B90F0E00F703C5 /* Products */,
 			);
@@ -215,16 +212,15 @@
 				0058665C24C074F3004E4889 /* BudgetListView.swift in Sources */,
 				002590E324B90F0E00F703C5 /* TimeGuardian.xcdatamodeld in Sources */,
 				00113D0A24B920180028AB57 /* TestDataBuilder.swift in Sources */,
+				00659F1324C5213200670CF0 /* TimeBudget+CoreDataClass.swift in Sources */,
 				0058665E24C0FD88004E4889 /* FundListView.swift in Sources */,
-				0005627A24BA7E7F003AECC6 /* TimeFund+CoreDataProperties.swift in Sources */,
-				0005627824BA7E7F003AECC6 /* TimeBudget+CoreDataClass.swift in Sources */,
 				002590E024B90F0E00F703C5 /* SceneDelegate.swift in Sources */,
-				0005627924BA7E7F003AECC6 /* TimeFund+CoreDataClass.swift in Sources */,
+				00659F1224C5213200670CF0 /* TimeFund+CoreDataClass.swift in Sources */,
 				00659F0924C511F800670CF0 /* FundRowView.swift in Sources */,
 				002531DA24C4614A00CB7FF0 /* TopView.swift in Sources */,
+				00659F1124C5213200670CF0 /* TimeBudget+CoreDataProperties.swift in Sources */,
+				00659F1024C5213200670CF0 /* TimeFund+CoreDataProperties.swift in Sources */,
 				003E0C9E24C4BDDE00AAC6C0 /* MultiRowSegmentedPickerView.swift in Sources */,
-				0005627B24BA7E7F003AECC6 /* TimeBudget+CoreDataProperties.swift in Sources */,
-				00659F0B24C5205F00670CF0 /* TimeFund+CoreDataProperties.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
