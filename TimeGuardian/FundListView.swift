@@ -41,7 +41,7 @@ struct FundListView: View {
 			}
 			)
 			List {
-				if self.action == .spend
+				if self.action == .qspend
 					|| self.action == .reset
 					|| self.action == .earn
 					|| self.action == .delete
@@ -106,7 +106,7 @@ struct FundSectionSpentView: View {
 	
 	var body: some View {
 		Section(header: Text("Spent")) {
-			if self.action == .spend
+			if self.action == .qspend
 				|| self.action == .reset
 				|| self.action == .earn
 				|| self.action == .delete

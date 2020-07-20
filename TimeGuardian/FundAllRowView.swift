@@ -24,9 +24,7 @@ struct FundAllRowView: View {
 					case .view:
 						debugLog("Can't view all")
 					case .spend:
-						for fund in self.allFunds {
-							fund.adjustBalance(-1)
-					}
+						debugLog("Can't spend all")
 					case .reset:
 						for fund in self.allFunds {
 							fund.resetBalance()
@@ -44,6 +42,10 @@ struct FundAllRowView: View {
 					case .delete:
 						for fund in self.allFunds {
 							self.managedObjectContext.delete(fund)
+					}
+					case .qspend:
+						for fund in self.allFunds {
+							fund.adjustBalance(-1)
 					}
 				}
 				saveData(self.managedObjectContext)
@@ -76,9 +78,7 @@ struct FundAllSpentRowView: View {
 					case .view:
 						debugLog("Can't view all")
 					case .spend:
-						for fund in self.spentFunds {
-							fund.adjustBalance(-1)
-					}
+						debugLog("Can't spend all")
 					case .reset:
 						for fund in self.spentFunds {
 							fund.resetBalance()
@@ -96,6 +96,10 @@ struct FundAllSpentRowView: View {
 					case .delete:
 						for fund in self.spentFunds {
 							self.managedObjectContext.delete(fund)
+					}
+					case .qspend:
+						for fund in self.spentFunds {
+							fund.adjustBalance(-1)
 					}
 				}
 				saveData(self.managedObjectContext)

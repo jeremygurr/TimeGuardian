@@ -16,6 +16,7 @@ protocol Stringable: Hashable, RawRepresentable {
 enum FundAction: Int, CaseIterable, Stringable {
 	case view = 0
 	case spend
+	case qspend
 	case reset
 	case earn
 	case subBudget
@@ -31,6 +32,7 @@ enum FundAction: Int, CaseIterable, Stringable {
 		switch self {
 			case .view: return "View"
 			case .spend: return "Spend"
+			case .qspend: return "QSpend"
 			case .reset: return "Reset"
 			case .earn: return "Earn"
 			case .subBudget: return "Sub"
@@ -42,7 +44,7 @@ enum FundAction: Int, CaseIterable, Stringable {
 	
 	static var allCasesInRows: [[FundAction]] {
 		[
-			[.view, .spend, .earn, .reset],
+			[.view, .spend, .qspend, .earn, .reset],
 			[.subBudget, .clone, .edit, .delete]
 		]
 	}

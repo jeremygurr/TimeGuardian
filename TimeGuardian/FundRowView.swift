@@ -73,9 +73,7 @@ struct FundRowView: View {
 								for f in self.budgetStack.getFunds() {
 									f.adjustBalance(-1)
 							}
-								while self.budgetStack.getFunds().count > 0 {
-									self.budgetStack.toFirstBudget()
-							}
+								self.budgetStack.toFirstBudget()
 							case .reset:
 								self.fund.resetBalance()
 							case .earn:
@@ -111,7 +109,8 @@ struct FundRowView: View {
 								errorLog("Impossible")
 							case .delete:
 								self.managedObjectContext.delete(self.fund)
-								saveData(self.managedObjectContext)
+							case .qspend:
+								self.fund.adjustBalance(-1)
 						}
 						saveData(self.managedObjectContext)
 					}, label: {
