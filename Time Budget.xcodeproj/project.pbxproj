@@ -54,6 +54,7 @@
 		00659F0E24C5213200670CF0 /* TimeFund+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "TimeFund+CoreDataClass.swift"; path = "Time Budget/BackModel/TimeFund+CoreDataClass.swift"; sourceTree = SOURCE_ROOT; };
 		00659F0F24C5213200670CF0 /* TimeBudget+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "TimeBudget+CoreDataClass.swift"; path = "Time Budget/BackModel/TimeBudget+CoreDataClass.swift"; sourceTree = SOURCE_ROOT; };
 		00659F1524C5227000670CF0 /* FundAllRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FundAllRowView.swift; path = "Time Budget/FundAllRowView.swift"; sourceTree = SOURCE_ROOT; };
+		00BA983824C74C9500E2AD91 /* Time Budget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Time Budget.entitlements"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -100,6 +101,7 @@
 		002590DC24B90F0E00F703C5 /* Time Budget */ = {
 			isa = PBXGroup;
 			children = (
+				00BA983824C74C9500E2AD91 /* Time Budget.entitlements */,
 				00113D0824B913960028AB57 /* BackModel */,
 				00113D0924B920180028AB57 /* TestDataBuilder.swift */,
 				002590DD24B90F0E00F703C5 /* AppDelegate.swift */,
@@ -363,6 +365,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "Time Budget/Time Budget.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"Time Budget/Preview Content\"";
 				DEVELOPMENT_TEAM = CUPYM3WLYW;
@@ -384,6 +387,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "Time Budget/Time Budget.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"Time Budget/Preview Content\"";
 				DEVELOPMENT_TEAM = CUPYM3WLYW;
