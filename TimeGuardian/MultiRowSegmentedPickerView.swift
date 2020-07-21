@@ -41,7 +41,7 @@ struct MultiRowSegmentedPickerView<T: Stringable>: View {
 	
 	private let cornerRadius: CGFloat = 8
 	private let selectorStrokeWidth: CGFloat = 4
-	private let selectorInset: CGFloat = 4
+	private let selectorInset: CGFloat = 5
 	private let backgroundColor = Color("ActionButtonBackground")
 	
 	private let choices: [[T]]
@@ -115,7 +115,7 @@ struct MultiRowSegmentedPickerView<T: Stringable>: View {
 						}
 					}
 					RoundedRectangle(cornerRadius: self.cornerRadius)
-						.stroke(Color.white, lineWidth: self.selectorStrokeWidth)
+						.stroke(Color.primary, lineWidth: self.selectorStrokeWidth)
 						.foregroundColor(Color.clear)
 						.frame(
 							width: self.selectionWidth - 2.0 * self.selectorInset,
