@@ -78,11 +78,14 @@ struct FundSectionAvailableView: View {
 	@Binding var newFundTop: String
 	@Binding var newFundBottom: String
 	@Binding var action : FundAction
+	@Environment(\.editMode) var editMode
 	@Environment(\.managedObjectContext) var managedObjectContext
 	
 	var body: some View {
 		Section(header: Text("Available")) {
-			NewFundRowView(newFundName: $newFundTop, funds: availableFunds, posOfNewFund: .before)
+			if self.editMode?.wrappedValue == .inactive {
+				NewFundRowView(newFundName: $newFundTop, funds: availableFunds, posOfNewFund: .before)
+			}
 			ForEach(availableFunds, id: \.self) { fund in
 				FundRowView(action: self.$action, fund: fund, funds: self.allFunds)
 			}.onMove() { (source: IndexSet, destination: Int) in
@@ -93,7 +96,9 @@ struct FundSectionAvailableView: View {
 				}
 				saveData(self.managedObjectContext)
 			}.listRowInsets(fundInsets())
-			NewFundRowView(newFundName: $newFundBottom, funds: availableFunds, posOfNewFund: .after)
+			if self.editMode?.wrappedValue == .inactive {
+				NewFundRowView(newFundName: $newFundBottom, funds: availableFunds, posOfNewFund: .after)
+			}
 		}
 	}
 }
