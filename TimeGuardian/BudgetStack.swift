@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 class BudgetStack: ObservableObject {
 	@Published private var budgetStack: [TimeBudget] = []
@@ -62,6 +63,19 @@ class BudgetStack: ObservableObject {
 	
 	func getTopBudget() -> TimeBudget {
 		return budgetStack.last!
+	}
+	
+	func getBudgetNameFontSize() -> CGFloat {
+		let budgetNameSize = budgetStack.last!.name.count
+		var size: CGFloat
+		if budgetNameSize > 20 {
+			size = 15
+		} else if budgetNameSize > 10 {
+			size = 20
+		} else {
+			size = 30
+		}
+		return size
 	}
 	
 	func getCurrentRatio() -> Float {

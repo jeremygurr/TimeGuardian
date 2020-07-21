@@ -34,14 +34,18 @@ class TestDataBuilder {
 	func createTestData() {
 		debugLog("Creating test data")
 		deleteExistingData()
-		createBudget(name: "Main")
-		createBudget(name: "Home")
-		createBudget(name: "Play")
-		createBudget(name: "Sunday")
-		let budget = self.budgets[0]
-		createFund(budget: budget, name: "rest")
-		createFund(budget: budget, name: "play")
-		createFund(budget: budget, name: "exercise")
+		_ = createBudget(name: "Main")
+		_ = createBudget(name: "Home")
+		_ = createBudget(name: "Play")
+		_ = createBudget(name: "Sunday")
+		let mainBudget = self.budgets[0]
+		_ = createFund(budget: mainBudget, name: "rest")
+		_ = createFund(budget: mainBudget, name: "play")
+		_ = createFund(budget: mainBudget, name: "exercise")
+		let homeBudget = self.budgets[1]
+		_ = createFund(budget: homeBudget, name: "short", subBudget: true)
+		_ = createFund(budget: homeBudget, name: "medium length fund", subBudget: true)
+		_ = createFund(budget: homeBudget, name: "long fund name that is so descriptive of what needs to happen", subBudget: true)
 		save()
 	}
 	
@@ -57,16 +61,22 @@ class TestDataBuilder {
 		}
 	}
 	
-	func createFund(budget: TimeBudget, name: String) {
+	func createFund(budget: TimeBudget, name: String, subBudget: Bool = false) -> TimeFund {
 		let fund = TimeFund(context: context)
 		fund.budget = budget
 		fund.name = name
 		funds.append(fund)
+		if subBudget {
+			fund.subBudget = createBudget(name: name)
+		}
+		return fund
 	}
 
-	func createBudget(name: String) {
+	func createBudget(name: String) -> TimeBudget {
 		let budget = TimeBudget(context: context)
 		budget.name = name
+		budget.order = Int16(budgets.count)
 		budgets.append(budget)
+		return budget
 	}
 }

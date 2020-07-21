@@ -30,27 +30,25 @@ struct TopView: View {
 				}
 			} else {
 				VStack {
-					ZStack {
-						Text("\(budgetStack.getTopBudget().name)")
-							.font(.title)
-							.frame(maxWidth: .infinity, alignment: .center)
-						HStack {
-							Button(
-								action: {
-									self.budgetStack.removeLastBudget()
-									self.budgetStack.removeLastFund()
-									self.editMode?.wrappedValue = .inactive
-									self.managedObjectContext.rollback()
-							},
-								label: {
-									Text("< Back")
-										.font(.body)
+					HStack {
+						Button(
+							action: {
+								self.budgetStack.removeLastBudget()
+								self.budgetStack.removeLastFund()
+								self.editMode?.wrappedValue = .inactive
+								self.managedObjectContext.rollback()
+						},
+							label: {
+								Text("< Back")
+									.font(.body)
 									.padding()
-							}
-							)
 						}
-						.frame(maxWidth: .infinity, alignment: .leading)
+						)
+						Text("\(budgetStack.getTopBudget().name)")
+							.font(Font.system(size: budgetStack.getBudgetNameFontSize()))
+							.frame(maxWidth: .infinity, alignment: .leading)
 					}
+					.frame(maxWidth: .infinity, alignment: .leading)
 					FundListView(budgetStack: self.budgetStack)
 				}
 			}
@@ -61,8 +59,8 @@ struct TopView: View {
 struct TopView_Previews: PreviewProvider {
 	static var previews: some View {
 		let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-		let tdb = TestDataBuilder(context: context)
-		tdb.createTestData()
+//		let tdb = TestDataBuilder(context: context)
+//		tdb.createTestData()
 		let budgetStack = BudgetStack()
 //		budgetStack.push(budget: tdb.budgets.first!)
 		return TopView()
