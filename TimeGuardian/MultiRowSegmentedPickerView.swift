@@ -67,7 +67,7 @@ struct MultiRowSegmentedPickerView<T: Stringable>: View {
 				let choice = rowChoices[c]
 				rowElements.append(SegmentedPickerElementView(id: choice, row: r, col: c) {
 					Text(choice.asString)
-						.font(Font.system(size: 20))
+						.font(.body)
 				})
 				newChoicesFlat.append(choice)
 			}
