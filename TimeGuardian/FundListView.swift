@@ -63,6 +63,9 @@ struct FundListView: View {
 					allFunds: self.allFunds,
 					action: self.$action
 				)
+				ForEach(1...10, id: \.self) {_ in
+					Text("")
+				}
 			}
 		}
 	}

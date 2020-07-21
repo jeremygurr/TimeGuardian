@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import Introspect
 
 struct BudgetListView: View {
 	@Environment(\.editMode) var editMode
@@ -34,6 +35,9 @@ struct BudgetListView: View {
 			}
 			Section(header: Text("Sub Budgets")) {
 				BudgetListSection(budgets: self.subBudgets)
+			}
+			ForEach(1...10, id: \.self) {_ in
+				Text("")
 			}
 		}
 	}
