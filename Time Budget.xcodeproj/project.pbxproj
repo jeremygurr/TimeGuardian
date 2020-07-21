@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 53;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -14,7 +14,7 @@
 		002531DC24C497EC00CB7FF0 /* BudgetStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 002531DB24C497EC00CB7FF0 /* BudgetStack.swift */; };
 		002590DE24B90F0E00F703C5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 002590DD24B90F0E00F703C5 /* AppDelegate.swift */; };
 		002590E024B90F0E00F703C5 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 002590DF24B90F0E00F703C5 /* SceneDelegate.swift */; };
-		002590E324B90F0E00F703C5 /* TimeGuardian.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 002590E124B90F0E00F703C5 /* TimeGuardian.xcdatamodeld */; };
+		002590E324B90F0E00F703C5 /* Time Budget.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 002590E124B90F0E00F703C5 /* Time Budget.xcdatamodeld */; };
 		002590E724B90F1000F703C5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 002590E624B90F1000F703C5 /* Assets.xcassets */; };
 		002590EA24B90F1000F703C5 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 002590E924B90F1000F703C5 /* Preview Assets.xcassets */; };
 		002590ED24B90F1000F703C5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 002590EB24B90F1000F703C5 /* LaunchScreen.storyboard */; };
@@ -32,28 +32,28 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		00113D0924B920180028AB57 /* TestDataBuilder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TestDataBuilder.swift; path = TimeGuardian/TestDataBuilder.swift; sourceTree = SOURCE_ROOT; };
-		002531D924C4614A00CB7FF0 /* TopView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TopView.swift; path = TimeGuardian/TopView.swift; sourceTree = SOURCE_ROOT; };
-		002531DB24C497EC00CB7FF0 /* BudgetStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BudgetStack.swift; path = TimeGuardian/BudgetStack.swift; sourceTree = SOURCE_ROOT; };
-		002590DA24B90F0E00F703C5 /* TimeGuardian.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TimeGuardian.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		002590DD24B90F0E00F703C5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = TimeGuardian/AppDelegate.swift; sourceTree = SOURCE_ROOT; };
-		002590DF24B90F0E00F703C5 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SceneDelegate.swift; path = TimeGuardian/SceneDelegate.swift; sourceTree = SOURCE_ROOT; };
-		002590E224B90F0E00F703C5 /* TimeGuardian.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = TimeGuardian.xcdatamodel; sourceTree = "<group>"; };
-		002590E624B90F1000F703C5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = TimeGuardian/Assets.xcassets; sourceTree = SOURCE_ROOT; };
+		00113D0924B920180028AB57 /* TestDataBuilder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TestDataBuilder.swift; path = "Time Budget/TestDataBuilder.swift"; sourceTree = SOURCE_ROOT; };
+		002531D924C4614A00CB7FF0 /* TopView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TopView.swift; path = "Time Budget/TopView.swift"; sourceTree = SOURCE_ROOT; };
+		002531DB24C497EC00CB7FF0 /* BudgetStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BudgetStack.swift; path = "Time Budget/BudgetStack.swift"; sourceTree = SOURCE_ROOT; };
+		002590DA24B90F0E00F703C5 /* Time Budget.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Time Budget.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		002590DD24B90F0E00F703C5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = "Time Budget/AppDelegate.swift"; sourceTree = SOURCE_ROOT; };
+		002590DF24B90F0E00F703C5 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SceneDelegate.swift; path = "Time Budget/SceneDelegate.swift"; sourceTree = SOURCE_ROOT; };
+		002590E224B90F0E00F703C5 /* Time Budget.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "Time Budget.xcdatamodel"; sourceTree = "<group>"; };
+		002590E624B90F1000F703C5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = "Time Budget/Assets.xcassets"; sourceTree = SOURCE_ROOT; };
 		002590E924B90F1000F703C5 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		002590EC24B90F1000F703C5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		002590EE24B90F1000F703C5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = TimeGuardian/Info.plist; sourceTree = SOURCE_ROOT; };
-		003E0C9D24C4BDDD00AAC6C0 /* MultiRowSegmentedPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MultiRowSegmentedPickerView.swift; path = TimeGuardian/MultiRowSegmentedPickerView.swift; sourceTree = SOURCE_ROOT; };
-		003E0C9F24C4D58200AAC6C0 /* FundAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FundAction.swift; path = TimeGuardian/FundAction.swift; sourceTree = SOURCE_ROOT; };
-		0058665624C05BBB004E4889 /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Utils.swift; path = TimeGuardian/Utils.swift; sourceTree = SOURCE_ROOT; };
-		0058665B24C074F3004E4889 /* BudgetListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BudgetListView.swift; path = TimeGuardian/BudgetListView.swift; sourceTree = SOURCE_ROOT; };
-		0058665D24C0FD88004E4889 /* FundListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FundListView.swift; path = TimeGuardian/FundListView.swift; sourceTree = SOURCE_ROOT; };
-		00659F0824C511F800670CF0 /* FundRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FundRowView.swift; path = TimeGuardian/FundRowView.swift; sourceTree = SOURCE_ROOT; };
-		00659F0C24C5213200670CF0 /* TimeFund+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "TimeFund+CoreDataProperties.swift"; path = "TimeGuardian/BackModel/TimeFund+CoreDataProperties.swift"; sourceTree = SOURCE_ROOT; };
-		00659F0D24C5213200670CF0 /* TimeBudget+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "TimeBudget+CoreDataProperties.swift"; path = "TimeGuardian/BackModel/TimeBudget+CoreDataProperties.swift"; sourceTree = SOURCE_ROOT; };
-		00659F0E24C5213200670CF0 /* TimeFund+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "TimeFund+CoreDataClass.swift"; path = "TimeGuardian/BackModel/TimeFund+CoreDataClass.swift"; sourceTree = SOURCE_ROOT; };
-		00659F0F24C5213200670CF0 /* TimeBudget+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "TimeBudget+CoreDataClass.swift"; path = "TimeGuardian/BackModel/TimeBudget+CoreDataClass.swift"; sourceTree = SOURCE_ROOT; };
-		00659F1524C5227000670CF0 /* FundAllRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FundAllRowView.swift; path = TimeGuardian/FundAllRowView.swift; sourceTree = SOURCE_ROOT; };
+		002590EE24B90F1000F703C5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = "Time Budget/Info.plist"; sourceTree = SOURCE_ROOT; };
+		003E0C9D24C4BDDD00AAC6C0 /* MultiRowSegmentedPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MultiRowSegmentedPickerView.swift; path = "Time Budget/MultiRowSegmentedPickerView.swift"; sourceTree = SOURCE_ROOT; };
+		003E0C9F24C4D58200AAC6C0 /* FundAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FundAction.swift; path = "Time Budget/FundAction.swift"; sourceTree = SOURCE_ROOT; };
+		0058665624C05BBB004E4889 /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Utils.swift; path = "Time Budget/Utils.swift"; sourceTree = SOURCE_ROOT; };
+		0058665B24C074F3004E4889 /* BudgetListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BudgetListView.swift; path = "Time Budget/BudgetListView.swift"; sourceTree = SOURCE_ROOT; };
+		0058665D24C0FD88004E4889 /* FundListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FundListView.swift; path = "Time Budget/FundListView.swift"; sourceTree = SOURCE_ROOT; };
+		00659F0824C511F800670CF0 /* FundRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FundRowView.swift; path = "Time Budget/FundRowView.swift"; sourceTree = SOURCE_ROOT; };
+		00659F0C24C5213200670CF0 /* TimeFund+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "TimeFund+CoreDataProperties.swift"; path = "Time Budget/BackModel/TimeFund+CoreDataProperties.swift"; sourceTree = SOURCE_ROOT; };
+		00659F0D24C5213200670CF0 /* TimeBudget+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "TimeBudget+CoreDataProperties.swift"; path = "Time Budget/BackModel/TimeBudget+CoreDataProperties.swift"; sourceTree = SOURCE_ROOT; };
+		00659F0E24C5213200670CF0 /* TimeFund+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "TimeFund+CoreDataClass.swift"; path = "Time Budget/BackModel/TimeFund+CoreDataClass.swift"; sourceTree = SOURCE_ROOT; };
+		00659F0F24C5213200670CF0 /* TimeBudget+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "TimeBudget+CoreDataClass.swift"; path = "Time Budget/BackModel/TimeBudget+CoreDataClass.swift"; sourceTree = SOURCE_ROOT; };
+		00659F1524C5227000670CF0 /* FundAllRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FundAllRowView.swift; path = "Time Budget/FundAllRowView.swift"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -78,13 +78,13 @@
 				00659F0C24C5213200670CF0 /* TimeFund+CoreDataProperties.swift */,
 			);
 			name = BackModel;
-			path = TimeGuardian/BackModel;
+			path = "Time Budget/BackModel";
 			sourceTree = SOURCE_ROOT;
 		};
 		002590D124B90F0E00F703C5 = {
 			isa = PBXGroup;
 			children = (
-				002590DC24B90F0E00F703C5 /* TimeGuardian */,
+				002590DC24B90F0E00F703C5 /* Time Budget */,
 				002590DB24B90F0E00F703C5 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -92,12 +92,12 @@
 		002590DB24B90F0E00F703C5 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				002590DA24B90F0E00F703C5 /* TimeGuardian.app */,
+				002590DA24B90F0E00F703C5 /* Time Budget.app */,
 			);
 			name = Products;
 			sourceTree = SOURCE_ROOT;
 		};
-		002590DC24B90F0E00F703C5 /* TimeGuardian */ = {
+		002590DC24B90F0E00F703C5 /* Time Budget */ = {
 			isa = PBXGroup;
 			children = (
 				00113D0824B913960028AB57 /* BackModel */,
@@ -116,10 +116,10 @@
 				002590E624B90F1000F703C5 /* Assets.xcassets */,
 				002590EB24B90F1000F703C5 /* LaunchScreen.storyboard */,
 				002590EE24B90F1000F703C5 /* Info.plist */,
-				002590E124B90F0E00F703C5 /* TimeGuardian.xcdatamodeld */,
+				002590E124B90F0E00F703C5 /* Time Budget.xcdatamodeld */,
 				002590E824B90F1000F703C5 /* Preview Content */,
 			);
-			path = TimeGuardian;
+			path = "Time Budget";
 			sourceTree = SOURCE_ROOT;
 		};
 		002590E824B90F1000F703C5 /* Preview Content */ = {
@@ -128,15 +128,15 @@
 				002590E924B90F1000F703C5 /* Preview Assets.xcassets */,
 			);
 			name = "Preview Content";
-			path = "TimeGuardian/Preview Content";
+			path = "Time Budget/Preview Content";
 			sourceTree = SOURCE_ROOT;
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		002590D924B90F0E00F703C5 /* TimeGuardian */ = {
+		002590D924B90F0E00F703C5 /* Time Budget */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 002590F124B90F1000F703C5 /* Build configuration list for PBXNativeTarget "TimeGuardian" */;
+			buildConfigurationList = 002590F124B90F1000F703C5 /* Build configuration list for PBXNativeTarget "Time Budget" */;
 			buildPhases = (
 				002590D624B90F0E00F703C5 /* Sources */,
 				002590D724B90F0E00F703C5 /* Frameworks */,
@@ -146,13 +146,13 @@
 			);
 			dependencies = (
 			);
-			name = TimeGuardian;
+			name = "Time Budget";
 			packageProductDependencies = (
 				0005627F24BE52D3003AECC6 /* Introspect */,
 				002531CF24C1B76400CB7FF0 /* IQKeyboardManagerSwift */,
 			);
-			productName = TimeGuardian;
-			productReference = 002590DA24B90F0E00F703C5 /* TimeGuardian.app */;
+			productName = "Time Budget";
+			productReference = 002590DA24B90F0E00F703C5 /* Time Budget.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -170,8 +170,8 @@
 					};
 				};
 			};
-			buildConfigurationList = 002590D524B90F0E00F703C5 /* Build configuration list for PBXProject "TimeGuardian" */;
-			compatibilityVersion = "Xcode 9.3";
+			buildConfigurationList = 002590D524B90F0E00F703C5 /* Build configuration list for PBXProject "Time Budget" */;
+			compatibilityVersion = "Xcode 11.4";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -187,7 +187,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				002590D924B90F0E00F703C5 /* TimeGuardian */,
+				002590D924B90F0E00F703C5 /* Time Budget */,
 			);
 		};
 /* End PBXProject section */
@@ -216,7 +216,7 @@
 				002531DC24C497EC00CB7FF0 /* BudgetStack.swift in Sources */,
 				0058665724C05BBB004E4889 /* Utils.swift in Sources */,
 				0058665C24C074F3004E4889 /* BudgetListView.swift in Sources */,
-				002590E324B90F0E00F703C5 /* TimeGuardian.xcdatamodeld in Sources */,
+				002590E324B90F0E00F703C5 /* Time Budget.xcdatamodeld in Sources */,
 				00113D0A24B920180028AB57 /* TestDataBuilder.swift in Sources */,
 				00659F1324C5213200670CF0 /* TimeBudget+CoreDataClass.swift in Sources */,
 				0058665E24C0FD88004E4889 /* FundListView.swift in Sources */,
@@ -239,7 +239,7 @@
 				002590EC24B90F1000F703C5 /* Base */,
 			);
 			name = LaunchScreen.storyboard;
-			path = TimeGuardian;
+			path = "Time Budget";
 			sourceTree = SOURCE_ROOT;
 		};
 /* End PBXVariantGroup section */
@@ -364,15 +364,16 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_ASSET_PATHS = "\"TimeGuardian/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"Time Budget/Preview Content\"";
 				DEVELOPMENT_TEAM = CUPYM3WLYW;
 				ENABLE_PREVIEWS = YES;
-				INFOPLIST_FILE = TimeGuardian/Info.plist;
+				INFOPLIST_FILE = "Time Budget/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.ple.TimeGuardian;
+				MARKETING_VERSION = 0.2;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ple.TimeBudget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -384,15 +385,16 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_ASSET_PATHS = "\"TimeGuardian/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"Time Budget/Preview Content\"";
 				DEVELOPMENT_TEAM = CUPYM3WLYW;
 				ENABLE_PREVIEWS = YES;
-				INFOPLIST_FILE = TimeGuardian/Info.plist;
+				INFOPLIST_FILE = "Time Budget/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.ple.TimeGuardian;
+				MARKETING_VERSION = 0.2;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ple.TimeBudget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -402,7 +404,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		002590D524B90F0E00F703C5 /* Build configuration list for PBXProject "TimeGuardian" */ = {
+		002590D524B90F0E00F703C5 /* Build configuration list for PBXProject "Time Budget" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				002590EF24B90F1000F703C5 /* Debug */,
@@ -411,7 +413,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		002590F124B90F1000F703C5 /* Build configuration list for PBXNativeTarget "TimeGuardian" */ = {
+		002590F124B90F1000F703C5 /* Build configuration list for PBXNativeTarget "Time Budget" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				002590F224B90F1000F703C5 /* Debug */,
@@ -455,13 +457,13 @@
 /* End XCSwiftPackageProductDependency section */
 
 /* Begin XCVersionGroup section */
-		002590E124B90F0E00F703C5 /* TimeGuardian.xcdatamodeld */ = {
+		002590E124B90F0E00F703C5 /* Time Budget.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
-				002590E224B90F0E00F703C5 /* TimeGuardian.xcdatamodel */,
+				002590E224B90F0E00F703C5 /* Time Budget.xcdatamodel */,
 			);
-			currentVersion = 002590E224B90F0E00F703C5 /* TimeGuardian.xcdatamodel */;
-			path = TimeGuardian.xcdatamodeld;
+			currentVersion = 002590E224B90F0E00F703C5 /* Time Budget.xcdatamodel */;
+			path = "Time Budget.xcdatamodeld";
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
 		};
