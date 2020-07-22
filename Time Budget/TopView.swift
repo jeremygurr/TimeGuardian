@@ -12,6 +12,17 @@ struct TopView: View {
 	@EnvironmentObject var budgetStack: BudgetStack
 	@Environment(\.editMode) var editMode
 	@Environment(\.managedObjectContext) var managedObjectContext
+	@State var isPressingBack = false
+	
+	func getTitle() -> String {
+		var title: String
+		if isPressingBack {
+			title = "to Top"
+		} else {
+			title = budgetStack.getTopBudget().name
+		}
+		return title
+	}
 	
 	var body: some View {
 		VStack {
@@ -31,34 +42,27 @@ struct TopView: View {
 			} else {
 				VStack {
 					HStack {
-						if self.budgetStack.getFunds().count > 1 {
-							Button(
-								action: {
-									self.budgetStack.toFirstBudget()
-									self.editMode?.wrappedValue = .inactive
-									self.managedObjectContext.rollback()
-							},
-								label: {
-									Text("< Top")
-										.font(.body)
-										.padding()
-							}
-							)
-						}
-						Button(
-							action: {
+						Text("< Back")
+							.font(.body)
+							.padding()
+							.contentShape(Rectangle())
+							.onTapGesture {
 								self.budgetStack.removeLastBudget()
 								self.budgetStack.removeLastFund()
 								self.editMode?.wrappedValue = .inactive
 								self.managedObjectContext.rollback()
-						},
-							label: {
-								Text("< Back")
-									.font(.body)
-									.padding()
 						}
+							.onLongPressGesture(
+								minimumDuration: longPressDuration, maximumDistance: longPressMaxDrift,
+								pressing: {
+									self.isPressingBack = $0
+							}, perform: {
+								self.budgetStack.toFirstBudget()
+								self.editMode?.wrappedValue = .inactive
+								self.managedObjectContext.rollback()
+							}
 						)
-						Text("\(budgetStack.getTopBudget().name)")
+						Text("\(getTitle())")
 							.font(Font.system(size: budgetStack.getBudgetNameFontSize()))
 							.frame(maxWidth: .infinity, alignment: .leading)
 					}
