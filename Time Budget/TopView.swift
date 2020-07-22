@@ -31,6 +31,20 @@ struct TopView: View {
 			} else {
 				VStack {
 					HStack {
+						if self.budgetStack.getFunds().count > 1 {
+							Button(
+								action: {
+									self.budgetStack.toFirstBudget()
+									self.editMode?.wrappedValue = .inactive
+									self.managedObjectContext.rollback()
+							},
+								label: {
+									Text("< Top")
+										.font(.body)
+										.padding()
+							}
+							)
+						}
 						Button(
 							action: {
 								self.budgetStack.removeLastBudget()
