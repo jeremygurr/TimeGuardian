@@ -157,7 +157,13 @@ struct MultiRowSegmentedPickerView<T: Buttonable>: View {
 									.onLongPressGesture(
 										minimumDuration: longPressDuration,
 										maximumDistance: longPressMaxDrift,
-										perform: {
+										pressing: { down in
+											withAnimation(.none) {
+												if down {
+													self.budgetStack.titleOverride = item.id.description
+												}
+											}
+									}, perform: {
 											withAnimation {
 												self.updateSelectionOffset(element: item, longPress: true)
 											}
