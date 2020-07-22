@@ -45,6 +45,7 @@ struct FundListView: View {
 					|| self.action == .reset
 					|| self.action == .earn
 					|| self.action == .delete
+					|| self.action == .freeze
 				{
 					FundAllRowView(
 						allFunds: self.allFunds,
@@ -118,6 +119,7 @@ struct FundSectionSpentView: View {
 				|| self.action == .reset
 				|| self.action == .earn
 				|| self.action == .delete
+				|| self.action == .freeze
 			{
 				FundAllSpentRowView(spentFunds: self.spentFunds, action: self.$action)
 			}

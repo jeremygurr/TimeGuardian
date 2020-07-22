@@ -69,6 +69,9 @@ struct FundRowView: View {
 							case .view:
 								debugLog("Viewing doesn't do anything here")
 							case .spend:
+								if self.fund.frozen {
+									self.fund.adjustBalance(1)
+								}
 								self.fund.deepSpend(budgetStack: self.budgetStack)
 								self.budgetStack.toFirstBudget()
 							case .reset:
@@ -105,6 +108,8 @@ struct FundRowView: View {
 								self.managedObjectContext.delete(self.fund)
 							case .qspend:
 								self.fund.adjustBalance(-1)
+							case .freeze:
+								self.fund.frozen = !self.fund.frozen
 						}
 						saveData(self.managedObjectContext)
 					}, label: {
@@ -121,9 +126,10 @@ struct FundRowLabel: View {
 	@EnvironmentObject var budgetStack: BudgetStack
 	
 	var body: some View {
-		let percentage = formatPercentage(fund.getRatio() * budgetStack.getCurrentRatio())
+		let percentage = fund.frozen ? "∞" : formatPercentage(fund.getRatio() * budgetStack.getCurrentRatio())
+		let balance = fund.frozen ? "∞" : "\(fund.roundedBalance)"
 		return HStack {
-			Text("\(fund.roundedBalance)")
+			Text(balance)
 				.frame(width: 30, alignment: .trailing)
 			Divider()
 			Text("\(percentage)")

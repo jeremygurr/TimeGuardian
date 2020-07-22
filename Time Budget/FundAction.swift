@@ -23,7 +23,8 @@ enum FundAction: Int, CaseIterable, Stringable {
 	case copy
 	case edit
 	case delete
-	
+	case freeze
+
 	var asInt: Int {
 		return self.rawValue
 	}
@@ -39,13 +40,14 @@ enum FundAction: Int, CaseIterable, Stringable {
 			case .copy: return "Copy"
 			case .edit: return "Edit"
 			case .delete: return "Delete"
+			case .freeze: return "Freeze"
 		}
 	}
 	
 	static var allCasesInRows: [[FundAction]] {
 		[
 			[.view, .spend, .qspend, .earn, .reset],
-			[.subBudget, .copy, .edit, .delete]
+			[.subBudget, .copy, .edit, .delete, .freeze]
 		]
 	}
 	

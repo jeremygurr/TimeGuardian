@@ -47,6 +47,10 @@ struct FundAllRowView: View {
 						for fund in self.allFunds {
 							fund.adjustBalance(-1)
 					}
+					case .freeze:
+						for fund in self.allFunds {
+							fund.frozen = !fund.frozen
+					}
 				}
 				saveData(self.managedObjectContext)
 			}, label: {
@@ -100,6 +104,10 @@ struct FundAllSpentRowView: View {
 					case .qspend:
 						for fund in self.spentFunds {
 							fund.adjustBalance(-1)
+					}
+					case .freeze:
+						for fund in self.spentFunds {
+							fund.frozen = !fund.frozen
 					}
 				}
 				saveData(self.managedObjectContext)
