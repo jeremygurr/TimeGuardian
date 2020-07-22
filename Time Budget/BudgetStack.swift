@@ -70,8 +70,18 @@ class BudgetStack: ObservableObject {
 		return budgetStack.last!
 	}
 	
+	func getTitle() -> String {
+		var title: String
+		if titleOverride != nil {
+			title = titleOverride!
+		} else {
+			title = getTopBudget().name
+		}
+		return title
+	}
+	
 	func getBudgetNameFontSize() -> CGFloat {
-		let budgetNameSize = budgetStack.last!.name.count
+		let budgetNameSize = getTitle().count
 		var size: CGFloat
 		if budgetNameSize > 20 {
 			size = 15

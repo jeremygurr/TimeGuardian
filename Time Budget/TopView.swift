@@ -13,16 +13,6 @@ struct TopView: View {
 	@Environment(\.editMode) var editMode
 	@Environment(\.managedObjectContext) var managedObjectContext
 	
-	func getTitle() -> String {
-		var title: String
-		if budgetStack.titleOverride != nil {
-			title = budgetStack.titleOverride!
-		} else {
-			title = budgetStack.getTopBudget().name
-		}
-		return title
-	}
-	
 	var body: some View {
 		VStack {
 			if self.budgetStack.isEmpty() {
@@ -65,7 +55,7 @@ struct TopView: View {
 								self.managedObjectContext.rollback()
 							}
 						)
-						Text("\(getTitle())")
+						Text("\(budgetStack.getTitle())")
 							.font(Font.system(size: budgetStack.getBudgetNameFontSize()))
 							.frame(maxWidth: .infinity, alignment: .leading)
 					}
