@@ -12,7 +12,7 @@ protocol Buttonable: Hashable, RawRepresentable {
 	var asString: String { get }
 	var asInt: Int { get }
 	var longPressVersion: Self? { get }
-	var description: String? { get }
+	var longDescription: String { get }
 }
 
 enum FundAction: Int, CaseIterable, Buttonable {
@@ -48,17 +48,17 @@ enum FundAction: Int, CaseIterable, Buttonable {
 		}
 	}
 	
-	var description: String? {
+	var longDescription: String {
 		switch self {
-			case .view: return nil
-			case .spend: return "spend Fund (balance - 1)"
+			case .view: return "navigate without changing any balances"
+			case .spend: return "spend fund (balance - 1)"
 			case .qspend: return "quick spend fund (don't return to top)"
 			case .reset: return "reset fund (balance = 1)"
 			case .earn: return "earn fund (balance + 1)"
 			case .subBudget: return "attach sub budget"
 			case .copy: return "copy (duplicate a fund)"
 			case .edit: return "edit fund name or position"
-			case .delete: return "delete Fund"
+			case .delete: return "delete fund"
 			case .freeze: return "freeze (marks a fund as frozen, which prevents it from being spent)"
 			case .unSubBudget: return "UnSub (detatch sub budget from fund)"
 		}
@@ -80,15 +80,17 @@ enum FundAction: Int, CaseIterable, Buttonable {
 	
 	var longPressVersion: FundAction? {
 		switch self {
+			case .spend: return .freeze
 			case .subBudget: return .unSubBudget
+			case .earn: return .reset
 			default: return nil
 		}
 	}
 	
 	static var allCasesInRows: [[FundAction]] {
 		[
-			[.view, .spend, .qspend, .earn, .reset],
-			[.subBudget, .copy, .edit, .delete, .freeze]
+			[.view, .spend, .qspend, .earn],
+			[.subBudget, .copy, .edit, .delete]
 		]
 	}
 	

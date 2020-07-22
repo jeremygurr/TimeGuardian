@@ -19,6 +19,12 @@ class BudgetStack: ObservableObject {
 			objectWillChange.send()
 		}
 	}
+	var actionDetail: String = "No action selected" {
+		willSet {
+			objectWillChange.send()
+		}
+	}
+	
 	private var fundRatioStack: [Float] = []
 	
 	func getBudgets() -> [TimeBudget] {

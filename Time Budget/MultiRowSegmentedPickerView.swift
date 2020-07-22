@@ -124,7 +124,7 @@ struct MultiRowSegmentedPickerView<T: Buttonable>: View {
 		}
 		
 		withAnimation(.none) {
-			budgetStack.titleOverride = id.description
+			budgetStack.actionDetail = id.longDescription
 		}
 
 		if id != selectedIndex || force {
@@ -160,7 +160,7 @@ struct MultiRowSegmentedPickerView<T: Buttonable>: View {
 										pressing: { down in
 											withAnimation(.none) {
 												if down {
-													self.budgetStack.titleOverride = item.id.description
+													self.budgetStack.actionDetail = item.id.longPressVersion?.longDescription ?? item.id.longDescription
 												}
 											}
 									}, perform: {

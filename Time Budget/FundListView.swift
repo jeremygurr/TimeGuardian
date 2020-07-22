@@ -40,6 +40,8 @@ struct FundListView: View {
 					}
 			}
 			)
+			Text(budgetStack.actionDetail)
+				.font(.body)
 			List {
 				if self.action.canApplyToAll {
 					FundAllRowView(
