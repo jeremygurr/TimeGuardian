@@ -41,12 +41,7 @@ struct FundListView: View {
 			}
 			)
 			List {
-				if self.action == .qspend
-					|| self.action == .reset
-					|| self.action == .earn
-					|| self.action == .delete
-					|| self.action == .freeze
-				{
+				if self.action.canApplyToAll {
 					FundAllRowView(
 						allFunds: self.allFunds,
 						action: self.$action
@@ -115,12 +110,7 @@ struct FundSectionSpentView: View {
 	
 	var body: some View {
 		Section(header: Text("Spent")) {
-			if self.action == .qspend
-				|| self.action == .reset
-				|| self.action == .earn
-				|| self.action == .delete
-				|| self.action == .freeze
-			{
+			if self.action.canApplyToAll {
 				FundAllSpentRowView(spentFunds: self.spentFunds, action: self.$action)
 			}
 			ForEach(self.spentFunds, id: \.self) { fund in

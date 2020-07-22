@@ -14,6 +14,11 @@ class BudgetStack: ObservableObject {
 	// fundStack will typically be one element shorter than budgetStack,
 	//   unless budgetStack is empty
 	@Published private var fundStack: [TimeFund] = []
+	var titleOverride: String? = nil {
+		willSet {
+			objectWillChange.send()
+		}
+	}
 	private var fundRatioStack: [Float] = []
 	
 	func getBudgets() -> [TimeBudget] {

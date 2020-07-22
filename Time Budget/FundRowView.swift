@@ -55,7 +55,7 @@ struct FundRowView: View {
 				)
 			} else {
 				if fund.subBudget != nil
-					&& (self.action == .spend || self.action == .view) {
+					&& self.action.goesToSubIfPossible {
 					Button(action: {
 						self.budgetStack.push(budget: self.fund.subBudget!)
 						self.budgetStack.push(fund: self.fund)
@@ -64,57 +64,57 @@ struct FundRowView: View {
 					}
 					)
 				} else {
-					Button(action: {
-						switch self.action {
-							case .view:
-								debugLog("Viewing doesn't do anything here")
-							case .spend:
-								if self.fund.frozen {
+					withAnimation(.none) {
+						Button(action: {
+							switch self.action {
+								case .view:
+									debugLog("Viewing doesn't do anything here")
+								case .spend:
+									if self.fund.frozen {
+										self.fund.adjustBalance(1)
+									}
+									self.fund.deepSpend(budgetStack: self.budgetStack)
+									self.budgetStack.toFirstBudget()
+								case .reset:
+									self.fund.resetBalance()
+								case .earn:
 									self.fund.adjustBalance(1)
-								}
-								self.fund.deepSpend(budgetStack: self.budgetStack)
-								self.budgetStack.toFirstBudget()
-							case .reset:
-								self.fund.resetBalance()
-							case .earn:
-								self.fund.adjustBalance(1)
-							case .subBudget:
-								do {
-									var subBudget: TimeBudget
-									let request = TimeBudget.fetchRequest(name: self.fund.name)
-									if let budgetWithSameName = try self.managedObjectContext.fetch(request).first {
-										subBudget = budgetWithSameName
-									} else {
-										subBudget = TimeBudget(context: self.managedObjectContext)
-										subBudget.name = self.fund.name
-									}
-									if self.fund.subBudget == nil {
+								case .subBudget:
+									do {
+										var subBudget: TimeBudget
+										let request = TimeBudget.fetchRequest(name: self.fund.name)
+										if let budgetWithSameName = try self.managedObjectContext.fetch(request).first {
+											subBudget = budgetWithSameName
+										} else {
+											subBudget = TimeBudget(context: self.managedObjectContext)
+											subBudget.name = self.fund.name
+										}
 										self.fund.subBudget = subBudget
-									} else {
-										self.fund.subBudget = nil
-									}
-								} catch {
-									errorLog("\(error)")
+									} catch {
+										errorLog("\(error)")
+								}
+								case .copy:
+									let newFund = TimeFund(context: self.managedObjectContext)
+									newFund.name = self.fund.name
+									newFund.order = self.fund.order
+									newFund.budget = self.budgetStack.getTopBudget()
+									newFund.subBudget = self.fund.subBudget
+								case .edit:
+									errorLog("Impossible")
+								case .delete:
+									self.managedObjectContext.delete(self.fund)
+								case .qspend:
+									self.fund.adjustBalance(-1)
+								case .freeze:
+									self.fund.frozen = !self.fund.frozen
+								case .unSubBudget:
+									self.fund.subBudget = nil
 							}
-							case .copy:
-								let newFund = TimeFund(context: self.managedObjectContext)
-								newFund.name = self.fund.name
-								newFund.order = self.fund.order
-								newFund.budget = self.budgetStack.getTopBudget()
-								newFund.subBudget = self.fund.subBudget
-							case .edit:
-								errorLog("Impossible")
-							case .delete:
-								self.managedObjectContext.delete(self.fund)
-							case .qspend:
-								self.fund.adjustBalance(-1)
-							case .freeze:
-								self.fund.frozen = !self.fund.frozen
-						}
-						saveData(self.managedObjectContext)
-					}, label: {
-						FundRowLabel(fund: self.fund)
-					})
+							saveData(self.managedObjectContext)
+						}, label: {
+							FundRowLabel(fund: self.fund)
+						})
+					}
 				}
 			}
 		}

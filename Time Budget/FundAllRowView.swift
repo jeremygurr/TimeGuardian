@@ -21,10 +21,6 @@ struct FundAllRowView: View {
 		Section() {
 			Button(action: {
 				switch self.action {
-					case .view:
-						debugLog("Can't view all")
-					case .spend:
-						debugLog("Can't spend all")
 					case .reset:
 						for fund in self.allFunds {
 							fund.resetBalance()
@@ -33,12 +29,6 @@ struct FundAllRowView: View {
 						for fund in self.allFunds {
 							fund.adjustBalance(1)
 					}
-					case .subBudget:
-						debugLog("Can't create subBudget on all")
-					case .copy:
-						debugLog("Can't copy all")
-					case .edit:
-						debugLog("Can't edit all")
 					case .delete:
 						for fund in self.allFunds {
 							self.managedObjectContext.delete(fund)
@@ -51,6 +41,8 @@ struct FundAllRowView: View {
 						for fund in self.allFunds {
 							fund.frozen = !fund.frozen
 					}
+					default:
+						debugLog("Impossible")
 				}
 				saveData(self.managedObjectContext)
 			}, label: {
@@ -79,10 +71,6 @@ struct FundAllSpentRowView: View {
 		Section() {
 			Button(action: {
 				switch self.action {
-					case .view:
-						debugLog("Can't view all")
-					case .spend:
-						debugLog("Can't spend all")
 					case .reset:
 						for fund in self.spentFunds {
 							fund.resetBalance()
@@ -91,12 +79,6 @@ struct FundAllSpentRowView: View {
 						for fund in self.spentFunds {
 							fund.adjustBalance(1)
 					}
-					case .subBudget:
-						debugLog("Can't create subBudget on all")
-					case .copy:
-						debugLog("Can't copy all")
-					case .edit:
-						debugLog("Can't edit all")
 					case .delete:
 						for fund in self.spentFunds {
 							self.managedObjectContext.delete(fund)
@@ -109,6 +91,8 @@ struct FundAllSpentRowView: View {
 						for fund in self.spentFunds {
 							fund.frozen = !fund.frozen
 					}
+					default:
+						debugLog("Impossible")
 				}
 				saveData(self.managedObjectContext)
 			}, label: {

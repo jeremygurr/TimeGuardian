@@ -2,21 +2,24 @@ import Foundation
 import Combine
 import SwiftUI
 
-struct SegmentedPickerElementView<Content, T>: Hashable, View where Content: View, T: Stringable {
+struct SegmentedPickerElementView<T>: Hashable, View where T: Buttonable {
 
 	let id: T
 	let row: Int
 	let col: Int
-	let content: () -> Content
-	
-	@inlinable init(id: T, row: Int, col: Int, @ViewBuilder content: @escaping () -> Content) {
-		self.id = id
-		self.row = row
-		self.col = col
-		self.content = content
-	}
-	
-	static func == (lhs: SegmentedPickerElementView<Content, T>, rhs: SegmentedPickerElementView<Content, T>) -> Bool {
+	let content: String
+	let longContent: String
+	@Binding var longPressState: [[Bool]]
+
+//	@inlinable init(id: T, row: Int, col: Int, content: String, longContent: String, longPressState: ) {
+//		self.id = id
+//		self.row = row
+//		self.col = col
+//		self.content = content
+//		self.longContent = longContent
+//	}
+//
+	static func == (lhs: SegmentedPickerElementView<T>, rhs: SegmentedPickerElementView<T>) -> Bool {
 		return lhs.id == rhs.id
 	}
 	
@@ -25,16 +28,27 @@ struct SegmentedPickerElementView<Content, T>: Hashable, View where Content: Vie
 	}
 	
 	var body: some View {
-		GeometryReader { proxy in
-			self.content()
+		VStack {
+			if self.longPressState[self.row][self.col] {
+				GeometryReader { proxy in
+					Text(self.longContent)
+						.font(.body)
+				}
+			} else {
+				GeometryReader { proxy in
+					Text(self.content)
+						.font(.body)
+				}
+			}
 		}
 	}
 }
 
-struct MultiRowSegmentedPickerView<T: Stringable>: View {
+struct MultiRowSegmentedPickerView<T: Buttonable>: View {
 	@Environment (\.colorScheme) var colorScheme: ColorScheme
 	@State var elementWidth: CGFloat = 0
 	@Binding private var selectedIndex: T
+	@EnvironmentObject var budgetStack: BudgetStack
 
 	@State private var width: CGFloat = 380
 	@State private var height: CGFloat = 84
@@ -44,9 +58,8 @@ struct MultiRowSegmentedPickerView<T: Stringable>: View {
 	private let selectorInset: CGFloat = 5
 	private let backgroundColor = Color("ActionButtonBackground")
 	
-	private let choices: [[T]]
-	private let choicesFlat: [T]
-	private let elements: [[SegmentedPickerElementView<Text, T>]]
+	private var elements: [[SegmentedPickerElementView<T>]] = []
+	@State private var longPressState: [[Bool]]
 	
 	private let onChange: (_ newValue: T) -> Void
 	
@@ -55,26 +68,42 @@ struct MultiRowSegmentedPickerView<T: Stringable>: View {
 		selectedIndex: Binding<T>,
 		onChange: @escaping (_ newValue: T) -> Void = { _ in }
 	) {
-		self.choices = choices
 		self.onChange = onChange
 		_selectedIndex = selectedIndex
-		var newElements: [[SegmentedPickerElementView<Text, T>]] = []
-		var newChoicesFlat: [T] = []
+
+		var newLongPressState: [[Bool]] = []
+		for r in choices.indices {
+			var rowLongPress: [Bool] = []
+			let rowChoices = choices[r]
+			for _ in rowChoices.indices {
+				rowLongPress.append(false)
+			}
+			newLongPressState.append(rowLongPress)
+		}
+		_longPressState = State(initialValue: newLongPressState)
+
+		var newElements: [[SegmentedPickerElementView<T>]] = []
 		for r in choices.indices {
 			let rowChoices = choices[r]
-			var rowElements = [SegmentedPickerElementView<Text, T>]()
+			var rowElements = [SegmentedPickerElementView<T>]()
+			var rowLongPress: [Bool] = []
 			for c in rowChoices.indices {
 				let choice = rowChoices[c]
-				rowElements.append(SegmentedPickerElementView(id: choice, row: r, col: c) {
-					Text(choice.asString)
-						.font(.body)
-				})
-				newChoicesFlat.append(choice)
+				rowElements.append(
+					SegmentedPickerElementView(
+						id: choice,
+						row: r,
+						col: c,
+						content: choice.asString,
+						longContent: choice.longPressVersion?.asString ?? "",
+						longPressState: self.$longPressState
+					)
+				)
+				rowLongPress.append(false)
 			}
 			newElements.append(rowElements)
 		}
 		self.elements = newElements
-		self.choicesFlat = newChoicesFlat
 	}
 	
 	@State var selectionIndex: CGFloat = 0
@@ -82,7 +111,22 @@ struct MultiRowSegmentedPickerView<T: Stringable>: View {
 	@State var selectionOffsetY: CGFloat = 0
 	@State var selectionWidth: CGFloat = 0
 	@State var selectionHeight: CGFloat = 0
-	func updateSelectionOffset(id: T, row: Int, col: Int, force: Bool = false) {
+	func updateSelectionOffset(element: SegmentedPickerElementView<T>, force: Bool = false, longPress: Bool) {
+		let id: T
+		let row = element.row
+		let col = element.col
+		if longPress && element.id.longPressVersion != nil {
+			id = element.id.longPressVersion!
+			longPressState[row][col] = true
+		} else {
+			id = element.id
+			longPressState[row][col] = false
+		}
+		
+		withAnimation(.none) {
+			budgetStack.titleOverride = id.description
+		}
+
 		if id != selectedIndex || force {
 			selectedIndex = id
 			selectionWidth = self.width/CGFloat(self.elements[row].count)
@@ -106,9 +150,18 @@ struct MultiRowSegmentedPickerView<T: Stringable>: View {
 										.onTapGesture(
 											perform: {
 												withAnimation {
-													self.updateSelectionOffset(id: item.id, row: item.row, col: item.col)
+													self.updateSelectionOffset(element: item, longPress: false)
 												}
 										}
+									)
+									.onLongPressGesture(
+										minimumDuration: longPressDuration,
+										maximumDistance: longPressMaxDrift,
+										perform: {
+											withAnimation {
+												self.updateSelectionOffset(element: item, longPress: true)
+											}
+									}
 									)
 								}
 							}
@@ -126,24 +179,16 @@ struct MultiRowSegmentedPickerView<T: Stringable>: View {
 				}
 				.background(self.backgroundColor)
 				.cornerRadius(self.cornerRadius)
-//				.padding()
-				
-//				Text(
-//					"selected element: "
-//						+ String(self.selectedIndex.asInt)
-//						+ " -> "
-//						+ self.selectedIndex.asString
-//				)
 			}
 			.onAppear(
 				perform: {
 					self.width = geo.size.width
 					self.height = geo.size.height
-					self.updateSelectionOffset(id: self.choicesFlat[0], row: 0, col: 0, force: true)
+					self.updateSelectionOffset(element: self.elements[0][0], force: true, longPress: false)
 			}
 			)
 		}
-		.frame(maxWidth: .infinity, maxHeight: CGFloat(60 * self.choices.count), alignment: .top)
+		.frame(maxWidth: .infinity, maxHeight: CGFloat(60 * self.elements.count), alignment: .top)
 	}
 }
 

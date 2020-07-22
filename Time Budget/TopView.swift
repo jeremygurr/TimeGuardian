@@ -12,12 +12,11 @@ struct TopView: View {
 	@EnvironmentObject var budgetStack: BudgetStack
 	@Environment(\.editMode) var editMode
 	@Environment(\.managedObjectContext) var managedObjectContext
-	@State var isPressingBack = false
 	
 	func getTitle() -> String {
 		var title: String
-		if isPressingBack {
-			title = "to Top"
+		if budgetStack.titleOverride != nil {
+			title = budgetStack.titleOverride!
 		} else {
 			title = budgetStack.getTopBudget().name
 		}
@@ -55,7 +54,11 @@ struct TopView: View {
 							.onLongPressGesture(
 								minimumDuration: longPressDuration, maximumDistance: longPressMaxDrift,
 								pressing: {
-									self.isPressingBack = $0
+									if $0 {
+										self.budgetStack.titleOverride = "to Top"
+									} else {
+										self.budgetStack.titleOverride = nil
+									}
 							}, perform: {
 								self.budgetStack.toFirstBudget()
 								self.editMode?.wrappedValue = .inactive
