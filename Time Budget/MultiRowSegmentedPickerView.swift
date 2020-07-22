@@ -57,8 +57,11 @@ struct MultiRowSegmentedPickerView<T: Buttonable>: View {
 	private let selectorStrokeWidth: CGFloat = 4
 	private let selectorInset: CGFloat = 5
 	private let backgroundColor = Color("ActionButtonBackground")
-	
+
+	// delete this
 	private var elements: [[SegmentedPickerElementView<T>]] = []
+	
+	private let choices: [[T]]
 	@State private var longPressState: [[Bool]]
 	
 	private let onChange: (_ newValue: T) -> Void
@@ -68,6 +71,7 @@ struct MultiRowSegmentedPickerView<T: Buttonable>: View {
 		selectedIndex: Binding<T>,
 		onChange: @escaping (_ newValue: T) -> Void = { _ in }
 	) {
+		self.choices = choices
 		self.onChange = onChange
 		_selectedIndex = selectedIndex
 
@@ -111,29 +115,35 @@ struct MultiRowSegmentedPickerView<T: Buttonable>: View {
 	@State var selectionOffsetY: CGFloat = 0
 	@State var selectionWidth: CGFloat = 0
 	@State var selectionHeight: CGFloat = 0
-	func updateSelectionOffset(element: SegmentedPickerElementView<T>, force: Bool = false, longPress: Bool) {
-		let id: T
-		let row = element.row
-		let col = element.col
-		if longPress && element.id.longPressVersion != nil {
-			id = element.id.longPressVersion!
+	func updateSelectionOffset(item: T, row: Int, col: Int, force: Bool = false, longPress: Bool) {
+		
+		for r in 0 ..< choices.count {
+			let choiceRow = choices[r]
+			for c in 0 ..< choiceRow.count {
+				longPressState[r][c] = false
+			}
+		}
+		
+		var newItem = item
+		if longPress && item.longPressVersion != nil {
+			newItem = item.longPressVersion!
 			longPressState[row][col] = true
 		} else {
-			id = element.id
+			newItem = item
 			longPressState[row][col] = false
 		}
 		
 		withAnimation(.none) {
-			budgetStack.actionDetail = id.longDescription
+			budgetStack.actionDetail = newItem.longDescription
 		}
 
-		if id != selectedIndex || force {
-			selectedIndex = id
-			selectionWidth = self.width/CGFloat(self.elements[row].count)
-			selectionHeight = self.height/CGFloat(self.elements.count)
+		if newItem != selectedIndex || force {
+			selectedIndex = newItem
+			selectionWidth = self.width/CGFloat(self.choices[row].count)
+			selectionHeight = self.height/CGFloat(self.choices.count)
 			selectionOffsetX = CGFloat((selectionWidth * CGFloat(col)) + selectionWidth/2.0)
 			selectionOffsetY = CGFloat((selectionHeight * CGFloat(row)) + selectionHeight/2.0)
-			onChange(id)
+			onChange(newItem)
 		}
 	}
 	
@@ -141,38 +151,7 @@ struct MultiRowSegmentedPickerView<T: Buttonable>: View {
 		GeometryReader { geo in
 			VStack {
 				ZStack(alignment: .leading) {
-					VStack {
-						ForEach(self.elements, id: \.self) { row in
-							HStack(alignment: .center, spacing: 0) {
-								ForEach(row, id: \.self) { item in
-									(item as SegmentedPickerElementView)
-										.contentShape(Rectangle())
-										.onTapGesture(
-											perform: {
-												withAnimation {
-													self.updateSelectionOffset(element: item, longPress: false)
-												}
-										}
-									)
-									.onLongPressGesture(
-										minimumDuration: longPressDuration,
-										maximumDistance: longPressMaxDrift,
-										pressing: { down in
-											withAnimation(.none) {
-												if down {
-													self.budgetStack.actionDetail = item.id.longPressVersion?.longDescription ?? item.id.longDescription
-												}
-											}
-									}, perform: {
-											withAnimation {
-												self.updateSelectionOffset(element: item, longPress: true)
-											}
-									}
-									)
-								}
-							}
-						}
-					}
+					self.elementsView
 					RoundedRectangle(cornerRadius: self.cornerRadius)
 						.stroke(Color.primary, lineWidth: self.selectorStrokeWidth)
 						.foregroundColor(Color.clear)
@@ -190,23 +169,84 @@ struct MultiRowSegmentedPickerView<T: Buttonable>: View {
 				perform: {
 					self.width = geo.size.width
 					self.height = geo.size.height
-					self.updateSelectionOffset(element: self.elements[0][0], force: true, longPress: false)
+					self.updateSelectionOffset(item: self.choices[0][0], row: 0, col: 0, force: true, longPress: false)
 			}
 			)
 		}
 		.frame(maxWidth: .infinity, maxHeight: CGFloat(60 * self.elements.count), alignment: .top)
 	}
+	
+	var elementsView: some View {
+		VStack {
+			ForEach(self.choices.indices) { row in
+				HStack(alignment: .center, spacing: 0) {
+					ForEach(self.choices[row].indices) { col in
+						self.elementView(item: self.choices[row][col], row: row, col: col)
+					}
+				}
+			}
+		}
+	}
+	
+	func elementView(item: T, row: Int, col: Int) -> some View {
+		VStack {
+			GeometryReader { proxy in
+				Text(
+					self.getButtonString(
+						item: item,
+						longPressState: self.longPressState[row][col]
+					)
+				)
+					.font(.body)
+					.contentShape(Rectangle())
+					.onTapGesture(
+						perform: {
+							withAnimation {
+								self.updateSelectionOffset(item: item, row: row, col: col, longPress: false)
+							}
+					}
+				)
+					.onLongPressGesture(
+						minimumDuration: longPressDuration,
+						maximumDistance: longPressMaxDrift,
+						pressing: { down in
+							withAnimation(.none) {
+								if down {
+									self.budgetStack.actionDetail = item.longDescription
+								}
+							}
+					}, perform: {
+						withAnimation {
+							self.updateSelectionOffset(item: item, row: row, col: col, longPress: true)
+						}
+					}
+				)
+			}
+		}
+	}
+	
+	func getButtonString(item: T, longPressState: Bool) -> String {
+		if longPressState {
+			return item.longPressVersion?.asString ?? ""
+		} else {
+			return item.asString
+		}
+	}
+	
 }
 
 struct SegmentedPickerView_Previews: PreviewProvider {
 	@State static var selectedAction: FundAction = .spend
+	static var budgetStack = BudgetStack()
 	static var previews: some View {
 		Group {
 			MultiRowSegmentedPickerView(choices: FundAction.allCasesInRows, selectedIndex: $selectedAction)
 				.environment(\.colorScheme, .light)
+				.environmentObject(budgetStack)
 			
 			MultiRowSegmentedPickerView(choices: FundAction.allCasesInRows, selectedIndex: $selectedAction)
 				.environment(\.colorScheme, .dark)
+				.environmentObject(budgetStack)
 		}
 	}
 }

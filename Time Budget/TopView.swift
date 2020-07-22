@@ -36,10 +36,12 @@ struct TopView: View {
 							.padding()
 							.contentShape(Rectangle())
 							.onTapGesture {
-								self.budgetStack.removeLastBudget()
-								self.budgetStack.removeLastFund()
-								self.editMode?.wrappedValue = .inactive
-								self.managedObjectContext.rollback()
+								withAnimation(.none) {
+									self.budgetStack.removeLastBudget()
+									self.budgetStack.removeLastFund()
+									self.editMode?.wrappedValue = .inactive
+									self.managedObjectContext.rollback()
+								}
 						}
 							.onLongPressGesture(
 								minimumDuration: longPressDuration, maximumDistance: longPressMaxDrift,
@@ -50,9 +52,11 @@ struct TopView: View {
 										self.budgetStack.titleOverride = nil
 									}
 							}, perform: {
-								self.budgetStack.toFirstBudget()
-								self.editMode?.wrappedValue = .inactive
-								self.managedObjectContext.rollback()
+								withAnimation(.none) {
+									self.budgetStack.toFirstBudget()
+									self.editMode?.wrappedValue = .inactive
+									self.managedObjectContext.rollback()
+								}
 							}
 						)
 						Text("\(budgetStack.getTitle())")
