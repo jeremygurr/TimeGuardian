@@ -133,7 +133,7 @@ struct FundRowLabel: View {
 				.frame(width: 30, alignment: .trailing)
 			Divider()
 			Text("\(percentage)")
-				.frame(width: 40, alignment: .trailing)
+				.frame(width: 50, alignment: .trailing)
 			Divider()
 			Text(fund.name)
 				.frame(minWidth: 20, maxWidth: .infinity, alignment: .leading)

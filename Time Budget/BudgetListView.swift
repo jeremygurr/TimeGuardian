@@ -52,8 +52,12 @@ struct BudgetListSection: View {
 			BudgetRowView(budget: budget)
 		}.onDelete { indexSet in
 			withAnimation(.none) {
+				var toDelete: [TimeBudget] = []
 				for index in indexSet {
-					self.managedObjectContext.delete(self.budgets[index])
+					toDelete.append(self.budgets[index])
+				}
+				for budget in toDelete {
+					self.managedObjectContext.delete(budget)
 				}
 				saveData(self.managedObjectContext)
 			}
