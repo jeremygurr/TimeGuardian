@@ -59,9 +59,11 @@ struct TopView: View {
 								}
 							}
 						)
+						Spacer()
 						Text("\(budgetStack.getTitle())")
 							.font(Font.system(size: budgetStack.getBudgetNameFontSize()))
-							.frame(maxWidth: .infinity, alignment: .leading)
+							.padding(Edge.Set([.trailing]), 10)
+//							.frame(maxWidth: .infinity, alignment: .leading)
 					}
 					.frame(maxWidth: .infinity, alignment: .leading)
 					FundListView(budgetStack: self.budgetStack)
@@ -74,10 +76,10 @@ struct TopView: View {
 struct TopView_Previews: PreviewProvider {
 	static var previews: some View {
 		let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-//		let tdb = TestDataBuilder(context: context)
-//		tdb.createTestData()
+		let tdb = TestDataBuilder(context: context)
+		tdb.createTestData()
 		let budgetStack = BudgetStack()
-//		budgetStack.push(budget: tdb.budgets.first!)
+		budgetStack.push(budget: tdb.budgets.first!)
 		return TopView()
 			.environment(\.managedObjectContext, context)
 			.environmentObject(budgetStack)

@@ -51,17 +51,21 @@ struct BudgetListSection: View {
 		ForEach(budgets, id: \.self) { budget in
 			BudgetRowView(budget: budget)
 		}.onDelete { indexSet in
-			for index in indexSet {
-				self.managedObjectContext.delete(self.budgets[index])
+			withAnimation(.none) {
+				for index in indexSet {
+					self.managedObjectContext.delete(self.budgets[index])
+				}
+				saveData(self.managedObjectContext)
 			}
-			saveData(self.managedObjectContext)
 		}.onMove() { (source: IndexSet, destination: Int) in
-			var newBudgets: [TimeBudget] = self.budgets.map() { $0 }
-			newBudgets.move(fromOffsets: source, toOffset: destination)
-			for (index, budget) in newBudgets.enumerated() {
-				budget.order = Int16(index)
+			withAnimation(.none) {
+				var newBudgets: [TimeBudget] = self.budgets.map() { $0 }
+				newBudgets.move(fromOffsets: source, toOffset: destination)
+				for (index, budget) in newBudgets.enumerated() {
+					budget.order = Int16(index)
+				}
+				saveData(self.managedObjectContext)
 			}
-			saveData(self.managedObjectContext)
 		}
 	}
 	

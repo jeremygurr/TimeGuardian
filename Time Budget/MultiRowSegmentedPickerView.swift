@@ -145,6 +145,7 @@ struct MultiRowSegmentedPickerView<T: Buttonable>: View {
 			selectionOffsetY = CGFloat((selectionHeight * CGFloat(row)) + selectionHeight/2.0)
 			onChange(newItem)
 		}
+		
 	}
 	
 	var body: some View {
