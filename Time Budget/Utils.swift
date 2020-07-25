@@ -34,6 +34,8 @@ func errorLog(_ message: String) {
 }
 
 func saveData(_ managedObjectContext: NSManagedObjectContext) {
+	debugLog("saveData")
+
 	managedObjectContext.performAndWait {
 		do {
 			try managedObjectContext.save()

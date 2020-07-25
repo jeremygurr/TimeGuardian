@@ -90,6 +90,8 @@ struct FundSectionAvailableView: View {
 			ForEach(availableFunds, id: \.self) { fund in
 				FundRowView(action: self.$action, fund: fund, funds: self.allFunds)
 			}.onMove() { (source: IndexSet, destination: Int) in
+				debugLog("FundListView.onMove")
+
 				var newFunds: [TimeFund] = self.availableFunds.map() { $0 }
 				newFunds.move(fromOffsets: source, toOffset: destination)
 				for (index, fund) in newFunds.enumerated() {

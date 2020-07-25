@@ -25,13 +25,13 @@ struct BudgetListView: View {
 	var body: some View {
 		List {
 			Section(header: Text("Top Level Budgets")) {
-				if self.editMode?.wrappedValue == .inactive {
+//				if self.editMode?.wrappedValue == .inactive {
 					NewBudgetRowView(newBudgetName: $newBudgetTop, budgets: mainBudgets, posOfNewBudget: .before)
-				}
+//				}
 				BudgetListSection(budgets: self.mainBudgets)
-				if self.editMode?.wrappedValue == .inactive {
+//				if self.editMode?.wrappedValue == .inactive {
 					NewBudgetRowView(newBudgetName: $newBudgetBottom, budgets: mainBudgets, posOfNewBudget: .after)
-				}
+//				}
 			}
 			Section(header: Text("Sub Budgets")) {
 				BudgetListSection(budgets: self.subBudgets)
@@ -51,6 +51,7 @@ struct BudgetListSection: View {
 		ForEach(budgets, id: \.self) { budget in
 			BudgetRowView(budget: budget)
 		}.onDelete { indexSet in
+			debugLog("BudgetListView.onDelete")
 			withAnimation(.none) {
 				var toDelete: [TimeBudget] = []
 				for index in indexSet {
@@ -62,6 +63,7 @@ struct BudgetListSection: View {
 				saveData(self.managedObjectContext)
 			}
 		}.onMove() { (source: IndexSet, destination: Int) in
+			debugLog("BudgetListView.onMove")
 			withAnimation(.none) {
 				var newBudgets: [TimeBudget] = self.budgets.map() { $0 }
 				newBudgets.move(fromOffsets: source, toOffset: destination)
