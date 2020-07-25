@@ -25,13 +25,11 @@ struct BudgetListView: View {
 	var body: some View {
 		List {
 			Section(header: Text("Top Level Budgets")) {
-//				if self.editMode?.wrappedValue == .inactive {
-					NewBudgetRowView(newBudgetName: $newBudgetTop, budgets: mainBudgets, posOfNewBudget: .before)
-//				}
+				NewBudgetRowView(newBudgetName: $newBudgetTop, budgets: mainBudgets, posOfNewBudget: .before)
+					.disabled(self.editMode?.wrappedValue == .active)
 				BudgetListSection(budgets: self.mainBudgets)
-//				if self.editMode?.wrappedValue == .inactive {
-					NewBudgetRowView(newBudgetName: $newBudgetBottom, budgets: mainBudgets, posOfNewBudget: .after)
-//				}
+				NewBudgetRowView(newBudgetName: $newBudgetBottom, budgets: mainBudgets, posOfNewBudget: .after)
+					.disabled(self.editMode?.wrappedValue == .active)
 			}
 			Section(header: Text("Sub Budgets")) {
 				BudgetListSection(budgets: self.subBudgets)
