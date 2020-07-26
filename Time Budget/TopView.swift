@@ -11,12 +11,27 @@ import SwiftUI
 struct TopView: View {
 	@EnvironmentObject var budgetStack: BudgetStack
 	
-	var body: some View {
+	private func budgetFundView() -> some View {
 		VStack {
 			if self.budgetStack.isEmpty() {
 				BudgetListViewWindow()
 			} else {
 				FundListViewWindow()
+			}
+		}
+	}
+	
+	var body: some View {
+		TabView {
+			budgetFundView()
+				.tabItem {
+					Image(systemName: "list.bullet")
+					Text("Budget")
+			}
+			Text("Calender")
+				.tabItem {
+					Image(systemName: "calendar")
+					Text("Calender")
 			}
 		}
 	}
@@ -38,20 +53,6 @@ struct BudgetListViewWindow: View {
 		}
 	}
 }
-
-struct TopView_Previews: PreviewProvider {
-	static var previews: some View {
-		let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-		let tdb = TestDataBuilder(context: context)
-		tdb.createTestData()
-		//		let budgetStack = BudgetStack()
-		//		budgetStack.push(budget: tdb.budgets.first!)
-		return TopView()
-			.environment(\.managedObjectContext, context)
-		//			.environmentObject(budgetStack)
-	}
-}
-
 
 struct FundListViewWindow: View {
 	@EnvironmentObject var budgetStack: BudgetStack
@@ -98,5 +99,22 @@ struct FundListViewWindow: View {
 			.frame(maxWidth: .infinity, alignment: .leading)
 			FundListView(budgetStack: self.budgetStack)
 		}
+	}
+}
+
+enum TopViewMode {
+	case budgetView, dayView
+}
+
+struct TopView_Previews: PreviewProvider {
+	static var previews: some View {
+		let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+		let tdb = TestDataBuilder(context: context)
+		tdb.createTestData()
+		let budgetStack = BudgetStack()
+		//		budgetStack.push(budget: tdb.budgets.first!)
+		return TopView()
+			.environment(\.managedObjectContext, context)
+			.environmentObject(budgetStack)
 	}
 }
