@@ -54,3 +54,10 @@ extension UIApplication {
 			.endEditing(force)
 	}
 }
+
+func getStartOfDay(of date: Date = Date()) -> Date {
+	let cal = Calendar(identifier: .gregorian)
+	let startOfDay = cal.startOfDay(for: date)
+	return startOfDay
+}
+

@@ -68,7 +68,7 @@ struct FundRowView: View {
 						Button(action: {
 							switch self.action {
 								case .view:
-									debugLog("Viewing doesn't do anything here")
+									self.budgetStack.lastSelectedFund = self.fund
 								case .spend:
 									if self.fund.frozen {
 										self.fund.adjustBalance(1)
@@ -105,6 +105,7 @@ struct FundRowView: View {
 									self.managedObjectContext.delete(self.fund)
 								case .qspend:
 									self.fund.adjustBalance(-1)
+									self.budgetStack.lastSelectedFund = self.fund
 								case .freeze:
 									self.fund.frozen = !self.fund.frozen
 								case .unSubBudget:

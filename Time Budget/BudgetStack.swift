@@ -10,15 +10,19 @@ import Foundation
 import SwiftUI
 
 class BudgetStack: ObservableObject {
+	
 	@Published private var budgetStack: [TimeBudget] = []
 	// fundStack will typically be one element shorter than budgetStack,
 	//   unless budgetStack is empty
 	@Published private var fundStack: [TimeFund] = []
+	@Published var lastSelectedFund: TimeFund? = nil
+	
 	var titleOverride: String? = nil {
 		willSet {
 			objectWillChange.send()
 		}
 	}
+	
 	var actionDetail: String = "No action selected" {
 		willSet {
 			objectWillChange.send()

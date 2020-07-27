@@ -26,6 +26,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		let contentView = TopView()
 			.environment(\.managedObjectContext, context)
 			.environmentObject(BudgetStack())
+			.environmentObject(CalendarSettings())
 		
 		// Use a UIHostingController as window root view controller.
 		if let windowScene = scene as? UIWindowScene {

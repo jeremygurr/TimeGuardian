@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="16119" systemVersion="19F101" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
-    <entity name="Expense" representedClassName="Expense" syncable="YES">
-        <attribute name="timeSlot" attributeType="Integer 16" minValueString="0" usesScalarValueType="YES"/>
-        <attribute name="when" attributeType="Date" usesScalarValueType="NO"/>
-        <relationship name="fund" maxCount="1" deletionRule="Nullify" destinationEntity="TimeFund"/>
-    </entity>
     <entity name="TimeBudget" representedClassName="TimeBudget" syncable="YES">
         <attribute name="name" attributeType="String"/>
         <attribute name="order" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <relationship name="funds" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="TimeFund" inverseName="budget" inverseEntity="TimeFund"/>
         <relationship name="superFund" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="TimeFund" inverseName="subBudget" inverseEntity="TimeFund"/>
+    </entity>
+    <entity name="TimeExpense" representedClassName="TimeExpense" syncable="YES">
+        <attribute name="path" optional="YES" attributeType="String"/>
+        <attribute name="timeSlot" attributeType="Integer 16" minValueString="0" usesScalarValueType="YES"/>
+        <attribute name="when" attributeType="Date" usesScalarValueType="NO"/>
+        <relationship name="fund" maxCount="1" deletionRule="Nullify" destinationEntity="TimeFund" inverseName="expenses" inverseEntity="TimeFund"/>
     </entity>
     <entity name="TimeFund" representedClassName="TimeFund" syncable="YES">
         <attribute name="balance" attributeType="Float" defaultValueString="1" usesScalarValueType="YES"/>
@@ -17,11 +18,12 @@
         <attribute name="name" attributeType="String"/>
         <attribute name="order" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <relationship name="budget" maxCount="1" deletionRule="Nullify" destinationEntity="TimeBudget" inverseName="funds" inverseEntity="TimeBudget"/>
+        <relationship name="expenses" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="TimeExpense" inverseName="fund" inverseEntity="TimeExpense"/>
         <relationship name="subBudget" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TimeBudget" inverseName="superFund" inverseEntity="TimeBudget"/>
     </entity>
     <elements>
         <element name="TimeBudget" positionX="-63" positionY="-18" width="128" height="103"/>
-        <element name="TimeFund" positionX="272.59765625" positionY="-15.421875" width="128" height="133"/>
-        <element name="Expense" positionX="108" positionY="36" width="128" height="88"/>
+        <element name="TimeFund" positionX="272.59765625" positionY="-15.421875" width="128" height="148"/>
+        <element name="TimeExpense" positionX="108" positionY="36" width="128" height="103"/>
     </elements>
 </model>

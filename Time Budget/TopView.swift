@@ -10,6 +10,7 @@ import SwiftUI
 
 struct TopView: View {
 	@EnvironmentObject var budgetStack: BudgetStack
+	@EnvironmentObject var calendarSettings: CalendarSettings
 	
 	private func budgetFundView() -> some View {
 		VStack {
@@ -26,12 +27,14 @@ struct TopView: View {
 			budgetFundView()
 				.tabItem {
 					Image(systemName: "list.bullet")
+						.imageScale(.large)
 					Text("Budget")
 			}
-			Text("Calender")
+			CalendarView()
 				.tabItem {
 					Image(systemName: "calendar")
-					Text("Calender")
+						.imageScale(.large)
+					Text("Day")
 			}
 		}
 	}
@@ -100,10 +103,6 @@ struct FundListViewWindow: View {
 			FundListView(budgetStack: self.budgetStack)
 		}
 	}
-}
-
-enum TopViewMode {
-	case budgetView, dayView
 }
 
 struct TopView_Previews: PreviewProvider {
