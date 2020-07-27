@@ -100,7 +100,9 @@ struct FundListViewWindow: View {
 				//							.frame(maxWidth: .infinity, alignment: .leading)
 			}
 			.frame(maxWidth: .infinity, alignment: .leading)
-			FundListView(budgetStack: self.budgetStack)
+			if self.budgetStack.hasTopBudget() {
+				FundListView(budgetStack: self.budgetStack)
+			}
 		}
 	}
 }

@@ -75,25 +75,38 @@ public class TimeFund: NSManagedObject, Identifiable {
 		return request
 	}
 	
+	@nonobjc public class func fetchRequest(budgetName: String, fundName: String) -> NSFetchRequest<TimeFund> {
+		let request = NSFetchRequest<TimeFund>(entityName: "TimeFund")
+		request.sortDescriptors = [ NSSortDescriptor(keyPath: \TimeFund.order, ascending: true) ]
+		request.predicate = NSPredicate(format: "name == %@ AND budget.name == %@", fundName, budgetName)
+		return request
+	}
+	
 	func deepSpend(budgetStack: BudgetStack) {
 		adjustBalance(-1)
 		budget.earnIfSpent()
 		for f in budgetStack.getFunds().reversed() {
 			f.adjustBalance(-1)
-			f.budget.earnIfSpent()
+			if !f.frozen {
+				f.budget.earnIfSpent()
+			}
 		}
 	}
 	
 	func adjustBalance(_ amount: Float) {
-		self.balance += amount
-		if self.balance < -0.5 && amount < 0 {
-			// charge interest on time debt
-			self.balance *= 1.1
+		if !frozen {
+			balance += amount
+			if balance < -0.5 && amount < 0 {
+				// charge interest on time debt
+				balance *= 1.1
+			}
 		}
 	}
 	
 	func resetBalance() {
-		self.balance = 1
+		if !frozen {
+			balance = 1
+		}
 	}
 	
 	public var roundedBalance: Int {
@@ -116,5 +129,4 @@ public class TimeFund: NSManagedObject, Identifiable {
 		return result
 	}
 	
-
 }

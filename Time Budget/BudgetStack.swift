@@ -76,6 +76,11 @@ class BudgetStack: ObservableObject {
 		budgetStack = s
 	}
 	
+	func hasTopBudget() -> Bool {
+		return budgetStack.last != nil
+	}
+	
+  // should never get called if the stack is empty
 	func getTopBudget() -> TimeBudget {
 		return budgetStack.last!
 	}

@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import CoreData
 import Introspect
 
 struct CalendarView: View {
@@ -46,7 +47,7 @@ struct ExpenseRowView: View {
 	@Environment(\.managedObjectContext) var managedObjectContext
 
 	var body: some View {
-		ForEach(0 ..< calendarSettings.periodsPerDay) { period in
+		ForEach(0 ..< calendarSettings.periodsPerDay, id: \.self) { period in
 			HStack {
 				Text("\(toTimeString(period, calendarSettings: self.calendarSettings))")
 				Spacer()
@@ -57,27 +58,58 @@ struct ExpenseRowView: View {
 			.background(colorOfRow(period, calendarSettings: self.calendarSettings))
 			.onTapGesture {
 				if let existingExpense = getExpenseFor(period, todaysExpenses: self.todaysExpenses) {
-					self.managedObjectContext.delete(existingExpense)
-					saveData(self.managedObjectContext)
+					self.removeExpense(existingExpense: existingExpense)
 				} else {
-					if let fund = self.budgetStack.lastSelectedFund {
-						let expense = TimeExpense(context: self.managedObjectContext)
-						expense.fund = fund
-						expense.timeSlot = Int16(period)
-						var pathString = ""
-						let space : Character = " "
-						for f in self.budgetStack.getFunds() {
-							if pathString.count > 0 {
-								pathString.append(space)
-							}
-							pathString.append(contentsOf: "\(f.id)")
-						}
-						expense.path = pathString
-						expense.when = getStartOfDay()
-						saveData(self.managedObjectContext)
-					}
+					self.addExpense(period: period)
 				}
 			}
+		}
+	}
+	
+	func removeExpense(existingExpense: TimeExpense) {
+		existingExpense.fund.adjustBalance(1)
+		var path = existingExpense.path.split(separator: space)
+		path.reverse()
+		for i in 0 ..< path.count - 1 {
+			
+			let fundName = String(path[i])
+			let budgetName = String(path[i+1])
+			
+			let request = TimeFund.fetchRequest(budgetName: budgetName, fundName: fundName)
+			
+			do {
+				let funds = try self.managedObjectContext.fetch(request)
+				if let fund = funds.first {
+					fund.adjustBalance(1)
+				} else {
+					errorLog("Missing fund: budgetName = \(budgetName), fundName = \(fundName)")
+				}
+			} catch {
+				errorLog("Error fetching fund: budgetName = \(budgetName), fundName = \(fundName), \(error)")
+			}
+			
+		}
+		self.managedObjectContext.delete(existingExpense)
+		saveData(self.managedObjectContext)
+	}
+	
+	func addExpense(period: Int) {
+		if let fund = self.budgetStack.lastSelectedFund {
+			let expense = TimeExpense(context: self.managedObjectContext)
+			expense.fund = fund
+			expense.timeSlot = Int16(period)
+			var pathString = ""
+			for b in self.budgetStack.getBudgets() {
+				if pathString.count > 0 {
+					pathString.append(space)
+				}
+				pathString.append(contentsOf: "\(b.name)")
+			}
+			expense.path = pathString
+			debugLog("Recorded path = '\(pathString)'")
+			expense.when = getStartOfDay()
+			fund.deepSpend(budgetStack: self.budgetStack)
+			saveData(self.managedObjectContext)
 		}
 	}
 }
@@ -135,3 +167,5 @@ struct CalendarView_Previews: PreviewProvider {
 			.environmentObject(calendarSettings)
 	}
 }
+
+let space : Character = " "

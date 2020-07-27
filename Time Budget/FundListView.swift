@@ -145,7 +145,3 @@ struct FundListView_Previews: PreviewProvider {
 //			.environment(\.colorScheme, .dark)
 	}
 }
-
-
-
-

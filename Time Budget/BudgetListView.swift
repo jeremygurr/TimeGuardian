@@ -151,28 +151,41 @@ struct NewBudgetRowView: View {
 		self.newBudgetName = self.newBudgetName.trimmingCharacters(in: .whitespacesAndNewlines)
 		
 		if self.newBudgetName.count > 0 {
-			let budget = TimeBudget(context: self.managedObjectContext)
-			budget.name = self.newBudgetName
-			var index = 0
-			
-			if self.posOfNewBudget == .before {
-				budget.order = 0
-				index += 1
+			let request = TimeBudget.fetchRequest(name: self.newBudgetName)
+			do {
+				let results: [TimeBudget] = try managedObjectContext.fetch(request)
+				if results.first != nil {
+					// don't create a new budget with the same name
+					self.newBudgetName = ""
+					return
+				}
+				
+				let budget = TimeBudget(context: self.managedObjectContext)
+				budget.name = self.newBudgetName
+				var index = 0
+				
+				if self.posOfNewBudget == .before {
+					budget.order = 0
+					index += 1
+				}
+				
+				for i in 0 ..< self.budgets.count {
+					self.budgets[i].order = Int16(i + index)
+				}
+				
+				index += self.budgets.count
+				
+				if self.posOfNewBudget == .after {
+					budget.order = Int16(index)
+					index += 1
+				}
+				
+				saveData(self.managedObjectContext)
+				self.newBudgetName = ""
+			} catch {
+				let nserror = error as NSError
+				fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
 			}
-			
-			for i in 0 ..< self.budgets.count {
-				self.budgets[i].order = Int16(i + index)
-			}
-			
-			index += self.budgets.count
-			
-			if self.posOfNewBudget == .after {
-				budget.order = Int16(index)
-				index += 1
-			}
-			
-			saveData(self.managedObjectContext)
-			self.newBudgetName = ""
 		}
 	}
 }

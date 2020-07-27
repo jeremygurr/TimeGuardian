@@ -69,10 +69,8 @@ struct FundRowView: View {
 							switch self.action {
 								case .view:
 									self.budgetStack.lastSelectedFund = self.fund
+									return
 								case .spend:
-									if self.fund.frozen {
-										self.fund.adjustBalance(1)
-									}
 									self.fund.deepSpend(budgetStack: self.budgetStack)
 									self.budgetStack.toFirstBudget()
 								case .reset:
@@ -105,7 +103,6 @@ struct FundRowView: View {
 									self.managedObjectContext.delete(self.fund)
 								case .qspend:
 									self.fund.adjustBalance(-1)
-									self.budgetStack.lastSelectedFund = self.fund
 								case .freeze:
 									self.fund.frozen = !self.fund.frozen
 								case .unSubBudget:
