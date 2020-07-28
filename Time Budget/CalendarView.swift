@@ -46,14 +46,14 @@ struct CalendarView: View {
 		.introspectTableView { tableView in
 			tableView.scrollToRow(
 				at: IndexPath(
-					item: self.getCalendarOffsetForCurrentTime(calendarSettings:  self.calendarSettings) + 1, section: 0)
+					item: self.getCalendarOffsetForCurrentTime() + 1, section: 0)
 				, at: .middle
 				, animated: false
 			)
 		}
 	}
 
-	func getCalendarOffsetForCurrentTime(calendarSettings: CalendarSettings) -> Int {
+	func getCalendarOffsetForCurrentTime() -> Int {
 		var result: Int = 0
 		for i in 0 ..< timeSlots.count {
 			let slot = timeSlots[i]
@@ -170,7 +170,7 @@ func colorOfRow(timeSlot: TimeSlot, calendarSettings: CalendarSettings) -> some 
 
 func toTimeString(timeSlot: TimeSlot) -> String {
 	let startOfDay = getStartOfDay()
-	let interval = timeSlot.timeIntervalFromBeginning * minutes
+	let interval = timeSlot.minutesFromBeginning * minutes
 	let currentPeriod = startOfDay.advanced(by: interval)
 	let timeFormat = DateFormatter()
 	timeFormat.dateFormat = "HH:mm"
@@ -181,7 +181,7 @@ func toTimeString(timeSlot: TimeSlot) -> String {
 
 func toDayString(timeSlot: TimeSlot) -> String {
 	let startOfDay = timeSlot.baseDate
-	let interval = timeSlot.timeIntervalFromBeginning * minutes
+	let interval = timeSlot.minutesFromBeginning * minutes
 	let currentPeriod = startOfDay.advanced(by: interval)
 	let timeFormat = DateFormatter()
 	timeFormat.dateFormat = "E"
