@@ -60,7 +60,7 @@ struct ExpenseRowView: View {
 				if let existingExpense = getExpenseFor(period, todaysExpenses: self.todaysExpenses) {
 					self.removeExpense(existingExpense: existingExpense)
 				} else {
-					self.addExpense(period: period)
+					addExpense(period: period, budgetStack: self.budgetStack, managedObjectContext: self.managedObjectContext)
 				}
 			}
 		}
@@ -92,25 +92,12 @@ struct ExpenseRowView: View {
 		self.managedObjectContext.delete(existingExpense)
 		saveData(self.managedObjectContext)
 	}
-	
-	func addExpense(period: Int) {
-		if let fund = self.budgetStack.lastSelectedFund {
-			let expense = TimeExpense(context: self.managedObjectContext)
-			expense.fund = fund
-			expense.timeSlot = Int16(period)
-			var pathString = ""
-			for b in self.budgetStack.getBudgets() {
-				if pathString.count > 0 {
-					pathString.append(space)
-				}
-				pathString.append(contentsOf: "\(b.name)")
-			}
-			expense.path = pathString
-			debugLog("Recorded path = '\(pathString)'")
-			expense.when = getStartOfDay()
-			fund.deepSpend(budgetStack: self.budgetStack)
-			saveData(self.managedObjectContext)
-		}
+}
+
+func addExpense(period: Int, budgetStack: BudgetStack, managedObjectContext: NSManagedObjectContext) {
+	if let fund = budgetStack.lastSelectedFund {
+		addExpense(period: period, fund: fund, budgetStack: budgetStack, managedObjectContext: managedObjectContext)
+		saveData(managedObjectContext)
 	}
 }
 
@@ -150,14 +137,6 @@ func toTimeString(_ period: Int, calendarSettings: CalendarSettings) -> String {
 	timeFormat.dateFormat = "HH:mm"
 	let timeString = timeFormat.string(from: currentPeriod)
 	return timeString
-}
-
-func getItemIndexOfCurrentTime(calendarSettings: CalendarSettings) -> Int {
-	let now = Date()
-	let startOfDay = getStartOfDay()
-	let difference = Int(startOfDay.distance(to: now))
-	let itemIndex = difference / 60 / calendarSettings.expensePeriod
-	return itemIndex
 }
 
 let space : Character = " "

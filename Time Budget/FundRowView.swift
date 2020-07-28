@@ -14,6 +14,7 @@ struct FundRowView: View {
 	@Environment(\.editMode) var editMode
 	@Environment(\.managedObjectContext) var managedObjectContext
 	@EnvironmentObject var budgetStack: BudgetStack
+	@EnvironmentObject var calendarSettings: CalendarSettings
 	@ObservedObject var fund: TimeFund
 	var funds: FetchedResults<TimeFund>
 	
@@ -65,57 +66,62 @@ struct FundRowView: View {
 					)
 				} else {
 					withAnimation(.none) {
-						Button(action: {
-							switch self.action {
-								case .view:
-									self.budgetStack.lastSelectedFund = self.fund
-									return
-								case .spend:
-									self.fund.deepSpend(budgetStack: self.budgetStack)
-									self.budgetStack.toFirstBudget()
-								case .reset:
-									self.fund.resetBalance()
-								case .earn:
-									self.fund.adjustBalance(1)
-								case .subBudget:
-									do {
-										var subBudget: TimeBudget
-										let request = TimeBudget.fetchRequest(name: self.fund.name)
-										if let budgetWithSameName = try self.managedObjectContext.fetch(request).first {
-											subBudget = budgetWithSameName
-										} else {
-											subBudget = TimeBudget(context: self.managedObjectContext)
-											subBudget.name = self.fund.name
-										}
-										self.fund.subBudget = subBudget
-									} catch {
-										errorLog("\(error)")
-								}
-								case .copy:
-									let newFund = TimeFund(context: self.managedObjectContext)
-									newFund.name = self.fund.name
-									newFund.order = self.fund.order
-									newFund.budget = self.budgetStack.getTopBudget()
-									newFund.subBudget = self.fund.subBudget
-								case .edit:
-									errorLog("Impossible")
-								case .delete:
-									self.managedObjectContext.delete(self.fund)
-								case .qspend:
-									self.fund.adjustBalance(-1)
-								case .freeze:
-									self.fund.frozen = !self.fund.frozen
-								case .unSubBudget:
-									self.fund.subBudget = nil
-							}
-							saveData(self.managedObjectContext)
-						}, label: {
-							FundRowLabel(fund: self.fund)
-						})
+						getMainButton()
 					}
 				}
 			}
 		}
+	}
+	
+	func getMainButton() -> some View {
+		return Button(action: {
+			switch self.action {
+				case .view:
+					self.budgetStack.lastSelectedFund = self.fund
+					return
+				case .spend:
+//					self.fund.deepSpend(budgetStack: self.budgetStack)
+					addExpenseToCurrentTimeIfEmpty(fund: self.fund, budgetStack: self.budgetStack, calendarSettings: self.calendarSettings, managedObjectContext: self.managedObjectContext)
+					self.budgetStack.toFirstBudget()
+				case .reset:
+					self.fund.resetBalance()
+				case .earn:
+					self.fund.adjustBalance(1)
+				case .subBudget:
+					do {
+						var subBudget: TimeBudget
+						let request = TimeBudget.fetchRequest(name: self.fund.name)
+						if let budgetWithSameName = try self.managedObjectContext.fetch(request).first {
+							subBudget = budgetWithSameName
+						} else {
+							subBudget = TimeBudget(context: self.managedObjectContext)
+							subBudget.name = self.fund.name
+						}
+						self.fund.subBudget = subBudget
+					} catch {
+						errorLog("\(error)")
+				}
+				case .copy:
+					let newFund = TimeFund(context: self.managedObjectContext)
+					newFund.name = self.fund.name
+					newFund.order = self.fund.order
+					newFund.budget = self.budgetStack.getTopBudget()
+					newFund.subBudget = self.fund.subBudget
+				case .edit:
+					errorLog("Impossible")
+				case .delete:
+					self.managedObjectContext.delete(self.fund)
+				case .qspend:
+					self.fund.adjustBalance(-1)
+				case .freeze:
+					self.fund.frozen = !self.fund.frozen
+				case .unSubBudget:
+					self.fund.subBudget = nil
+			}
+			saveData(self.managedObjectContext)
+		}, label: {
+			FundRowLabel(fund: self.fund)
+		})
 	}
 }
 
