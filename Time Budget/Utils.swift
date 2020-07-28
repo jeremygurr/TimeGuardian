@@ -65,3 +65,5 @@ let minutes:TimeInterval = 60.0
 let hours:TimeInterval = 60.0 * minutes
 let days:TimeInterval = 24 * hours
 
+let space : Character = " "
+let newline : Character = "\n"

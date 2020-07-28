@@ -38,10 +38,15 @@ public class TimeExpense: NSManagedObject {
 		
 	}
 	
+//	public override var description: String {
+//		return "TimeExpense: { fund: \(fund), when: \(when), timeSlot: \(timeSlot), path: \(path) }"
+//	}
+	
 }
 
 func addExpense(timeSlot: TimeSlot, fund: TimeFund, budgetStack: BudgetStack, managedObjectContext: NSManagedObjectContext) {
-	
+	debugLog("addExpense: { timeSlot: \(timeSlot), fund: \(fund) }")
+
 	let expense = TimeExpense(context: managedObjectContext)
 	expense.fund = fund
 	expense.timeSlot = Int16(timeSlot.slotIndex)
@@ -49,7 +54,7 @@ func addExpense(timeSlot: TimeSlot, fund: TimeFund, budgetStack: BudgetStack, ma
 	
 	for b in budgetStack.getBudgets() {
 		if pathString.count > 0 {
-			pathString.append(space)
+			pathString.append(newline)
 		}
 		pathString.append(contentsOf: "\(b.name)")
 	}

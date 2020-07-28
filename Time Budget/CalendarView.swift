@@ -103,8 +103,9 @@ struct ExpenseRowView: View {
 	}
 	
 	func removeExpense(existingExpense: TimeExpense) {
+		debugLog("removeExpense: \(existingExpense)")
 		existingExpense.fund.adjustBalance(1)
-		var path = existingExpense.path.split(separator: space)
+		var path = existingExpense.path.split(separator: newline)
 		path.reverse()
 		for i in 0 ..< path.count - 1 {
 			
@@ -189,8 +190,6 @@ func toDayString(timeSlot: TimeSlot) -> String {
 //	debugLog("toTimeString -> \(timeString)")
 	return timeString
 }
-
-let space : Character = " "
 
 struct CalendarView_Previews: PreviewProvider {
 	static let calendarSettings = CalendarSettings()

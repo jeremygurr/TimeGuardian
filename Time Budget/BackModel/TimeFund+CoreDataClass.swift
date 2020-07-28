@@ -14,6 +14,10 @@ import SwiftUI
 @objc(TimeFund)
 public class TimeFund: NSManagedObject, Identifiable {
 	
+//	public override var description: String {
+//		return "TimeFund: { name: \(name), balance: \(balance), budget: \(budget) }"
+//	}
+
 	func save() {
 		debugLog("save fund called")
 		if(hasChanges) {
@@ -83,6 +87,8 @@ public class TimeFund: NSManagedObject, Identifiable {
 	}
 	
 	func deepSpend(budgetStack: BudgetStack) {
+		debugLog("deepSpend on \(self)")
+		
 		adjustBalance(-1)
 		budget.earnIfSpent()
 		for f in budgetStack.getFunds().reversed() {
@@ -94,6 +100,7 @@ public class TimeFund: NSManagedObject, Identifiable {
 	}
 	
 	func adjustBalance(_ amount: Float) {
+		debugLog("adjustBalance on \(self) amount: \(amount)")
 		if !frozen {
 			balance += amount
 			if balance < -0.5 && amount < 0 {
@@ -104,6 +111,7 @@ public class TimeFund: NSManagedObject, Identifiable {
 	}
 	
 	func resetBalance() {
+		debugLog("resetBalance on \(self)")
 		if !frozen {
 			balance = 1
 		}

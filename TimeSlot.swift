@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct TimeSlot: Equatable {
+struct TimeSlot: Equatable, CustomStringConvertible {
 	
 	let baseDate: Date
 	let slotIndex: Int
@@ -22,6 +22,10 @@ struct TimeSlot: Equatable {
 		self.minutesFromBeginning = slotSize * Double(slotIndex)
 	}
 	
+	public var description: String {
+		return "TimeSlot: { baseDate: \(baseDate), slotIndex: \(slotIndex), slotSize: \(slotSize), minutesFromBeginning: \(minutesFromBeginning) }"
+	}
+
 	var coversCurrentTime: Bool {
 		let today = Date()
 		let currentDate = getStartOfDay()
