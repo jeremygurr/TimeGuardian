@@ -201,6 +201,15 @@ struct MultiRowSegmentedPickerView<T: Buttonable>: View {
 					.font(.body)
 					.contentShape(Rectangle())
 					.onTapGesture(
+						count: 2,
+						perform: {
+							withAnimation {
+								self.updateSelectionOffset(item: item, row: row, col: col, longPress: true)
+							}
+					}
+				)
+					.onTapGesture(
+						count: 1,
 						perform: {
 							withAnimation {
 								self.updateSelectionOffset(item: item, row: row, col: col, longPress: false)
