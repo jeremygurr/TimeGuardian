@@ -117,5 +117,6 @@ struct TopView_Previews: PreviewProvider {
 		return TopView()
 			.environment(\.managedObjectContext, context)
 			.environmentObject(budgetStack)
+			.environmentObject(CalendarSettings())
 	}
 }

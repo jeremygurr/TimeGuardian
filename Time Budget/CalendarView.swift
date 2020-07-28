@@ -22,17 +22,14 @@ struct CalendarView: View {
 
 	var body: some View {
 		List {
-			ForEach(0 ..< 10) { _ in
-				Text("")
-			}
+			Text("").frame(height: 200)
 			ExpenseRowView(todaysExpenses: self.todaysExpenses)
-			ForEach(0 ..< 10) { _ in
-				Text("")
-			}
-		}.introspectTableView { tableView in
+			Text("").frame(height: 200)
+		}
+		.introspectTableView { tableView in
 			tableView.scrollToRow(
 				at: IndexPath(
-					item: getItemIndexOfCurrentTime(calendarSettings: self.calendarSettings) + 10, section: 0)
+					item: getItemIndexOfCurrentTime(calendarSettings: self.calendarSettings) + 1, section: 0)
 				, at: .middle
 				, animated: false
 			)
@@ -119,6 +116,7 @@ func toExpenseString(_ period: Int, todaysExpenses: FetchedResults<TimeExpense>)
 	if let existingExpense = getExpenseFor(period, todaysExpenses: todaysExpenses) {
 		result = existingExpense.fund.name
 	}
+//	debugLog("toExpenseString -> \(result)")
 	return result
 }
 
@@ -136,6 +134,7 @@ func toTimeString(_ period: Int, calendarSettings: CalendarSettings) -> String {
 	let timeFormat = DateFormatter()
 	timeFormat.dateFormat = "HH:mm"
 	let timeString = timeFormat.string(from: currentPeriod)
+//	debugLog("toTimeString -> \(timeString)")
 	return timeString
 }
 
