@@ -13,7 +13,7 @@ import Introspect
 struct CalendarView: View {
 	@EnvironmentObject var calendarSettings: CalendarSettings
 	@EnvironmentObject var budgetStack: BudgetStack
-	@FetchRequest var todaysExpenses: FetchedResults<TimeExpense>
+	@FetchRequest var recentExpenses: FetchedResults<TimeExpense>
 	@Environment(\.managedObjectContext) var managedObjectContext
 	@State var startDate: Date
 	@State var endDate: Date
@@ -26,7 +26,7 @@ struct CalendarView: View {
 		let newEndDate = today + Double(plusMinus) * days
 		_startDate = State(initialValue: newStartDate)
 		_endDate = State(initialValue: newEndDate)
-		_todaysExpenses = TimeExpense.fetchRequestFor(startDate: newStartDate, endDate: newEndDate)
+		_recentExpenses = TimeExpense.fetchRequestFor(startDate: newStartDate, endDate: newEndDate)
 		var newTimeSlots: [TimeSlot] = []
 		for dayOffset in -plusMinus ... plusMinus {
 			for timeSlot in 0 ..< calendarSettings.periodsPerDay {
@@ -40,7 +40,7 @@ struct CalendarView: View {
 	var body: some View {
 		List {
 			Text("").frame(height: listViewExtension)
-			ExpenseRowView(todaysExpenses: self.todaysExpenses, timeSlots: $timeSlots)
+			ExpenseRowView(todaysExpenses: self.recentExpenses, timeSlots: $timeSlots)
 			Text("").frame(height: listViewExtension)
 		}
 		.introspectTableView { tableView in

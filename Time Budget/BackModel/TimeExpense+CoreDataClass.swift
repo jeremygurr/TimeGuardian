@@ -19,6 +19,7 @@ public class TimeExpense: NSManagedObject {
 		let request = FetchRequest<TimeExpense>(
 			entity: TimeExpense.entity(),
 			sortDescriptors: [
+				NSSortDescriptor(keyPath: \TimeExpense.when, ascending: true),
 				NSSortDescriptor(keyPath: \TimeExpense.timeSlot, ascending: true)
 			],
 			predicate: NSPredicate(format: "when >= %@ AND when <= %@", startDate as NSDate, endDate as NSDate)
