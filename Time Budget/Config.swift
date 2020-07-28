@@ -11,3 +11,4 @@ import SwiftUI
 
 let longPressDuration = 0.15
 let longPressMaxDrift: CGFloat = 0.1
+let listViewExtension: CGFloat = 200

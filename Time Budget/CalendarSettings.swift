@@ -10,11 +10,12 @@ import Foundation
 import SwiftUI
 
 class CalendarSettings: ObservableObject {
-	@Published private var currentDay: Date = Date()
-	@Published var expensePeriod: Int = 30
+//	@Published private var currentDay: Date = Date()
+	@Published var expensePeriod: TimeInterval = 30
+	@Published var plusMinusDays: Int = 1
 	var periodsPerDay: Int {
-		let minutesPerDay = 60 * 24
-		return minutesPerDay / expensePeriod
+		let minutesPerDay: Double = 60 * 24
+		return Int(minutesPerDay / expensePeriod)
 	}
 }
 

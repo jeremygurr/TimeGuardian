@@ -30,7 +30,7 @@ struct TopView: View {
 						.imageScale(.large)
 					Text("Budget")
 			}
-			CalendarView()
+			CalendarView(calendarSettings: calendarSettings)
 				.tabItem {
 					Image(systemName: "calendar")
 						.imageScale(.large)

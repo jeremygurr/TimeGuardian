@@ -14,25 +14,25 @@ import SwiftUI
 @objc(TimeExpense)
 public class TimeExpense: NSManagedObject {
 	
-	@nonobjc public class func fetchRequestFor(date: Date) -> FetchRequest<TimeExpense> {
+	@nonobjc class func fetchRequestFor(startDate: Date, endDate: Date) -> FetchRequest<TimeExpense> {
 		
 		let request = FetchRequest<TimeExpense>(
 			entity: TimeExpense.entity(),
 			sortDescriptors: [
 				NSSortDescriptor(keyPath: \TimeExpense.timeSlot, ascending: true)
 			],
-			predicate: NSPredicate(format: "when == %@", getStartOfDay(of: date) as NSDate)
+			predicate: NSPredicate(format: "when >= %@ AND when <= %@", startDate as NSDate, endDate as NSDate)
 		)
 		
 		return request
 		
 	}
 
-	@nonobjc public class func fetchRequestFor(date: Date, period: Int) -> NSFetchRequest<TimeExpense> {
+	@nonobjc class func fetchRequestFor(timeSlot: TimeSlot) -> NSFetchRequest<TimeExpense> {
 		
 		let request = NSFetchRequest<TimeExpense>(entityName: "TimeExpense")
 		request.sortDescriptors = [ NSSortDescriptor(keyPath: \TimeExpense.timeSlot, ascending: true) ]
-		request.predicate = NSPredicate(format: "when == %@ AND timeSlot == '%@'", getStartOfDay(of: date) as NSDate, Int16(period))
+		request.predicate = NSPredicate(format: "when == %@ AND timeSlot == '%@'", timeSlot.baseDate as NSDate, Int16(timeSlot.slotIndex))
 
 		return request
 		
@@ -40,11 +40,11 @@ public class TimeExpense: NSManagedObject {
 	
 }
 
-func addExpense(period: Int, fund: TimeFund, budgetStack: BudgetStack, managedObjectContext: NSManagedObjectContext) {
+func addExpense(timeSlot: TimeSlot, fund: TimeFund, budgetStack: BudgetStack, managedObjectContext: NSManagedObjectContext) {
 	
 	let expense = TimeExpense(context: managedObjectContext)
 	expense.fund = fund
-	expense.timeSlot = Int16(period)
+	expense.timeSlot = Int16(timeSlot.slotIndex)
 	var pathString = ""
 	
 	for b in budgetStack.getBudgets() {
@@ -55,27 +55,27 @@ func addExpense(period: Int, fund: TimeFund, budgetStack: BudgetStack, managedOb
 	}
 	
 	expense.path = pathString
-	expense.when = getStartOfDay()
+	expense.when = timeSlot.baseDate
 	fund.deepSpend(budgetStack: budgetStack)
 	
 }
 
-func getItemIndexOfCurrentTime(calendarSettings: CalendarSettings) -> Int {
+func getTimeSlotOfCurrentTime(calendarSettings: CalendarSettings) -> TimeSlot {
 	let now = Date()
 	let startOfDay = getStartOfDay()
-	let difference = Int(startOfDay.distance(to: now))
-	let itemIndex = difference / 60 / calendarSettings.expensePeriod
-	return itemIndex
+	let difference = startOfDay.distance(to: now)
+	let itemIndex = Int(difference / 60 / calendarSettings.expensePeriod)
+	return TimeSlot(baseDate: startOfDay, slotIndex: itemIndex, slotSize: calendarSettings.expensePeriod)
 }
 
 func addExpenseToCurrentTimeIfEmpty(fund: TimeFund, budgetStack: BudgetStack, calendarSettings: CalendarSettings, managedObjectContext: NSManagedObjectContext) {
-	let period = getItemIndexOfCurrentTime(calendarSettings: calendarSettings)
-	let request = TimeExpense.fetchRequestFor(date: Date(), period: period)
+	let slot = getTimeSlotOfCurrentTime(calendarSettings: calendarSettings)
+	let request = TimeExpense.fetchRequestFor(timeSlot: slot)
 	
 	do {
 		let expenses = try managedObjectContext.fetch(request)
 		if expenses.first == nil {
-			addExpense(period: period, fund: fund, budgetStack: budgetStack, managedObjectContext: managedObjectContext)
+			addExpense(timeSlot: slot, fund: fund, budgetStack: budgetStack, managedObjectContext: managedObjectContext)
 		} else {
 			fund.deepSpend(budgetStack: budgetStack)
 		}

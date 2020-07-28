@@ -15,26 +15,56 @@ struct CalendarView: View {
 	@EnvironmentObject var budgetStack: BudgetStack
 	@FetchRequest var todaysExpenses: FetchedResults<TimeExpense>
 	@Environment(\.managedObjectContext) var managedObjectContext
+	@State var startDate: Date
+	@State var endDate: Date
+	@State var timeSlots: [TimeSlot]
 
-	init() {
-		_todaysExpenses = TimeExpense.fetchRequestFor(date: Date())
+	init(calendarSettings: CalendarSettings) {
+		let today = getStartOfDay()
+		let plusMinus = calendarSettings.plusMinusDays
+		let newStartDate = today - Double(plusMinus) * days
+		let newEndDate = today + Double(plusMinus) * days
+		_startDate = State(initialValue: newStartDate)
+		_endDate = State(initialValue: newEndDate)
+		_todaysExpenses = TimeExpense.fetchRequestFor(startDate: newStartDate, endDate: newEndDate)
+		var newTimeSlots: [TimeSlot] = []
+		for dayOffset in -plusMinus ... plusMinus {
+			for timeSlot in 0 ..< calendarSettings.periodsPerDay {
+				let baseDate = today + Double(dayOffset) * days
+				newTimeSlots.append(TimeSlot(baseDate: baseDate, slotIndex: timeSlot, slotSize: calendarSettings.expensePeriod))
+			}
+		}
+		_timeSlots = State(initialValue: newTimeSlots)
 	}
 
 	var body: some View {
 		List {
-			Text("").frame(height: 200)
-			ExpenseRowView(todaysExpenses: self.todaysExpenses)
-			Text("").frame(height: 200)
+			Text("").frame(height: listViewExtension)
+			ExpenseRowView(todaysExpenses: self.todaysExpenses, timeSlots: $timeSlots)
+			Text("").frame(height: listViewExtension)
 		}
 		.introspectTableView { tableView in
 			tableView.scrollToRow(
 				at: IndexPath(
-					item: getItemIndexOfCurrentTime(calendarSettings: self.calendarSettings) + 1, section: 0)
+					item: self.getCalendarOffsetForCurrentTime(calendarSettings:  self.calendarSettings) + 1, section: 0)
 				, at: .middle
 				, animated: false
 			)
 		}
 	}
+
+	func getCalendarOffsetForCurrentTime(calendarSettings: CalendarSettings) -> Int {
+		var result: Int = 0
+		for i in 0 ..< timeSlots.count {
+			let slot = timeSlots[i]
+			if slot.coversCurrentTime {
+				result = i
+				break
+			}
+		}
+		return result
+	}
+	
 }
 
 struct ExpenseRowView: View {
@@ -42,23 +72,32 @@ struct ExpenseRowView: View {
 	@EnvironmentObject var budgetStack: BudgetStack
 	var todaysExpenses: FetchedResults<TimeExpense>
 	@Environment(\.managedObjectContext) var managedObjectContext
+	@Binding var timeSlots: [TimeSlot]
 
 	var body: some View {
-		ForEach(0 ..< calendarSettings.periodsPerDay, id: \.self) { period in
-			HStack {
-				Text("\(toTimeString(period, calendarSettings: self.calendarSettings))")
-				Spacer()
-				Text("\(toExpenseString(period, todaysExpenses: self.todaysExpenses))")
+		ForEach(0 ..< self.timeSlots.count, id: \.self) { index in
+			self.RowView(index)
+		}
+	}
+	
+	func RowView(_ index: Int) -> some View {
+		let timeSlot = timeSlots[index]
+		return HStack {
+			VStack {
+				Text("\(toDayString(timeSlot: timeSlot))")
+				Text("\(toTimeString(timeSlot: timeSlot))")
 			}
-			.padding()
-			.contentShape(Rectangle())
-			.background(colorOfRow(period, calendarSettings: self.calendarSettings))
-			.onTapGesture {
-				if let existingExpense = getExpenseFor(period, todaysExpenses: self.todaysExpenses) {
-					self.removeExpense(existingExpense: existingExpense)
-				} else {
-					addExpense(period: period, budgetStack: self.budgetStack, managedObjectContext: self.managedObjectContext)
-				}
+			Spacer()
+			Text("\(toExpenseString(timeSlot: timeSlot, todaysExpenses: self.todaysExpenses))")
+		}
+		.padding()
+		.contentShape(Rectangle())
+		.background(colorOfRow(timeSlot: timeSlot, calendarSettings: self.calendarSettings))
+		.onTapGesture {
+			if let existingExpense = getExpenseFor(timeSlot: timeSlot, todaysExpenses: self.todaysExpenses) {
+				self.removeExpense(existingExpense: existingExpense)
+			} else {
+				addExpense(timeSlot: timeSlot, budgetStack: self.budgetStack, managedObjectContext: self.managedObjectContext)
 			}
 		}
 	}
@@ -91,48 +130,61 @@ struct ExpenseRowView: View {
 	}
 }
 
-func addExpense(period: Int, budgetStack: BudgetStack, managedObjectContext: NSManagedObjectContext) {
+func addExpense(timeSlot: TimeSlot, budgetStack: BudgetStack, managedObjectContext: NSManagedObjectContext) {
 	if let fund = budgetStack.lastSelectedFund {
-		addExpense(period: period, fund: fund, budgetStack: budgetStack, managedObjectContext: managedObjectContext)
+		addExpense(timeSlot: timeSlot, fund: fund, budgetStack: budgetStack, managedObjectContext: managedObjectContext)
 		saveData(managedObjectContext)
 	}
 }
 
-func getExpenseFor(_ period: Int, todaysExpenses: FetchedResults<TimeExpense>) -> TimeExpense? {
+func getExpenseFor(timeSlot: TimeSlot, todaysExpenses: FetchedResults<TimeExpense>) -> TimeExpense? {
 	var result: TimeExpense? = nil
 
 	for expense in todaysExpenses {
-		if expense.timeSlot == period {
+		if expense.when == timeSlot.baseDate && expense.timeSlot == timeSlot.slotIndex {
 			result = expense
-		} else if expense.timeSlot > period {
+		} else if
+			expense.when > timeSlot.baseDate ||
+				expense.when == timeSlot.baseDate &&
+				expense.timeSlot > timeSlot.slotIndex {
 			break
 		}
 	}
 	return result
 }
 
-func toExpenseString(_ period: Int, todaysExpenses: FetchedResults<TimeExpense>) -> String {
+func toExpenseString(timeSlot: TimeSlot, todaysExpenses: FetchedResults<TimeExpense>) -> String {
 	var result = ""
-	if let existingExpense = getExpenseFor(period, todaysExpenses: todaysExpenses) {
+	if let existingExpense = getExpenseFor(timeSlot: timeSlot, todaysExpenses: todaysExpenses) {
 		result = existingExpense.fund.name
 	}
-//	debugLog("toExpenseString -> \(result)")
 	return result
 }
 
-func colorOfRow(_ row: Int, calendarSettings: CalendarSettings) -> some View {
-	if(row == getItemIndexOfCurrentTime(calendarSettings: calendarSettings)) {
+func colorOfRow(timeSlot: TimeSlot, calendarSettings: CalendarSettings) -> some View {
+	if(timeSlot == getTimeSlotOfCurrentTime(calendarSettings: calendarSettings)) {
 		return Color.init("HighlightBackground")
 	}
 	return Color.clear
 }
 
-func toTimeString(_ period: Int, calendarSettings: CalendarSettings) -> String {
+func toTimeString(timeSlot: TimeSlot) -> String {
 	let startOfDay = getStartOfDay()
-	let interval = TimeInterval(period * calendarSettings.expensePeriod * 60)
+	let interval = timeSlot.timeIntervalFromBeginning * minutes
 	let currentPeriod = startOfDay.advanced(by: interval)
 	let timeFormat = DateFormatter()
 	timeFormat.dateFormat = "HH:mm"
+	let timeString = timeFormat.string(from: currentPeriod)
+	//	debugLog("toTimeString -> \(timeString)")
+	return timeString
+}
+
+func toDayString(timeSlot: TimeSlot) -> String {
+	let startOfDay = timeSlot.baseDate
+	let interval = timeSlot.timeIntervalFromBeginning * minutes
+	let currentPeriod = startOfDay.advanced(by: interval)
+	let timeFormat = DateFormatter()
+	timeFormat.dateFormat = "E"
 	let timeString = timeFormat.string(from: currentPeriod)
 //	debugLog("toTimeString -> \(timeString)")
 	return timeString
@@ -152,13 +204,13 @@ struct CalendarView_Previews: PreviewProvider {
 		budgetStack.push(budget: budget)
 		
 		return Group {
-			CalendarView()
+			CalendarView(calendarSettings: calendarSettings)
 				.environmentObject(calendarSettings)
 				.environmentObject(budgetStack)
 				.environment(\.colorScheme, .light)
 				.environment(\.managedObjectContext, context)
 
-			CalendarView()
+			CalendarView(calendarSettings: calendarSettings)
 				.environmentObject(calendarSettings)
 				.environmentObject(budgetStack)
 				.environment(\.colorScheme, .dark)
