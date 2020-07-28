@@ -139,7 +139,7 @@ func colorOfRow(_ row: Int, calendarSettings: CalendarSettings) -> some View {
 	if(row == getItemIndexOfCurrentTime(calendarSettings: calendarSettings)) {
 		return Color.init("HighlightBackground")
 	}
-	return Color.white
+	return Color.clear
 }
 
 func toTimeString(_ period: Int, calendarSettings: CalendarSettings) -> String {
@@ -160,12 +160,32 @@ func getItemIndexOfCurrentTime(calendarSettings: CalendarSettings) -> Int {
 	return itemIndex
 }
 
+let space : Character = " "
+
 struct CalendarView_Previews: PreviewProvider {
 	static let calendarSettings = CalendarSettings()
 	static var previews: some View {
-		CalendarView()
-			.environmentObject(calendarSettings)
+		
+		let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+		let testDataBuilder = TestDataBuilder(context: context)
+		testDataBuilder.createTestData()
+		let budget = testDataBuilder.budgets.first!
+		let budgetStack = BudgetStack()
+		budgetStack.push(budget: budget)
+		
+		return Group {
+			CalendarView()
+				.environmentObject(calendarSettings)
+				.environmentObject(budgetStack)
+				.environment(\.colorScheme, .light)
+				.environment(\.managedObjectContext, context)
+
+			CalendarView()
+				.environmentObject(calendarSettings)
+				.environmentObject(budgetStack)
+				.environment(\.colorScheme, .dark)
+				.environment(\.managedObjectContext, context)
+		}
 	}
 }
 
-let space : Character = " "
