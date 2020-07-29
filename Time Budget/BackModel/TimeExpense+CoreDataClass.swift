@@ -33,7 +33,7 @@ public class TimeExpense: NSManagedObject {
 		
 		let request = NSFetchRequest<TimeExpense>(entityName: "TimeExpense")
 		request.sortDescriptors = [ NSSortDescriptor(keyPath: \TimeExpense.timeSlot, ascending: true) ]
-		request.predicate = NSPredicate(format: "when == %@ AND timeSlot == '%@'", timeSlot.baseDate as NSDate, Int16(timeSlot.slotIndex))
+		request.predicate = NSPredicate(format: "when == %@ AND timeSlot == %@", timeSlot.baseDate as NSDate, timeSlot.slotIndex as NSNumber)
 
 		return request
 		
@@ -80,9 +80,12 @@ func addExpenseToCurrentTimeIfEmpty(fund: TimeFund, budgetStack: BudgetStack, ca
 	
 	do {
 		let expenses = try managedObjectContext.fetch(request)
-		if expenses.first == nil {
+		let firstExpense: TimeExpense? = expenses.first
+		if firstExpense == nil {
+			debugLog("No expense found for this slot, so we will create one")
 			addExpense(timeSlot: slot, fund: fund, budgetStack: budgetStack, managedObjectContext: managedObjectContext)
 		} else {
+			let fund = firstExpense!.fund
 			fund.deepSpend(budgetStack: budgetStack)
 		}
 	} catch {
