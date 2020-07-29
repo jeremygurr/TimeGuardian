@@ -103,7 +103,7 @@ public class TimeFund: NSManagedObject, Identifiable {
 		debugLog("adjustBalance on \(self) amount: \(amount)")
 		if !frozen {
 			balance += amount
-			if balance < -0.5 && amount < 0 {
+			if balance < interestThreshold && amount < 0 {
 				// charge interest on time debt
 				balance *= 1.1
 			}
