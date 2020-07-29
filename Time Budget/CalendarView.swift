@@ -9,8 +9,21 @@
 import SwiftUI
 import CoreData
 import Introspect
+import Combine
 
 struct CalendarView: View {
+	struct ViewState: Equatable {
+		var currentPosition: Int? = nil
+	}
+	@State private var viewState = ViewState()
+	@Environment(\.injected) private var injected: AppState.Injection
+	private var stateUpdate: AnyPublisher<ViewState, Never> {
+		injected.appState.map {
+			ViewState(currentPosition: $0.currentPosition)
+		}
+		.removeDuplicates().eraseToAnyPublisher()
+	}
+
 	@EnvironmentObject var calendarSettings: CalendarSettings
 	@EnvironmentObject var budgetStack: BudgetStack
 	@FetchRequest var recentExpenses: FetchedResults<TimeExpense>
@@ -18,6 +31,8 @@ struct CalendarView: View {
 	@State var startDate: Date
 	@State var endDate: Date
 	@State var timeSlots: [TimeSlot]
+	private let updateTimer = Timer(timeInterval: 5 * minutes, repeats: true, block: { _ in })
+	@State private var updateTrigger = false
 
 	init(calendarSettings: CalendarSettings) {
 		let today = getStartOfDay()
@@ -46,11 +61,24 @@ struct CalendarView: View {
 		.introspectTableView { tableView in
 			tableView.scrollToRow(
 				at: IndexPath(
-					item: self.getCalendarOffsetForCurrentTime() + 1, section: 0)
+					item: self.getCurrentPosition() + 1, section: 0)
 				, at: .middle
 				, animated: false
 			)
 		}
+		.onReceive(stateUpdate) { self.viewState = $0 }
+	}
+	
+	func getCurrentPosition() -> Int {
+		var result: Int
+		if let c = viewState.currentPosition {
+			result = c
+		} else {
+			let c = self.getCalendarOffsetForCurrentTime()
+			injected.appState.value.currentPosition = c
+			result = c
+		}
+		return result
 	}
 
 	func getCalendarOffsetForCurrentTime() -> Int {
@@ -68,6 +96,18 @@ struct CalendarView: View {
 }
 
 struct ExpenseRowView: View {
+	struct ViewState: Equatable {
+		var currentPosition: Int? = nil
+	}
+	@State private var viewState = ViewState()
+	@Environment(\.injected) private var injected: AppState.Injection
+	private var stateUpdate: AnyPublisher<ViewState, Never> {
+		injected.appState.map {
+			ViewState(currentPosition: $0.currentPosition)
+		}
+		.removeDuplicates().eraseToAnyPublisher()
+	}
+
 	@EnvironmentObject var calendarSettings: CalendarSettings
 	@EnvironmentObject var budgetStack: BudgetStack
 	var todaysExpenses: FetchedResults<TimeExpense>
@@ -78,6 +118,7 @@ struct ExpenseRowView: View {
 		ForEach(0 ..< self.timeSlots.count, id: \.self) { index in
 			self.RowView(index)
 		}
+		.onReceive(stateUpdate) { self.viewState = $0 }
 	}
 	
 	func RowView(_ index: Int) -> some View {
@@ -94,6 +135,7 @@ struct ExpenseRowView: View {
 		.contentShape(Rectangle())
 		.background(colorOfRow(timeSlot: timeSlot, calendarSettings: self.calendarSettings))
 		.onTapGesture {
+			self.injected.appState.value.currentPosition = index
 			if let existingExpense = getExpenseFor(timeSlot: timeSlot, todaysExpenses: self.todaysExpenses) {
 				self.removeExpense(existingExpense: existingExpense)
 			} else {
@@ -193,6 +235,8 @@ func toDayString(timeSlot: TimeSlot) -> String {
 
 struct CalendarView_Previews: PreviewProvider {
 	static let calendarSettings = CalendarSettings()
+	@State static var currentPosition: Int? = nil
+
 	static var previews: some View {
 		
 		let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
@@ -201,18 +245,21 @@ struct CalendarView_Previews: PreviewProvider {
 		let budget = testDataBuilder.budgets.first!
 		let budgetStack = BudgetStack()
 		budgetStack.push(budget: budget)
+		let appState = AppState.Injection(appState: .init(AppState()))
 		
 		return Group {
 			CalendarView(calendarSettings: calendarSettings)
 				.environmentObject(calendarSettings)
 				.environmentObject(budgetStack)
 				.environment(\.colorScheme, .light)
+				.environment(\.injected, appState)
 				.environment(\.managedObjectContext, context)
 
 			CalendarView(calendarSettings: calendarSettings)
 				.environmentObject(calendarSettings)
 				.environmentObject(budgetStack)
 				.environment(\.colorScheme, .dark)
+				.environment(\.injected, appState)
 				.environment(\.managedObjectContext, context)
 		}
 	}

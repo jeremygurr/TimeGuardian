@@ -11,7 +11,9 @@ import SwiftUI
 struct TopView: View {
 	@EnvironmentObject var budgetStack: BudgetStack
 	@EnvironmentObject var calendarSettings: CalendarSettings
-	
+	@Environment(\.injected) private var injected: AppState.Injection
+	@State var currentPosition: Int? = nil
+
 	private func budgetFundView() -> some View {
 		VStack {
 			if self.budgetStack.isEmpty() {
@@ -110,12 +112,14 @@ struct FundListViewWindow: View {
 struct TopView_Previews: PreviewProvider {
 	static var previews: some View {
 		let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+		let appState = AppState.Injection(appState: .init(AppState()))
 		let tdb = TestDataBuilder(context: context)
 		tdb.createTestData()
 		let budgetStack = BudgetStack()
 		//		budgetStack.push(budget: tdb.budgets.first!)
 		return TopView()
 			.environment(\.managedObjectContext, context)
+			.environment(\.injected, appState)
 			.environmentObject(budgetStack)
 			.environmentObject(CalendarSettings())
 	}

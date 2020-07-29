@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		000344BE24C84E2D00CD2AAB /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000344BD24C84E2D00CD2AAB /* Config.swift */; };
+		000344BE24C84E2D00CD2AAB /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000344BD24C84E2D00CD2AAB /* AppState.swift */; };
 		0005628024BE52D3003AECC6 /* Introspect in Frameworks */ = {isa = PBXBuildFile; productRef = 0005627F24BE52D3003AECC6 /* Introspect */; };
 		00113D0A24B920180028AB57 /* TestDataBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00113D0924B920180028AB57 /* TestDataBuilder.swift */; };
 		002531D024C1B76400CB7FF0 /* IQKeyboardManagerSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 002531CF24C1B76400CB7FF0 /* IQKeyboardManagerSwift */; };
@@ -38,7 +38,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		000344BD24C84E2D00CD2AAB /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
+		000344BD24C84E2D00CD2AAB /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		00113D0924B920180028AB57 /* TestDataBuilder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TestDataBuilder.swift; path = "Time Budget/TestDataBuilder.swift"; sourceTree = SOURCE_ROOT; };
 		002531D924C4614A00CB7FF0 /* TopView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TopView.swift; path = "Time Budget/TopView.swift"; sourceTree = SOURCE_ROOT; };
 		002531DB24C497EC00CB7FF0 /* BudgetStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BudgetStack.swift; path = "Time Budget/BudgetStack.swift"; sourceTree = SOURCE_ROOT; };
@@ -118,7 +118,7 @@
 				00BA983824C74C9500E2AD91 /* Time Budget.entitlements */,
 				00113D0824B913960028AB57 /* BackModel */,
 				00113D0924B920180028AB57 /* TestDataBuilder.swift */,
-				000344BD24C84E2D00CD2AAB /* Config.swift */,
+				000344BD24C84E2D00CD2AAB /* AppState.swift */,
 				00E1440C24D0B7AA0087F5C2 /* TimeSlot.swift */,
 				002590DD24B90F0E00F703C5 /* AppDelegate.swift */,
 				002590DF24B90F0E00F703C5 /* SceneDelegate.swift */,
@@ -242,7 +242,7 @@
 				00659F1324C5213200670CF0 /* TimeBudget+CoreDataClass.swift in Sources */,
 				0058665E24C0FD88004E4889 /* FundListView.swift in Sources */,
 				002590E024B90F0E00F703C5 /* SceneDelegate.swift in Sources */,
-				000344BE24C84E2D00CD2AAB /* Config.swift in Sources */,
+				000344BE24C84E2D00CD2AAB /* AppState.swift in Sources */,
 				006F1C6A24CE521D005C0E1A /* CalendarView.swift in Sources */,
 				00659F1224C5213200670CF0 /* TimeFund+CoreDataClass.swift in Sources */,
 				00659F0924C511F800670CF0 /* FundRowView.swift in Sources */,

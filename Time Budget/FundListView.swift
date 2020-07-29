@@ -136,12 +136,14 @@ struct FundListView_Previews: PreviewProvider {
 		let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
 		let testDataBuilder = TestDataBuilder(context: context)
 		testDataBuilder.createTestData()
+		let appState = AppState.Injection(appState: .init(AppState()))
 		let budget = testDataBuilder.budgets.first!
 		let budgetStack = BudgetStack()
 		budgetStack.push(budget: budget)
 		return FundListView(budgetStack: budgetStack)
 			.environment(\.managedObjectContext, context)
 			.environmentObject(budgetStack)
+			.environment(\.injected, appState)
 //			.environment(\.colorScheme, .dark)
 	}
 }

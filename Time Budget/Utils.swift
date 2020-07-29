@@ -9,6 +9,7 @@
 import Foundation
 import CoreData
 import SwiftUI
+import Combine
 
 func arrayEquals<E: Equatable>(_ x: [E], _ y: [E]) -> Bool {
 	var result = true
