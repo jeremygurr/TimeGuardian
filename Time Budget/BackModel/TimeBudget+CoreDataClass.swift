@@ -62,21 +62,23 @@ public class TimeBudget: NSManagedObject, Identifiable {
 		if funds == nil {
 			return
 		}
-		var minBelowOne: Float = 9999999
+		var minBelowRecharge: Float = 9999999
 		var allFundsSpent = true
-		for fund in funds! {
-			let belowOne = rechargeLevel - (fund as! TimeFund).balance
-			if belowOne < 0 {
+		for f in funds! {
+			let fund = f as! TimeFund
+			let belowRecharge = rechargeLevel - fund.balance
+			let belowOne = 1 - fund.balance
+			if belowOne < 0.5 {
 				allFundsSpent = false
 				break
 			}
-			if belowOne < minBelowOne {
-				minBelowOne = belowOne
+			if belowRecharge < minBelowRecharge {
+				minBelowRecharge = belowRecharge
 			}
 		}
 		if allFundsSpent {
 			for fund in funds! {
-				(fund as! TimeFund).balance += minBelowOne
+				(fund as! TimeFund).balance += minBelowRecharge
 			}
 		}
 	}

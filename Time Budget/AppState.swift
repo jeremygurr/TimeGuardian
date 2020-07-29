@@ -13,7 +13,7 @@ let longPressDuration = 0.15
 let longPressMaxDrift: CGFloat = 0.1
 let listViewExtension: CGFloat = 200
 let interestThreshold: Float = -1
-let rechargeLevel: Float = 2
+let rechargeLevel: Float = 3
 
 struct AppState {
 	var currentPosition: Int? = nil
