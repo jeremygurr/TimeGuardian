@@ -56,6 +56,7 @@ struct CalendarView: View {
 		List {
 			Text("").frame(height: listViewExtension)
 			ExpenseRowView(todaysExpenses: self.recentExpenses, timeSlots: $timeSlots)
+				.listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 00))
 			Text("").frame(height: listViewExtension)
 		}
 		.introspectTableView { tableView in
@@ -128,10 +129,11 @@ struct ExpenseRowView: View {
 				Text("\(toDayString(timeSlot: timeSlot))")
 				Text("\(toTimeString(timeSlot: timeSlot))")
 			}
+			.padding(.leading, 10)
 			Spacer()
 			Text("\(toExpenseString(timeSlot: timeSlot, todaysExpenses: self.todaysExpenses))")
+				.padding(.trailing, 10)
 		}
-		.padding()
 		.contentShape(Rectangle())
 		.background(colorOfRow(timeSlot: timeSlot, calendarSettings: self.calendarSettings))
 		.onTapGesture {
