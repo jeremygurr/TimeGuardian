@@ -113,7 +113,7 @@ public class TimeFund: NSManagedObject, Identifiable {
 	func resetBalance() {
 		debugLog("resetBalance on \(self)")
 		if !frozen {
-			balance = 1
+			balance = rechargeLevel
 		}
 	}
 	
