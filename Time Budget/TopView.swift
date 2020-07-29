@@ -75,6 +75,7 @@ struct FundListViewWindow: View {
 						withAnimation(.none) {
 							self.budgetStack.removeLastBudget()
 							self.budgetStack.removeLastFund()
+							self.budgetStack.titleOverride = nil
 							self.editMode?.wrappedValue = .inactive
 							self.managedObjectContext.rollback()
 						}
@@ -90,6 +91,7 @@ struct FundListViewWindow: View {
 				}, perform: {
 					withAnimation(.none) {
 						self.budgetStack.toFirstBudget()
+						self.budgetStack.titleOverride = nil
 						self.editMode?.wrappedValue = .inactive
 						self.managedObjectContext.rollback()
 					}

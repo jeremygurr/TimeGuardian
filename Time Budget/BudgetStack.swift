@@ -90,7 +90,11 @@ class BudgetStack: ObservableObject {
 		if titleOverride != nil {
 			title = titleOverride!
 		} else {
-			title = getTopBudget().name
+			if budgetStack.count > 0 {
+				title = getTopBudget().name
+			} else {
+				title = "None"
+			}
 		}
 		return title
 	}
