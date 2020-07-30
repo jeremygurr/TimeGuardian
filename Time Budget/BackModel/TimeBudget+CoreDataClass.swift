@@ -83,4 +83,23 @@ public class TimeBudget: NSManagedObject, Identifiable {
 		}
 	}
 	
+	func balancedSpend(fundName: String) {
+		if let funds = funds?.allObjects as! [TimeFund]? {
+			var highestFund: TimeFund? = nil
+			var highestAmount: Float = -9999999
+
+			for fund in funds {
+				if fund.name == fundName && fund.balance > highestAmount {
+					highestFund = fund
+					highestAmount = fund.balance
+				}
+			}
+
+			if let fund = highestFund {
+				fund.adjustBalance(-1)
+			}
+
+		}
+	}
+	
 }

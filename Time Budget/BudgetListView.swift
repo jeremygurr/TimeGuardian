@@ -34,9 +34,7 @@ struct BudgetListView: View {
 			Section(header: Text("Sub Budgets")) {
 				BudgetListSection(budgets: self.subBudgets)
 			}
-			ForEach(1...10, id: \.self) {_ in
-				Text("")
-			}
+			Text("").frame(height: listViewExtension)
 		}
 	}
 }
@@ -92,8 +90,8 @@ struct BudgetRowView: View {
 					(superFund as! TimeFund).name = newName
 				}
 			}
-			saveData(self.managedObjectContext)
 		}
+		saveData(self.managedObjectContext)
 	}
 	
 	var body: some View {

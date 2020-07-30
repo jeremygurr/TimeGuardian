@@ -89,13 +89,17 @@ public class TimeFund: NSManagedObject, Identifiable {
 		return request
 	}
 	
+	func balancedSpend() {
+		budget.balancedSpend(fundName: name)
+	}
+	
 	func deepSpend(budgetStack: BudgetStack) {
 		debugLog("deepSpend on \(self)")
 		
-		adjustBalance(-1)
+		balancedSpend()
 		budget.earnIfSpent()
 		for f in budgetStack.getFunds().reversed() {
-			f.adjustBalance(-1)
+			f.balancedSpend()
 			if !f.frozen {
 				f.budget.earnIfSpent()
 			}
