@@ -8,22 +8,33 @@
 
 import Foundation
 import SwiftUI
+import Combine
 
 struct FundRowView: View {
+	struct ViewState: Equatable {
+		var ratioDisplayMode: RatioDisplayMode = .percentage
+	}
+	@State private var viewState = ViewState()
+	@Environment(\.injected) private var injected: AppState.Injection
+	private var stateUpdate: AnyPublisher<ViewState, Never> {
+		injected.appState.map {
+			ViewState(ratioDisplayMode: $0.ratioDisplayMode)
+		}
+		.removeDuplicates().eraseToAnyPublisher()
+	}
+
 	@Binding var action: FundAction
 	@Environment(\.editMode) var editMode
 	@Environment(\.managedObjectContext) var managedObjectContext
 	@EnvironmentObject var budgetStack: BudgetStack
 	@EnvironmentObject var calendarSettings: CalendarSettings
 	@ObservedObject var fund: TimeFund
-	@Binding var ratioDisplayMode: RatioDisplayMode
 	var funds: FetchedResults<TimeFund>
 	let balance: String
 
-	init(action: Binding<FundAction>, fund: ObservedObject<TimeFund>, funds: FetchedResults<TimeFund>, ratioDisplayMode: Binding<RatioDisplayMode>) {
+	init(action: Binding<FundAction>, fund: ObservedObject<TimeFund>, funds: FetchedResults<TimeFund>) {
 		_action = action
 		_fund = fund
-		_ratioDisplayMode = ratioDisplayMode
 		self.funds = funds
 		let f = fund.wrappedValue
 		balance = f.frozen ? "∞" : "\(f.roundedBalance)"
@@ -33,7 +44,7 @@ struct FundRowView: View {
 		let ratioString: String
 		let percentage = fund.frozen ? "∞" : formatPercentage(fund.getRatio() * budgetStack.getCurrentRatio())
 		let time = fund.frozen ? "∞" : formatTime(fund.getRatio() * budgetStack.getCurrentRatio() * 24 * 3600)
-		switch ratioDisplayMode {
+		switch viewState.ratioDisplayMode {
 			case .percentage:
 				ratioString = percentage
 			case .timePerDay:
@@ -85,11 +96,12 @@ struct FundRowView: View {
 					Divider()
 					Text("\(ratioString)")
 						.frame(width: 50, alignment: .trailing)
+						.contentShape(Rectangle())
 						.onTapGesture {
-							if self.ratioDisplayMode == .percentage {
-								self.ratioDisplayMode = .timePerDay
+							if self.viewState.ratioDisplayMode == .percentage {
+								self.injected.appState.value.ratioDisplayMode = .timePerDay
 							} else {
-								self.ratioDisplayMode = .percentage
+								self.injected.appState.value.ratioDisplayMode = .percentage
 							}
 							debugLog("clicked on ratio button")
 					}
@@ -101,6 +113,7 @@ struct FundRowView: View {
 							Image(systemName: "list.bullet")
 								.imageScale(.large)
 						}
+						.contentShape(Rectangle())
 						.onTapGesture {
 							debugLog("clicked on sub")
 							self.budgetStack.push(budget: self.fund.subBudget!)
@@ -114,10 +127,12 @@ struct FundRowView: View {
 				}
 			}
 		}
+		.onReceive(stateUpdate) { self.viewState = $0 }
 	}
 	
 	func getMainButton() -> some View {
 		return FundRowLabel(fund: self.fund)
+			.contentShape(Rectangle())
 			.onTapGesture {
 				debugLog("clicked on main action button")
 				switch self.action {
@@ -222,7 +237,7 @@ struct FundRowView_PreviewHelper: View {
 	}
 		
 	var body: some View {
-		FundRowView(action: $action, fund: ObservedObject(initialValue: fund), funds: allFunds, ratioDisplayMode: $ratioDisplayMode)
+		FundRowView(action: $action, fund: ObservedObject(initialValue: fund), funds: allFunds)
 	}
 }
 

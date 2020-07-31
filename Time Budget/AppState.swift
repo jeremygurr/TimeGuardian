@@ -17,6 +17,7 @@ let rechargeLevel: Float = 3
 
 struct AppState {
 	var currentPosition: Int? = nil
+	var ratioDisplayMode: RatioDisplayMode = .percentage
 }
 
 extension AppState {

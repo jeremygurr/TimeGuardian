@@ -91,7 +91,7 @@ struct FundSectionAvailableView: View {
 				NewFundRowView(newFundName: $newFundTop, funds: availableFunds, posOfNewFund: .before)
 			}
 			ForEach(availableFunds, id: \.self) { fund in
-				FundRowView(action: self.$action, fund: ObservedObject(initialValue: fund), funds: self.allFunds, ratioDisplayMode: self.$ratioDisplayMode)
+				FundRowView(action: self.$action, fund: ObservedObject(initialValue: fund), funds: self.allFunds)
 			}
 			.onMove() { (source: IndexSet, destination: Int) in
 				debugLog("FundListView.onMove")
@@ -125,7 +125,7 @@ struct FundSectionSpentView: View {
 				FundAllSpentRowView(spentFunds: self.spentFunds, action: self.$action)
 			}
 			ForEach(self.spentFunds, id: \.self) { fund in
-				FundRowView(action: self.$action, fund: ObservedObject(initialValue: fund), funds: self.allFunds, ratioDisplayMode: self.$ratioDisplayMode)
+				FundRowView(action: self.$action, fund: ObservedObject(initialValue: fund), funds: self.allFunds)
 			}.onMove() { (source: IndexSet, destination: Int) in
 				var newFunds: [TimeFund] = self.spentFunds.map() { $0 }
 				newFunds.move(fromOffsets: source, toOffset: destination)
