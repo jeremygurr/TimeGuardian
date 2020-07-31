@@ -64,9 +64,7 @@ struct FundListView: View {
 					action: self.$action,
 					ratioDisplayMode: self.$ratioDisplayMode
 				)
-				ForEach(1...10, id: \.self) {_ in
-					Text("")
-				}
+				Text("").frame(height: listViewExtension)
 			}
 		}
 	}
@@ -94,7 +92,8 @@ struct FundSectionAvailableView: View {
 			}
 			ForEach(availableFunds, id: \.self) { fund in
 				FundRowView(action: self.$action, fund: ObservedObject(initialValue: fund), funds: self.allFunds, ratioDisplayMode: self.$ratioDisplayMode)
-			}.onMove() { (source: IndexSet, destination: Int) in
+			}
+			.onMove() { (source: IndexSet, destination: Int) in
 				debugLog("FundListView.onMove")
 
 				var newFunds: [TimeFund] = self.availableFunds.map() { $0 }
@@ -103,7 +102,8 @@ struct FundSectionAvailableView: View {
 					fund.order = Int16(index)
 				}
 				saveData(self.managedObjectContext)
-			}.listRowInsets(fundInsets())
+			}
+			.listRowInsets(fundInsets())
 			if self.editMode?.wrappedValue == .inactive {
 				NewFundRowView(newFundName: $newFundBottom, funds: availableFunds, posOfNewFund: .after)
 			}
