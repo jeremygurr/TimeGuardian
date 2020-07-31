@@ -150,25 +150,27 @@ struct ExpenseRowView: View {
 		debugLog("removeExpense: \(existingExpense)")
 		existingExpense.fund.adjustBalance(1)
 		var path = existingExpense.path.split(separator: newline)
-		path.reverse()
-		for i in 0 ..< path.count - 1 {
-			
-			let fundName = String(path[i])
-			let budgetName = String(path[i+1])
-			
-			let request = TimeFund.fetchRequest(budgetName: budgetName, fundName: fundName)
-			
-			do {
-				let funds = try self.managedObjectContext.fetch(request)
-				if let fund = funds.first {
-					fund.adjustBalance(1)
-				} else {
-					errorLog("Missing fund: budgetName = \(budgetName), fundName = \(fundName)")
+		if path.count > 0 {
+			path.reverse()
+			for i in 0 ..< path.count - 1 {
+				
+				let fundName = String(path[i])
+				let budgetName = String(path[i+1])
+				
+				let request = TimeFund.fetchRequest(budgetName: budgetName, fundName: fundName)
+				
+				do {
+					let funds = try self.managedObjectContext.fetch(request)
+					if let fund = funds.first {
+						fund.adjustBalance(1)
+					} else {
+						errorLog("Missing fund: budgetName = \(budgetName), fundName = \(fundName)")
+					}
+				} catch {
+					errorLog("Error fetching fund: budgetName = \(budgetName), fundName = \(fundName), \(error)")
 				}
-			} catch {
-				errorLog("Error fetching fund: budgetName = \(budgetName), fundName = \(fundName), \(error)")
+				
 			}
-			
 		}
 		self.managedObjectContext.delete(existingExpense)
 		saveData(self.managedObjectContext)
