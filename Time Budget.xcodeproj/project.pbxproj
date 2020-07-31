@@ -35,6 +35,7 @@
 		006F1C7324CF5ADD005C0E1A /* TimeExpense+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 006F1C7124CF5ADD005C0E1A /* TimeExpense+CoreDataClass.swift */; };
 		006F1C7424CF5ADD005C0E1A /* TimeExpense+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 006F1C7224CF5ADD005C0E1A /* TimeExpense+CoreDataProperties.swift */; };
 		00E1440D24D0B7AA0087F5C2 /* TimeSlot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00E1440C24D0B7AA0087F5C2 /* TimeSlot.swift */; };
+		00F9052224D4A313000832D3 /* NewFundRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00F9052124D4A313000832D3 /* NewFundRowView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -67,6 +68,7 @@
 		006F1C7224CF5ADD005C0E1A /* TimeExpense+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TimeExpense+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		00BA983824C74C9500E2AD91 /* Time Budget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Time Budget.entitlements"; sourceTree = "<group>"; };
 		00E1440C24D0B7AA0087F5C2 /* TimeSlot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeSlot.swift; sourceTree = SOURCE_ROOT; };
+		00F9052124D4A313000832D3 /* NewFundRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewFundRowView.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -129,6 +131,7 @@
 				006F1C6924CE521D005C0E1A /* CalendarView.swift */,
 				006F1C6B24CE5374005C0E1A /* CalendarSettings.swift */,
 				00659F0824C511F800670CF0 /* FundRowView.swift */,
+				00F9052124D4A313000832D3 /* NewFundRowView.swift */,
 				00659F1524C5227000670CF0 /* FundAllRowView.swift */,
 				003E0C9F24C4D58200AAC6C0 /* FundAction.swift */,
 				002531DB24C497EC00CB7FF0 /* BudgetStack.swift */,
@@ -231,6 +234,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				00659F1624C5227000670CF0 /* FundAllRowView.swift in Sources */,
+				00F9052224D4A313000832D3 /* NewFundRowView.swift in Sources */,
 				003E0CA024C4D58200AAC6C0 /* FundAction.swift in Sources */,
 				002590DE24B90F0E00F703C5 /* AppDelegate.swift in Sources */,
 				006F1C7424CF5ADD005C0E1A /* TimeExpense+CoreDataProperties.swift in Sources */,

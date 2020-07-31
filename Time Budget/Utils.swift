@@ -62,6 +62,7 @@ func getStartOfDay(of date: Date = Date()) -> Date {
 	return startOfDay
 }
 
+let seconds:TimeInterval = 1.0
 let minutes:TimeInterval = 60.0
 let hours:TimeInterval = 60.0 * minutes
 let days:TimeInterval = 24 * hours

@@ -18,7 +18,8 @@ struct FundListView: View {
 	@State var newFundTop = ""
 	@State var newFundBottom = ""
 	@State var action: FundAction = .spend
-	
+	@State var ratioDisplayMode: RatioDisplayMode = .percentage
+
 	init(budgetStack: BudgetStack) {
 		let budget = budgetStack.getTopBudget()
 		_availableFunds = TimeFund.fetchAvailableRequest(budget: budget)
@@ -54,12 +55,14 @@ struct FundListView: View {
 					allFunds: self.allFunds,
 					newFundTop: self.$newFundTop,
 					newFundBottom: self.$newFundBottom,
-					action: self.$action
+					action: self.$action,
+					ratioDisplayMode: self.$ratioDisplayMode
 				)
 				FundSectionSpentView(
 					spentFunds: self.spentFunds,
 					allFunds: self.allFunds,
-					action: self.$action
+					action: self.$action,
+					ratioDisplayMode: self.$ratioDisplayMode
 				)
 				ForEach(1...10, id: \.self) {_ in
 					Text("")
@@ -79,16 +82,18 @@ struct FundSectionAvailableView: View {
 	@Binding var newFundTop: String
 	@Binding var newFundBottom: String
 	@Binding var action : FundAction
+	@Binding var ratioDisplayMode: RatioDisplayMode
 	@Environment(\.editMode) var editMode
 	@Environment(\.managedObjectContext) var managedObjectContext
-	
+	@EnvironmentObject var budgetStack: BudgetStack
+
 	var body: some View {
 		Section(header: Text("Available")) {
 			if self.editMode?.wrappedValue == .inactive {
 				NewFundRowView(newFundName: $newFundTop, funds: availableFunds, posOfNewFund: .before)
 			}
 			ForEach(availableFunds, id: \.self) { fund in
-				FundRowView(action: self.$action, fund: fund, funds: self.allFunds)
+				FundRowView(action: self.$action, fund: ObservedObject(initialValue: fund), funds: self.allFunds, ratioDisplayMode: self.$ratioDisplayMode)
 			}.onMove() { (source: IndexSet, destination: Int) in
 				debugLog("FundListView.onMove")
 
@@ -111,14 +116,16 @@ struct FundSectionSpentView: View {
 	var allFunds: FetchedResults<TimeFund>
 	@Binding var action : FundAction
 	@Environment(\.managedObjectContext) var managedObjectContext
-	
+	@EnvironmentObject var budgetStack: BudgetStack
+	@Binding var ratioDisplayMode: RatioDisplayMode
+
 	var body: some View {
 		Section(header: Text("Spent")) {
 			if self.action.canApplyToAll {
 				FundAllSpentRowView(spentFunds: self.spentFunds, action: self.$action)
 			}
 			ForEach(self.spentFunds, id: \.self) { fund in
-				FundRowView(action: self.$action, fund: fund, funds: self.allFunds)
+				FundRowView(action: self.$action, fund: ObservedObject(initialValue: fund), funds: self.allFunds, ratioDisplayMode: self.$ratioDisplayMode)
 			}.onMove() { (source: IndexSet, destination: Int) in
 				var newFunds: [TimeFund] = self.spentFunds.map() { $0 }
 				newFunds.move(fromOffsets: source, toOffset: destination)

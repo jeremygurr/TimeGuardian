@@ -16,8 +16,32 @@ struct FundRowView: View {
 	@EnvironmentObject var budgetStack: BudgetStack
 	@EnvironmentObject var calendarSettings: CalendarSettings
 	@ObservedObject var fund: TimeFund
+	@Binding var ratioDisplayMode: RatioDisplayMode
 	var funds: FetchedResults<TimeFund>
+	let balance: String
+
+	init(action: Binding<FundAction>, fund: ObservedObject<TimeFund>, funds: FetchedResults<TimeFund>, ratioDisplayMode: Binding<RatioDisplayMode>) {
+		_action = action
+		_fund = fund
+		_ratioDisplayMode = ratioDisplayMode
+		self.funds = funds
+		let f = fund.wrappedValue
+		balance = f.frozen ? "∞" : "\(f.roundedBalance)"
+	}
 	
+	var ratioString: String {
+		let ratioString: String
+		let percentage = fund.frozen ? "∞" : formatPercentage(fund.getRatio() * budgetStack.getCurrentRatio())
+		let time = fund.frozen ? "∞" : formatTime(fund.getRatio() * budgetStack.getCurrentRatio() * 24 * 3600)
+		switch ratioDisplayMode {
+			case .percentage:
+				ratioString = percentage
+			case .timePerDay:
+				ratioString = time
+		}
+		return ratioString
+	}
+         
 	func commitRenameFund() {
 		self.fund.name = self.fund.name.trimmingCharacters(in: .whitespacesAndNewlines)
 		let newName = self.fund.name
@@ -55,18 +79,38 @@ struct FundRowView: View {
 				}
 				)
 			} else {
-				if fund.subBudget != nil
-					&& self.action.goesToSubIfPossible {
+				HStack {
+					Text(balance)
+						.frame(width: 30, alignment: .trailing)
+					Divider()
 					Button(action: {
-						self.budgetStack.push(budget: self.fund.subBudget!)
-						self.budgetStack.push(fund: self.fund)
+						if self.ratioDisplayMode == .percentage {
+							self.ratioDisplayMode = .timePerDay
+						} else {
+							self.ratioDisplayMode = .percentage
+						}
 					}, label: {
-						FundRowLabel(fund: self.fund)
-					}
-					)
-				} else {
-					withAnimation(.none) {
-						getMainButton()
+						Text("\(ratioString)")
+							.frame(width: 50, alignment: .trailing)
+					})
+					Divider()
+					if fund.subBudget != nil
+						&& self.action.goesToSubIfPossible {
+						Button(action: {
+							self.budgetStack.push(budget: self.fund.subBudget!)
+							self.budgetStack.push(fund: self.fund)
+						}, label: {
+							HStack {
+								FundRowLabel(fund: self.fund)
+								Image(systemName: "list.bullet")
+									.imageScale(.large)
+							}
+						}
+						)
+					} else {
+						withAnimation(.none) {
+							getMainButton()
+						}
 					}
 				}
 			}
@@ -125,28 +169,32 @@ struct FundRowView: View {
 	}
 }
 
+enum RatioDisplayMode {
+	case percentage, timePerDay
+}
+
 struct FundRowLabel: View {
 	@ObservedObject var fund: TimeFund
 	@EnvironmentObject var budgetStack: BudgetStack
 	
 	var body: some View {
-		let percentage = fund.frozen ? "∞" : formatPercentage(fund.getRatio() * budgetStack.getCurrentRatio())
-		let balance = fund.frozen ? "∞" : "\(fund.roundedBalance)"
-		return HStack {
-			Text(balance)
-				.frame(width: 30, alignment: .trailing)
-			Divider()
-			Text("\(percentage)")
-				.frame(width: 50, alignment: .trailing)
-			Divider()
-			Text(fund.name)
-				.frame(minWidth: 20, maxWidth: .infinity, alignment: .leading)
-			if self.fund.subBudget != nil {
-				Image(systemName: "list.bullet")
-					.imageScale(.large)
-			}
-		}
+		Text(fund.name)
+			.frame(minWidth: 20, maxWidth: .infinity, alignment: .leading)
 	}
+}
+
+func formatTime(_ x: Float) -> String {
+	let y = Double(x)
+	var result: String
+	if y < 2 * minutes {
+		result = String(format: "%.1fs", y / seconds)
+	} else if y < 2 * hours {
+		result = String(format: "%.1fm", y / minutes)
+	} else {
+		result = String(format: "%.1fh", y / hours)
+	}
+	
+	return result
 }
 
 func formatPercentage(_ x: Float) -> String {
@@ -163,70 +211,40 @@ func formatPercentage(_ x: Float) -> String {
 	return result
 }
 
-struct NewFundRowView: View {
-	@Environment(\.managedObjectContext) var managedObjectContext
-	@EnvironmentObject var budgetStack: BudgetStack
-	@Binding var newFundName: String
-	var funds: FetchedResults<TimeFund>
-	let posOfNewFund: ListPosition
-	
+struct FundRowView_PreviewHelper: View {
+	@FetchRequest var allFunds: FetchedResults<TimeFund>
+	@State var action: FundAction = .spend
+	@State var ratioDisplayMode: RatioDisplayMode = .percentage
+	let fund: TimeFund
+
+	init(budget: TimeBudget, fund: TimeFund) {
+		_allFunds = TimeFund.fetchAllRequest(budget: budget)
+		self.fund = fund
+	}
+		
 	var body: some View {
-		HStack {
-			TextField("New Fund", text: self.$newFundName)
-			Button(action: {
-				self.newFundName = self.newFundName.trimmingCharacters(in: .whitespacesAndNewlines)
-				
-				if self.newFundName.count > 0 {
-					let fund = TimeFund(context: self.managedObjectContext)
-					fund.name = self.newFundName
-					fund.budget = self.budgetStack.getTopBudget()
-					var index = 0
-					
-					if self.posOfNewFund == .before {
-						fund.order = 0
-						index += 1
-					}
-					
-					for i in 0 ..< self.funds.count {
-						self.funds[i].order = Int16(i + index)
-					}
-					
-					index += self.funds.count
-					
-					if self.posOfNewFund == .after {
-						fund.order = Int16(index)
-						index += 1
-					}
-					
-					saveData(self.managedObjectContext)
-					self.newFundName = ""
-				}
-			}) {
-				Image(systemName: "plus.circle.fill")
-					.foregroundColor(.green)
-					.imageScale(.large)
-			}
-		}
+		FundRowView(action: $action, fund: ObservedObject(initialValue: fund), funds: allFunds, ratioDisplayMode: $ratioDisplayMode)
 	}
 }
 
 struct FundRowView_Previews: PreviewProvider {
-	@State static var action: FundAction = .spend
-	@FetchRequest(
-		entity: TimeFund.entity(),
-		sortDescriptors: [NSSortDescriptor(keyPath: \TimeFund.order, ascending: true)]
-	) static var allFunds: FetchedResults<TimeFund>
-	
 	static var previews: some View {
+
 		let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
 		let testDataBuilder = TestDataBuilder(context: context)
 		testDataBuilder.createTestData()
 		let budget = testDataBuilder.budgets.first!
 		let fund = testDataBuilder.funds.first!
 		let budgetStack = BudgetStack()
+		let calendarSettings = CalendarSettings()
+		let appState = AppState.Injection(appState: .init(AppState()))
 		budgetStack.push(budget: budget)
-		return FundRowView(action: $action, fund: fund, funds: allFunds)
+		return FundRowView_PreviewHelper(budget: budget, fund: fund)
 			.environment(\.managedObjectContext, context)
+			.environment(\.injected, appState)
 			.environmentObject(budgetStack)
+			.environmentObject(calendarSettings)
+			.frame(maxHeight: 50)
+			.border(Color.black, width: 2)
 	}
 }
