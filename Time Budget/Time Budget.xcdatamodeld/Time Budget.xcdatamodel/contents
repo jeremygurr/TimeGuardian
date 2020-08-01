@@ -17,13 +17,14 @@
         <attribute name="frozen" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="name" attributeType="String"/>
         <attribute name="order" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="recharge" attributeType="Float" defaultValueString="1" usesScalarValueType="YES"/>
         <relationship name="budget" maxCount="1" deletionRule="Nullify" destinationEntity="TimeBudget" inverseName="funds" inverseEntity="TimeBudget"/>
         <relationship name="expenses" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="TimeExpense" inverseName="fund" inverseEntity="TimeExpense"/>
         <relationship name="subBudget" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TimeBudget" inverseName="superFund" inverseEntity="TimeBudget"/>
     </entity>
     <elements>
         <element name="TimeBudget" positionX="-63" positionY="-18" width="128" height="103"/>
-        <element name="TimeFund" positionX="272.59765625" positionY="-15.421875" width="128" height="148"/>
         <element name="TimeExpense" positionX="108" positionY="36" width="128" height="103"/>
+        <element name="TimeFund" positionX="272.59765625" positionY="-15.421875" width="128" height="163"/>
     </elements>
 </model>
