@@ -53,7 +53,7 @@ enum FundAction: Int, CaseIterable, Buttonable {
 			case .view: return "navigate without changing any balances"
 			case .spend: return "spend fund (balance - 1)"
 			case .qspend: return "quick spend fund (don't return to top)"
-			case .reset: return "reset fund (balance = \(rechargeLevel))"
+			case .reset: return "reset fund to recharge level"
 			case .earn: return "earn fund (balance + 1)"
 			case .subBudget: return "attach sub budget"
 			case .copy: return "copy (duplicate a fund)"

@@ -17,7 +17,8 @@ struct FundRowView: View {
 	@State private var viewState = ViewState()
 	@Environment(\.injected) private var injected: AppState.Injection
 	private var stateUpdate: AnyPublisher<ViewState, Never> {
-		injected.appState.map {
+		debugLog("stateUpdate")
+		return injected.appState.map {
 			ViewState(ratioDisplayMode: $0.ratioDisplayMode)
 		}
 		.removeDuplicates().eraseToAnyPublisher()
@@ -30,25 +31,29 @@ struct FundRowView: View {
 	@EnvironmentObject var calendarSettings: CalendarSettings
 	@ObservedObject var fund: TimeFund
 	var funds: FetchedResults<TimeFund>
-	let balance: String
 
 	init(action: Binding<FundAction>, fund: ObservedObject<TimeFund>, funds: FetchedResults<TimeFund>) {
 		_action = action
 		_fund = fund
 		self.funds = funds
-		let f = fund.wrappedValue
-		balance = f.frozen ? "∞" : "\(f.roundedBalance)"
+	}
+
+	var balance: String {
+		fund.frozen ? "∞" : "\(fund.roundedBalance)"
 	}
 	
 	var ratioString: String {
 		let ratioString: String
 		let percentage = fund.frozen ? "∞" : formatPercentage(fund.getRatio() * budgetStack.getCurrentRatio())
-		let time = fund.frozen ? "∞" : formatTime(fund.getRatio() * budgetStack.getCurrentRatio() * 24 * 3600)
+		let time = fund.frozen ? "∞" : formatTime(fund.getRatio() * budgetStack.getCurrentRatio() * Float(days))
+		let rechargeAmount = formatRecharge(fund.recharge)
 		switch viewState.ratioDisplayMode {
 			case .percentage:
 				ratioString = percentage
 			case .timePerDay:
 				ratioString = time
+			case .rechargeAmount:
+				ratioString = rechargeAmount
 		}
 		return ratioString
 	}
@@ -95,15 +100,22 @@ struct FundRowView: View {
 						.frame(width: 30, alignment: .trailing)
 					Divider()
 					Text("\(ratioString)")
-						.frame(width: 50, alignment: .trailing)
+						.frame(width: 55, alignment: .trailing)
 						.contentShape(Rectangle())
 						.onTapGesture {
-							if self.viewState.ratioDisplayMode == .percentage {
-								self.injected.appState.value.ratioDisplayMode = .timePerDay
-							} else {
-								self.injected.appState.value.ratioDisplayMode = .percentage
-							}
 							debugLog("clicked on ratio button")
+							switch self.action {
+								case .earn:
+									self.fund.recharge += 1
+									saveData(self.managedObjectContext)
+								case .qspend:
+									if self.fund.recharge > 1 {
+										self.fund.recharge -= 1
+										saveData(self.managedObjectContext)
+									}
+								default:
+									self.injected.appState.value.ratioDisplayMode = self.viewState.ratioDisplayMode.next()
+							}
 					}
 					Divider()
 					if fund.subBudget != nil
@@ -140,7 +152,6 @@ struct FundRowView: View {
 						self.budgetStack.lastSelectedFund = self.fund
 						return
 					case .spend:
-						//					self.fund.deepSpend(budgetStack: self.budgetStack)
 						addExpenseToCurrentTimeIfEmpty(fund: self.fund, budgetStack: self.budgetStack, calendarSettings: self.calendarSettings, managedObjectContext: self.managedObjectContext)
 						self.budgetStack.toFirstBudget()
 					case .reset:
@@ -183,8 +194,8 @@ struct FundRowView: View {
 	}
 }
 
-enum RatioDisplayMode {
-	case percentage, timePerDay
+enum RatioDisplayMode: CaseIterable {
+	case percentage, timePerDay, rechargeAmount
 }
 
 struct FundRowLabel: View {
@@ -200,14 +211,23 @@ struct FundRowLabel: View {
 func formatTime(_ x: Float) -> String {
 	let y = Double(x)
 	var result: String
-	if y < 2 * minutes {
+	if y < 1 * minutes {
 		result = String(format: "%.1fs", y / seconds)
-	} else if y < 2 * hours {
+	} else if y < 1 * hours {
 		result = String(format: "%.1fm", y / minutes)
 	} else {
 		result = String(format: "%.1fh", y / hours)
 	}
 	
+	return result
+}
+
+func formatRecharge(_ x: Float) -> String {
+	var result: String
+	result = String(format: "%2.0f", x)
+	if x >= 0 {
+		result = "+" + result
+	}
 	return result
 }
 

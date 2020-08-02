@@ -56,34 +56,58 @@ public class TimeBudget: NSManagedObject, Identifiable {
 		request.predicate = NSPredicate(format: "name == %@", name)
 		return request
 	}
-	
-	// add to the balance of all funds in this budget if all have a balance of less than 1
-	func earnIfSpent() {
+
+	func allFundsSpent() -> Bool {
+		if funds == nil {
+			return false
+		}
+
+		var spent = true
+		var allFrozen = true
+		
+		for f in funds! {
+			let fund = f as! TimeFund
+			if !fund.frozen {
+				if fund.balance >= 1 {
+					spent = false
+					break
+				}
+				
+				allFrozen = false
+			}
+		}
+		
+		if allFrozen {
+			spent = false
+		}
+		
+		return spent
+	}
+
+	func rechargeFunds() {
 		if funds == nil {
 			return
 		}
-		var minBelowRecharge: Float = 9999999
-		var allFundsSpent = true
+
 		for f in funds! {
 			let fund = f as! TimeFund
-			let belowRecharge = rechargeLevel - fund.balance
-			let belowOne = 1 - fund.balance
-			if belowOne < 0.5 {
-				allFundsSpent = false
-				break
-			}
-			if belowRecharge < minBelowRecharge {
-				minBelowRecharge = belowRecharge
-			}
+			fund.adjustBalance(fund.recharge)
 		}
-		if allFundsSpent {
-			for fund in funds! {
-				(fund as! TimeFund).balance += minBelowRecharge
-			}
+	}
+	
+	// add to the balance of all funds in this budget if all have a balance of less than 1
+	func rechargeIfSpent() {
+		if funds == nil {
+			return
+		}
+		
+		while allFundsSpent() {
+			rechargeFunds()
 		}
 	}
 	
 	func balancedSpend(fundName: String) {
+		debugLog("balancedSpend(\(fundName))")
 		if let funds = funds?.allObjects as! [TimeFund]? {
 			var highestFund: TimeFund? = nil
 			var highestAmount: Float = -9999999

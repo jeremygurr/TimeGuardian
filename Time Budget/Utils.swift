@@ -62,6 +62,15 @@ func getStartOfDay(of date: Date = Date()) -> Date {
 	return startOfDay
 }
 
+extension CaseIterable where Self: Equatable {
+	func next() -> Self {
+		let all = Self.allCases
+		let idx = all.firstIndex(of: self)!
+		let next = all.index(after: idx)
+		return all[next == all.endIndex ? all.startIndex : next]
+	}
+}
+
 let seconds:TimeInterval = 1.0
 let minutes:TimeInterval = 60.0
 let hours:TimeInterval = 60.0 * minutes

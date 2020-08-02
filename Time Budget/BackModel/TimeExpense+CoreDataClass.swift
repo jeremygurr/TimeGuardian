@@ -85,7 +85,6 @@ func addExpenseToCurrentTimeIfEmpty(fund: TimeFund, budgetStack: BudgetStack, ca
 			debugLog("No expense found for this slot, so we will create one")
 			addExpense(timeSlot: slot, fund: fund, budgetStack: budgetStack, managedObjectContext: managedObjectContext)
 		} else {
-			let fund = firstExpense!.fund
 			fund.deepSpend(budgetStack: budgetStack)
 		}
 	} catch {

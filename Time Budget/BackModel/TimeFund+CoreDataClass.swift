@@ -94,33 +94,36 @@ public class TimeFund: NSManagedObject, Identifiable {
 	}
 	
 	func deepSpend(budgetStack: BudgetStack) {
-		debugLog("deepSpend on \(self)")
+		debugLog("deepSpend on \(self.name)")
 		
 		balancedSpend()
-		budget.earnIfSpent()
+		budget.rechargeIfSpent()
 		for f in budgetStack.getFunds().reversed() {
 			f.balancedSpend()
 			if !f.frozen {
-				f.budget.earnIfSpent()
+				f.budget.rechargeIfSpent()
 			}
 		}
 	}
 	
 	func adjustBalance(_ amount: Float) {
-		debugLog("adjustBalance on \(self) amount: \(amount)")
+		debugLog("adjustBalance on \(self.name) amount: \(amount)")
 		if !frozen {
 			balance += amount
 			if balance < interestThreshold && amount < 0 {
 				// charge interest on time debt
 				balance *= 1.1
 			}
+		} else {
+			debugLog("fund \(self.name) is frozen")
 		}
+		debugLog("new balance on \(self.name) is: \(balance)")
 	}
 	
 	func resetBalance() {
-		debugLog("resetBalance on \(self)")
+		debugLog("resetBalance on \(self.name)")
 		if !frozen {
-			balance = rechargeLevel
+			balance = recharge
 		}
 	}
 	
@@ -133,10 +136,11 @@ public class TimeFund: NSManagedObject, Identifiable {
 		if let funds = self.budget.funds {
 			var totalFunds: Float = 0.0
 			var fundsWithSameName: Float = 0.0
-			for fund in funds {
-				totalFunds += 1
-				if (fund as! TimeFund).name == self.name {
-					fundsWithSameName += 1
+			for f in funds {
+				let fund = f as! TimeFund
+				totalFunds += fund.recharge
+				if fund.name == self.name {
+					fundsWithSameName += fund.recharge
 				}
 			}
 			result = fundsWithSameName / totalFunds
