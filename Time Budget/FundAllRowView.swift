@@ -13,6 +13,8 @@ struct FundAllRowView: View {
 	var allFunds: FetchedResults<TimeFund>
 	@Binding var action: FundAction
 	@Environment(\.managedObjectContext) var managedObjectContext
+	let appState: AppState
+
 	var allFundBalance: Int {
 		return self.allFunds.count
 	}
@@ -63,6 +65,8 @@ struct FundAllSpentRowView: View {
 	var spentFunds: FetchedResults<TimeFund>
 	@Binding var action: FundAction
 	@Environment(\.managedObjectContext) var managedObjectContext
+	let appState: AppState
+
 	var allSpentFundBalance: Int {
 		return self.spentFunds.count
 	}

@@ -9,7 +9,7 @@
 import Foundation
 import SwiftUI
 
-class CalendarSettings: ObservableObject {
+class DayViewSettings: ObservableObject {
 //	@Published private var currentDay: Date = Date()
 	@Published var expensePeriod: TimeInterval = 30
 	@Published var plusMinusDays: Int = 1

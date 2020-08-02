@@ -19,12 +19,14 @@ struct FundListView: View {
 	@State var newFundTop = ""
 	@State var newFundBottom = ""
 	@State var action: FundAction = .spend
+	let appState: AppState
 
-	init(budgetStack: BudgetStack) {
+	init(budgetStack: BudgetStack, appState: AppState) {
 		let budget = budgetStack.getTopBudget()
 		_availableFunds = TimeFund.fetchAvailableRequest(budget: budget)
 		_spentFunds = TimeFund.fetchSpentRequest(budget: budget)
 		_allFunds = TimeFund.fetchAllRequest(budget: budget)
+		self.appState = appState
 	}
 	
 	var body: some View {
@@ -47,7 +49,8 @@ struct FundListView: View {
 				if self.action.canApplyToAll {
 					FundAllRowView(
 						allFunds: self.allFunds,
-						action: self.$action
+						action: self.$action,
+						appState: self.appState
 					)
 				}
 				FundSectionAvailableView(
@@ -55,12 +58,14 @@ struct FundListView: View {
 					allFunds: self.allFunds,
 					newFundTop: self.$newFundTop,
 					newFundBottom: self.$newFundBottom,
-					action: self.$action
+					action: self.$action,
+					appState: self.appState
 				)
 				FundSectionSpentView(
 					spentFunds: self.spentFunds,
 					allFunds: self.allFunds,
-					action: self.$action
+					action: self.$action,
+					appState: self.appState
 				)
 				Text("").frame(height: listViewExtension)
 			}
@@ -81,7 +86,7 @@ struct FundSectionAvailableView: View {
 	@Environment(\.editMode) var editMode
 	@Environment(\.managedObjectContext) var managedObjectContext
 	@EnvironmentObject var budgetStack: BudgetStack
-	@Environment(\.injected) private var injected: AppState.Injection
+	let appState: AppState
 
 	var body: some View {
 		Section(header: Text("Available")) {
@@ -89,7 +94,7 @@ struct FundSectionAvailableView: View {
 				NewFundRowView(newFundName: $newFundTop, funds: availableFunds, posOfNewFund: .before)
 			}
 			ForEach(availableFunds, id: \.self) { fund in
-				FundRowView(action: self.$action, fund: ObservedObject(initialValue: fund), funds: self.allFunds, initialRatioDisplayMode: self.injected.appState.value.ratioDisplayMode)
+				FundRowView(action: self.$action, fund: ObservedObject(initialValue: fund), funds: self.allFunds, appState: self.appState)
 			}
 			.onMove() { (source: IndexSet, destination: Int) in
 				debugLog("FundListView.onMove")
@@ -115,15 +120,15 @@ struct FundSectionSpentView: View {
 	@Binding var action : FundAction
 	@Environment(\.managedObjectContext) var managedObjectContext
 	@EnvironmentObject var budgetStack: BudgetStack
-	@Environment(\.injected) private var injected: AppState.Injection
+	let appState: AppState
 
 	var body: some View {
 		Section(header: Text("Spent")) {
 			if self.action.canApplyToAll {
-				FundAllSpentRowView(spentFunds: self.spentFunds, action: self.$action)
+				FundAllSpentRowView(spentFunds: self.spentFunds, action: self.$action, appState: self.appState)
 			}
 			ForEach(self.spentFunds, id: \.self) { fund in
-				FundRowView(action: self.$action, fund: ObservedObject(initialValue: fund), funds: self.allFunds, initialRatioDisplayMode: self.injected.appState.value.ratioDisplayMode)
+				FundRowView(action: self.$action, fund: ObservedObject(initialValue: fund), funds: self.allFunds, appState: self.appState)
 			}.onMove() { (source: IndexSet, destination: Int) in
 				var newFunds: [TimeFund] = self.spentFunds.map() { $0 }
 				newFunds.move(fromOffsets: source, toOffset: destination)
@@ -141,14 +146,13 @@ struct FundListView_Previews: PreviewProvider {
 		let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
 		let testDataBuilder = TestDataBuilder(context: context)
 		testDataBuilder.createTestData()
-		let appState = AppState.Injection(appState: .init(AppState()))
+		let appState = AppState()
 		let budget = testDataBuilder.budgets.first!
 		let budgetStack = BudgetStack()
 		budgetStack.push(budget: budget)
-		return FundListView(budgetStack: budgetStack)
+		return FundListView(budgetStack: budgetStack, appState: appState)
 			.environment(\.managedObjectContext, context)
 			.environmentObject(budgetStack)
-			.environment(\.injected, appState)
 //			.environment(\.colorScheme, .dark)
 	}
 }

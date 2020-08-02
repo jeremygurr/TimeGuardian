@@ -11,20 +11,8 @@ import CoreData
 import Introspect
 import Combine
 
-struct CalendarView: View {
-	struct ViewState: Equatable {
-		var currentPosition: Int? = nil
-	}
-	@State private var viewState = ViewState()
-	@Environment(\.injected) private var injected: AppState.Injection
-	private var stateUpdate: AnyPublisher<ViewState, Never> {
-		injected.appState.map {
-			ViewState(currentPosition: $0.currentPosition)
-		}
-		.removeDuplicates().eraseToAnyPublisher()
-	}
-
-	@EnvironmentObject var calendarSettings: CalendarSettings
+struct DayView: View {
+	@EnvironmentObject var calendarSettings: DayViewSettings
 	@EnvironmentObject var budgetStack: BudgetStack
 	@FetchRequest var recentExpenses: FetchedResults<TimeExpense>
 	@Environment(\.managedObjectContext) var managedObjectContext
@@ -33,8 +21,10 @@ struct CalendarView: View {
 	@State var timeSlots: [TimeSlot]
 	private let updateTimer = Timer(timeInterval: 5 * minutes, repeats: true, block: { _ in })
 	@State private var updateTrigger = false
+	@Binding var currentPosition: Int?
+	let appState: AppState
 
-	init(calendarSettings: CalendarSettings) {
+	init(calendarSettings: DayViewSettings, appState: AppState) {
 		let today = getStartOfDay()
 		let plusMinus = calendarSettings.plusMinusDays
 		let newStartDate = today - Double(plusMinus) * days
@@ -50,12 +40,14 @@ struct CalendarView: View {
 			}
 		}
 		_timeSlots = State(initialValue: newTimeSlots)
+		self.appState = appState
+		_currentPosition = appState.$dayViewListPosition
 	}
 
 	var body: some View {
 		List {
 			Text("").frame(height: listViewExtension)
-			ExpenseRowView(todaysExpenses: self.recentExpenses, timeSlots: $timeSlots)
+			ExpenseRowView(todaysExpenses: self.recentExpenses, timeSlots: $timeSlots, appState: self.appState)
 				.listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 00))
 			Text("").frame(height: listViewExtension)
 		}
@@ -67,16 +59,15 @@ struct CalendarView: View {
 				, animated: false
 			)
 		}
-		.onReceive(stateUpdate) { self.viewState = $0 }
 	}
 	
 	func getCurrentPosition() -> Int {
 		var result: Int
-		if let c = viewState.currentPosition {
+		if let c = self.currentPosition {
 			result = c
 		} else {
 			let c = self.getCalendarOffsetForCurrentTime()
-			injected.appState.value.currentPosition = c
+			self.currentPosition = c
 			result = c
 		}
 		return result
@@ -97,29 +88,23 @@ struct CalendarView: View {
 }
 
 struct ExpenseRowView: View {
-	struct ViewState: Equatable {
-		var currentPosition: Int? = nil
-	}
-	@State private var viewState = ViewState()
-	@Environment(\.injected) private var injected: AppState.Injection
-	private var stateUpdate: AnyPublisher<ViewState, Never> {
-		injected.appState.map {
-			ViewState(currentPosition: $0.currentPosition)
-		}
-		.removeDuplicates().eraseToAnyPublisher()
-	}
-
-	@EnvironmentObject var calendarSettings: CalendarSettings
+	@EnvironmentObject var calendarSettings: DayViewSettings
 	@EnvironmentObject var budgetStack: BudgetStack
 	var todaysExpenses: FetchedResults<TimeExpense>
 	@Environment(\.managedObjectContext) var managedObjectContext
 	@Binding var timeSlots: [TimeSlot]
+	@Binding var currentPosition: Int?
 
+	init(todaysExpenses: FetchedResults<TimeExpense>, timeSlots: Binding<[TimeSlot]>, appState: AppState) {
+		_currentPosition = appState.$dayViewListPosition
+		self.todaysExpenses = todaysExpenses
+		_timeSlots = timeSlots
+	}
+	
 	var body: some View {
 		ForEach(0 ..< self.timeSlots.count, id: \.self) { index in
 			self.RowView(index)
 		}
-		.onReceive(stateUpdate) { self.viewState = $0 }
 	}
 	
 	func RowView(_ index: Int) -> some View {
@@ -137,7 +122,7 @@ struct ExpenseRowView: View {
 		.contentShape(Rectangle())
 		.background(colorOfRow(timeSlot: timeSlot, calendarSettings: self.calendarSettings))
 		.onTapGesture {
-			self.injected.appState.value.currentPosition = index
+			self.currentPosition = index
 			if let existingExpense = getExpenseFor(timeSlot: timeSlot, todaysExpenses: self.todaysExpenses) {
 				self.removeExpense(existingExpense: existingExpense)
 			} else {
@@ -208,7 +193,7 @@ func toExpenseString(timeSlot: TimeSlot, todaysExpenses: FetchedResults<TimeExpe
 	return result
 }
 
-func colorOfRow(timeSlot: TimeSlot, calendarSettings: CalendarSettings) -> some View {
+func colorOfRow(timeSlot: TimeSlot, calendarSettings: DayViewSettings) -> some View {
 	if(timeSlot == getTimeSlotOfCurrentTime(calendarSettings: calendarSettings)) {
 		return Color.init("HighlightBackground")
 	}
@@ -238,7 +223,7 @@ func toDayString(timeSlot: TimeSlot) -> String {
 }
 
 struct CalendarView_Previews: PreviewProvider {
-	static let calendarSettings = CalendarSettings()
+	static let calendarSettings = DayViewSettings()
 	@State static var currentPosition: Int? = nil
 
 	static var previews: some View {
@@ -249,21 +234,19 @@ struct CalendarView_Previews: PreviewProvider {
 		let budget = testDataBuilder.budgets.first!
 		let budgetStack = BudgetStack()
 		budgetStack.push(budget: budget)
-		let appState = AppState.Injection(appState: .init(AppState()))
+		let appState = AppState()
 		
 		return Group {
-			CalendarView(calendarSettings: calendarSettings)
+			DayView(calendarSettings: calendarSettings, appState: appState)
 				.environmentObject(calendarSettings)
 				.environmentObject(budgetStack)
 				.environment(\.colorScheme, .light)
-				.environment(\.injected, appState)
 				.environment(\.managedObjectContext, context)
 
-			CalendarView(calendarSettings: calendarSettings)
+			DayView(calendarSettings: calendarSettings, appState: appState)
 				.environmentObject(calendarSettings)
 				.environmentObject(budgetStack)
 				.environment(\.colorScheme, .dark)
-				.environment(\.injected, appState)
 				.environment(\.managedObjectContext, context)
 		}
 	}

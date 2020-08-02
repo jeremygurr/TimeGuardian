@@ -11,32 +11,20 @@ import SwiftUI
 import Combine
 
 struct FundRowView: View {
-	struct ViewState: Equatable {
-		var ratioDisplayMode: RatioDisplayMode
-	}
-	@State private var viewState: ViewState
-	@Environment(\.injected) private var injected: AppState.Injection
-	private var stateUpdate: AnyPublisher<ViewState, Never> {
-		debugLog("FundRowView stateUpdate")
-		return injected.appState.map {
-			ViewState(ratioDisplayMode: $0.ratioDisplayMode)
-		}
-		.removeDuplicates().eraseToAnyPublisher()
-	}
-
 	@Binding var action: FundAction
 	@Environment(\.editMode) var editMode
 	@Environment(\.managedObjectContext) var managedObjectContext
 	@EnvironmentObject var budgetStack: BudgetStack
-	@EnvironmentObject var calendarSettings: CalendarSettings
+	@EnvironmentObject var calendarSettings: DayViewSettings
 	@ObservedObject var fund: TimeFund
 	var funds: FetchedResults<TimeFund>
+	@Binding var ratioDisplayMode: RatioDisplayMode
 
-	init(action: Binding<FundAction>, fund: ObservedObject<TimeFund>, funds: FetchedResults<TimeFund>, initialRatioDisplayMode: RatioDisplayMode) {
+	init(action: Binding<FundAction>, fund: ObservedObject<TimeFund>, funds: FetchedResults<TimeFund>, appState: AppState) {
 		_action = action
 		_fund = fund
-		_viewState = State(initialValue: ViewState(ratioDisplayMode: initialRatioDisplayMode))
 		self.funds = funds
+		_ratioDisplayMode = appState.$ratioDisplayMode
 	}
 
 	var balance: String {
@@ -48,7 +36,7 @@ struct FundRowView: View {
 		let percentage = fund.frozen ? "∞" : formatPercentage(fund.getRatio() * budgetStack.getCurrentRatio())
 		let time = fund.frozen ? "∞" : formatTime(fund.getRatio() * budgetStack.getCurrentRatio() * Float(days))
 		let rechargeAmount = formatRecharge(fund.recharge)
-		switch viewState.ratioDisplayMode {
+		switch self.ratioDisplayMode {
 			case .percentage:
 				ratioString = percentage
 			case .timePerDay:
@@ -115,7 +103,7 @@ struct FundRowView: View {
 										saveData(self.managedObjectContext)
 									}
 								default:
-									self.injected.appState.value.ratioDisplayMode = self.viewState.ratioDisplayMode.next()
+									self.ratioDisplayMode = self.ratioDisplayMode.next()
 							}
 					}
 					Divider()
@@ -140,7 +128,6 @@ struct FundRowView: View {
 				}
 			}
 		}
-		.onReceive(stateUpdate) { self.viewState = $0 }
 	}
 	
 	func getMainButton() -> some View {
@@ -249,16 +236,17 @@ func formatPercentage(_ x: Float) -> String {
 struct FundRowView_PreviewHelper: View {
 	@FetchRequest var allFunds: FetchedResults<TimeFund>
 	@State var action: FundAction = .view
-	@State var ratioDisplayMode: RatioDisplayMode = .percentage
 	let fund: TimeFund
+	let appState: AppState
 
-	init(budget: TimeBudget, fund: TimeFund) {
+	init(budget: TimeBudget, fund: TimeFund, appState: AppState) {
 		_allFunds = TimeFund.fetchAllRequest(budget: budget)
 		self.fund = fund
+		self.appState = appState
 	}
 		
 	var body: some View {
-		FundRowView(action: $action, fund: ObservedObject(initialValue: fund), funds: allFunds, initialRatioDisplayMode: ratioDisplayMode)
+		FundRowView(action: $action, fund: ObservedObject(initialValue: fund), funds: allFunds, appState: appState)
 	}
 }
 
@@ -271,12 +259,11 @@ struct FundRowView_Previews: PreviewProvider {
 		let budget = testDataBuilder.budgets.first!
 		let fund = testDataBuilder.funds.first!
 		let budgetStack = BudgetStack()
-		let calendarSettings = CalendarSettings()
-		let appState = AppState.Injection(appState: .init(AppState()))
+		let calendarSettings = DayViewSettings()
+		let appState = AppState()
 		budgetStack.push(budget: budget)
-		return FundRowView_PreviewHelper(budget: budget, fund: fund)
+		return FundRowView_PreviewHelper(budget: budget, fund: fund, appState: appState)
 			.environment(\.managedObjectContext, context)
-			.environment(\.injected, appState)
 			.environmentObject(budgetStack)
 			.environmentObject(calendarSettings)
 			.frame(maxHeight: 50)

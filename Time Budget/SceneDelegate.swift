@@ -25,15 +25,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 //			let tdb = TestDataBuilder(context: context)
 //			tdb.createTestData()
 		
-		let appState = AppState.Injection(appState: .init(AppState()))
+		let appState = AppState()
 
 		// Create the SwiftUI view and set the context as the value for the managedObjectContext environment keyPath.
 		// Add `@Environment(\.managedObjectContext)` in the views that will need the context.
-		let contentView = TopView()
+		let contentView = TopView(appState: appState)
 			.environment(\.managedObjectContext, context)
-			.environment(\.injected, appState)
 			.environmentObject(BudgetStack())
-			.environmentObject(CalendarSettings())
+			.environmentObject(DayViewSettings())
 		
 		// Use a UIHostingController as window root view controller.
 		if let windowScene = scene as? UIWindowScene {

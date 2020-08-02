@@ -10,16 +10,15 @@ import SwiftUI
 
 struct TopView: View {
 	@EnvironmentObject var budgetStack: BudgetStack
-	@EnvironmentObject var calendarSettings: CalendarSettings
-	@Environment(\.injected) private var injected: AppState.Injection
-	@State var currentPosition: Int? = nil
+	@EnvironmentObject var calendarSettings: DayViewSettings
+	let appState: AppState
 
 	private func budgetFundView() -> some View {
 		VStack {
 			if self.budgetStack.isEmpty() {
 				BudgetListViewWindow()
 			} else {
-				FundListViewWindow()
+				FundListViewWindow(appState: appState)
 			}
 		}
 	}
@@ -32,7 +31,7 @@ struct TopView: View {
 						.imageScale(.large)
 					Text("Budget")
 			}
-			CalendarView(calendarSettings: calendarSettings)
+			DayView(calendarSettings: calendarSettings, appState: self.appState)
 				.tabItem {
 					Image(systemName: "calendar")
 						.imageScale(.large)
@@ -63,6 +62,7 @@ struct FundListViewWindow: View {
 	@EnvironmentObject var budgetStack: BudgetStack
 	@Environment(\.editMode) var editMode
 	@Environment(\.managedObjectContext) var managedObjectContext
+	let appState: AppState
 
 	var body: some View {
 		VStack {
@@ -105,7 +105,7 @@ struct FundListViewWindow: View {
 			}
 			.frame(maxWidth: .infinity, alignment: .leading)
 			if self.budgetStack.hasTopBudget() {
-				FundListView(budgetStack: self.budgetStack)
+				FundListView(budgetStack: self.budgetStack, appState: appState)
 			}
 		}
 	}
@@ -114,15 +114,14 @@ struct FundListViewWindow: View {
 struct TopView_Previews: PreviewProvider {
 	static var previews: some View {
 		let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-		let appState = AppState.Injection(appState: .init(AppState()))
+		let appState = AppState()
 		let tdb = TestDataBuilder(context: context)
 		tdb.createTestData()
 		let budgetStack = BudgetStack()
 		//		budgetStack.push(budget: tdb.budgets.first!)
-		return TopView()
+		return TopView(appState: appState)
 			.environment(\.managedObjectContext, context)
-			.environment(\.injected, appState)
 			.environmentObject(budgetStack)
-			.environmentObject(CalendarSettings())
+			.environmentObject(DayViewSettings())
 	}
 }

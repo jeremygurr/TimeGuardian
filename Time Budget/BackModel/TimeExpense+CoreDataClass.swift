@@ -66,7 +66,7 @@ func addExpense(timeSlot: TimeSlot, fund: TimeFund, budgetStack: BudgetStack, ma
 	
 }
 
-func getTimeSlotOfCurrentTime(calendarSettings: CalendarSettings) -> TimeSlot {
+func getTimeSlotOfCurrentTime(calendarSettings: DayViewSettings) -> TimeSlot {
 	let now = Date()
 	let startOfDay = getStartOfDay()
 	let difference = startOfDay.distance(to: now)
@@ -74,7 +74,7 @@ func getTimeSlotOfCurrentTime(calendarSettings: CalendarSettings) -> TimeSlot {
 	return TimeSlot(baseDate: startOfDay, slotIndex: itemIndex, slotSize: calendarSettings.expensePeriod)
 }
 
-func addExpenseToCurrentTimeIfEmpty(fund: TimeFund, budgetStack: BudgetStack, calendarSettings: CalendarSettings, managedObjectContext: NSManagedObjectContext) {
+func addExpenseToCurrentTimeIfEmpty(fund: TimeFund, budgetStack: BudgetStack, calendarSettings: DayViewSettings, managedObjectContext: NSManagedObjectContext) {
 	let slot = getTimeSlotOfCurrentTime(calendarSettings: calendarSettings)
 	let request = TimeExpense.fetchRequestFor(timeSlot: slot)
 	
