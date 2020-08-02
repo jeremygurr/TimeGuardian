@@ -12,12 +12,12 @@ import Combine
 
 struct FundRowView: View {
 	struct ViewState: Equatable {
-		var ratioDisplayMode: RatioDisplayMode = .percentage
+		var ratioDisplayMode: RatioDisplayMode
 	}
-	@State private var viewState = ViewState()
+	@State private var viewState: ViewState
 	@Environment(\.injected) private var injected: AppState.Injection
 	private var stateUpdate: AnyPublisher<ViewState, Never> {
-		debugLog("stateUpdate")
+		debugLog("FundRowView stateUpdate")
 		return injected.appState.map {
 			ViewState(ratioDisplayMode: $0.ratioDisplayMode)
 		}
@@ -32,9 +32,10 @@ struct FundRowView: View {
 	@ObservedObject var fund: TimeFund
 	var funds: FetchedResults<TimeFund>
 
-	init(action: Binding<FundAction>, fund: ObservedObject<TimeFund>, funds: FetchedResults<TimeFund>) {
+	init(action: Binding<FundAction>, fund: ObservedObject<TimeFund>, funds: FetchedResults<TimeFund>, initialRatioDisplayMode: RatioDisplayMode) {
 		_action = action
 		_fund = fund
+		_viewState = State(initialValue: ViewState(ratioDisplayMode: initialRatioDisplayMode))
 		self.funds = funds
 	}
 
@@ -257,7 +258,7 @@ struct FundRowView_PreviewHelper: View {
 	}
 		
 	var body: some View {
-		FundRowView(action: $action, fund: ObservedObject(initialValue: fund), funds: allFunds)
+		FundRowView(action: $action, fund: ObservedObject(initialValue: fund), funds: allFunds, initialRatioDisplayMode: ratioDisplayMode)
 	}
 }
 
