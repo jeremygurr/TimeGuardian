@@ -11,14 +11,6 @@ struct SegmentedPickerElementView<T>: Hashable, View where T: Buttonable {
 	let longContent: String
 	@Binding var longPressState: [[Bool]]
 
-//	@inlinable init(id: T, row: Int, col: Int, content: String, longContent: String, longPressState: ) {
-//		self.id = id
-//		self.row = row
-//		self.col = col
-//		self.content = content
-//		self.longContent = longContent
-//	}
-//
 	static func == (lhs: SegmentedPickerElementView<T>, rhs: SegmentedPickerElementView<T>) -> Bool {
 		return lhs.id == rhs.id
 	}
@@ -45,10 +37,9 @@ struct SegmentedPickerElementView<T>: Hashable, View where T: Buttonable {
 }
 
 struct MultiRowSegmentedPickerView<T: Buttonable>: View {
-	@Environment (\.colorScheme) var colorScheme: ColorScheme
-	@State var elementWidth: CGFloat = 0
+	var elementWidth: CGFloat = 0
 	@Binding private var selectedIndex: T
-	@EnvironmentObject var budgetStack: BudgetStack
+	@Binding var actionDetail: String
 
 	@State private var width: CGFloat = 380
 	@State private var height: CGFloat = 84
@@ -58,19 +49,18 @@ struct MultiRowSegmentedPickerView<T: Buttonable>: View {
 	private let selectorInset: CGFloat = 5
 	private let backgroundColor = Color("ActionButtonBackground")
 
-	// delete this
-	private var elements: [[SegmentedPickerElementView<T>]] = []
-	
 	private let choices: [[T]]
 	@State private var longPressState: [[Bool]]
 	
 	private let onChange: (_ newValue: T) -> Void
 	
 	init(
+		actionDetail: Binding<String>,
 		choices: [[T]],
 		selectedIndex: Binding<T>,
 		onChange: @escaping (_ newValue: T) -> Void = { _ in }
 	) {
+		_actionDetail = actionDetail
 		self.choices = choices
 		self.onChange = onChange
 		_selectedIndex = selectedIndex
@@ -85,29 +75,6 @@ struct MultiRowSegmentedPickerView<T: Buttonable>: View {
 			newLongPressState.append(rowLongPress)
 		}
 		_longPressState = State(initialValue: newLongPressState)
-
-		var newElements: [[SegmentedPickerElementView<T>]] = []
-		for r in choices.indices {
-			let rowChoices = choices[r]
-			var rowElements = [SegmentedPickerElementView<T>]()
-			var rowLongPress: [Bool] = []
-			for c in rowChoices.indices {
-				let choice = rowChoices[c]
-				rowElements.append(
-					SegmentedPickerElementView(
-						id: choice,
-						row: r,
-						col: c,
-						content: choice.asString,
-						longContent: choice.longPressVersion?.asString ?? "",
-						longPressState: self.$longPressState
-					)
-				)
-				rowLongPress.append(false)
-			}
-			newElements.append(rowElements)
-		}
-		self.elements = newElements
 	}
 	
 	@State var selectionIndex: CGFloat = 0
@@ -134,7 +101,7 @@ struct MultiRowSegmentedPickerView<T: Buttonable>: View {
 		}
 		
 		withAnimation(.none) {
-			budgetStack.actionDetail = newItem.longDescription
+			actionDetail = newItem.longDescription
 		}
 
 		if newItem != selectedIndex || force {
@@ -174,7 +141,7 @@ struct MultiRowSegmentedPickerView<T: Buttonable>: View {
 			}
 			)
 		}
-		.frame(maxWidth: .infinity, maxHeight: CGFloat(60 * self.elements.count), alignment: .top)
+		.frame(maxWidth: .infinity, maxHeight: CGFloat(60 * self.choices.count), alignment: .top)
 	}
 	
 	var elementsView: some View {
@@ -222,7 +189,7 @@ struct MultiRowSegmentedPickerView<T: Buttonable>: View {
 						pressing: { down in
 							withAnimation(.none) {
 								if down {
-									self.budgetStack.actionDetail = item.longDescription
+									self.actionDetail = item.longDescription
 								}
 							}
 					}, perform: {
@@ -246,17 +213,26 @@ struct MultiRowSegmentedPickerView<T: Buttonable>: View {
 }
 
 struct SegmentedPickerView_Previews: PreviewProvider {
+	
 	@State static var selectedAction: FundAction = .spend
-	static var budgetStack = BudgetStack()
+	@State static var actionDetail = "None"
+	
 	static var previews: some View {
 		Group {
-			MultiRowSegmentedPickerView(choices: FundAction.allCasesInRows, selectedIndex: $selectedAction)
+			MultiRowSegmentedPickerView(
+				actionDetail: self.$actionDetail,
+				choices: FundAction.allCasesInRows,
+				selectedIndex: $selectedAction
+			)
 				.environment(\.colorScheme, .light)
-				.environmentObject(budgetStack)
 			
-			MultiRowSegmentedPickerView(choices: FundAction.allCasesInRows, selectedIndex: $selectedAction)
+			MultiRowSegmentedPickerView(
+				actionDetail: self.$actionDetail,
+				choices: FundAction.allCasesInRows,
+				selectedIndex: $selectedAction
+			)
 				.environment(\.colorScheme, .dark)
-				.environmentObject(budgetStack)
 		}
 	}
+	
 }

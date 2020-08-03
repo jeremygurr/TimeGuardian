@@ -10,6 +10,7 @@ import SwiftUI
 import Introspect
 
 struct BudgetListView: View {
+	let appState: AppState
 	@Environment(\.editMode) var editMode
 	@Environment(\.managedObjectContext) var managedObjectContext
 	@FetchRequest var mainBudgets: FetchedResults<TimeBudget>
@@ -17,9 +18,10 @@ struct BudgetListView: View {
 	@State var newBudgetTop = ""
 	@State var newBudgetBottom = ""
 
-	init() {
+	init(appState: AppState) {
 		_mainBudgets = TimeBudget.fetchRequestMain()
 		_subBudgets = TimeBudget.fetchRequestSub()
+		self.appState = appState
 	}
 
 	var body: some View {
@@ -27,12 +29,12 @@ struct BudgetListView: View {
 			Section(header: Text("Top Level Budgets")) {
 				NewBudgetRowView(newBudgetName: $newBudgetTop, budgets: mainBudgets, posOfNewBudget: .before)
 					.disabled(self.editMode?.wrappedValue == .active)
-				BudgetListSection(budgets: self.mainBudgets)
+				BudgetListSection(budgets: self.mainBudgets, appState: self.appState)
 				NewBudgetRowView(newBudgetName: $newBudgetBottom, budgets: mainBudgets, posOfNewBudget: .after)
 					.disabled(self.editMode?.wrappedValue == .active)
 			}
 			Section(header: Text("Sub Budgets")) {
-				BudgetListSection(budgets: self.subBudgets)
+				BudgetListSection(budgets: self.subBudgets, appState: self.appState)
 			}
 			Text("").frame(height: listViewExtension)
 		}
@@ -42,10 +44,11 @@ struct BudgetListView: View {
 struct BudgetListSection: View {
 	var budgets: FetchedResults<TimeBudget>
 	@Environment(\.managedObjectContext) var managedObjectContext
+	let appState: AppState
 
 	var body: some View {
 		ForEach(budgets, id: \.self) { budget in
-			BudgetRowView(budget: budget)
+			BudgetRowView(appState: self.appState, budget: budget)
 		}.onDelete { indexSet in
 			debugLog("BudgetListView.onDelete")
 			withAnimation(.none) {
@@ -77,7 +80,12 @@ struct BudgetRowView: View {
 	@Environment(\.editMode) var editMode
 	@Environment(\.managedObjectContext) var managedObjectContext
 	@State var budget: TimeBudget
-	@EnvironmentObject var budgetStack: BudgetStack
+	@Binding var budgetStack: BudgetStack
+
+	init(appState: AppState, budget: TimeBudget	) {
+		_budgetStack = appState.budgetStack.projectedValue
+		_budget = State(initialValue: budget)
+	}
 	
 	func commitRenameBudget() {
 		self.budget.name = self.budget.name.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -195,9 +203,8 @@ enum ListPosition {
 struct BudgetListView_Previews: PreviewProvider {
 	static var previews: some View {
 		let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-		return BudgetListView()
+		return BudgetListView(appState: AppState())
 			.environment(\.managedObjectContext, context)
-			.environmentObject(BudgetStack())
 	}
 }
 

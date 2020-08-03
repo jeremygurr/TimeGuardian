@@ -9,14 +9,19 @@
 import SwiftUI
 
 struct TopView: View {
-	@EnvironmentObject var budgetStack: BudgetStack
-	@EnvironmentObject var calendarSettings: DayViewSettings
+	@State var budgetStack: BudgetStack
 	let appState: AppState
+	
+	init(appState: AppState) {
+		debugLog("TopView.init")
+		_budgetStack = appState.budgetStack
+		self.appState = appState
+	}
 
 	private func budgetFundView() -> some View {
 		VStack {
 			if self.budgetStack.isEmpty() {
-				BudgetListViewWindow()
+				BudgetListViewWindow(appState: self.appState)
 			} else {
 				FundListViewWindow(appState: appState)
 			}
@@ -31,7 +36,7 @@ struct TopView: View {
 						.imageScale(.large)
 					Text("Budget")
 			}
-			DayView(calendarSettings: calendarSettings, appState: self.appState)
+			DayView(appState: self.appState)
 				.tabItem {
 					Image(systemName: "calendar")
 						.imageScale(.large)
@@ -42,6 +47,13 @@ struct TopView: View {
 }
 
 struct BudgetListViewWindow: View {
+	let appState: AppState
+	
+	init(appState: AppState) {
+		debugLog("BudgetListViewWindow.init")
+		self.appState = appState
+	}
+
 	var body: some View {
 		VStack {
 			ZStack {
@@ -53,16 +65,22 @@ struct BudgetListViewWindow: View {
 					.font(.body)
 					.frame(maxWidth: .infinity, alignment: .trailing)
 			}
-			BudgetListView()
+			BudgetListView(appState: self.appState)
 		}
 	}
 }
 
 struct FundListViewWindow: View {
-	@EnvironmentObject var budgetStack: BudgetStack
+	@Binding var budgetStack: BudgetStack
 	@Environment(\.editMode) var editMode
 	@Environment(\.managedObjectContext) var managedObjectContext
 	let appState: AppState
+	
+	init(appState: AppState) {
+		debugLog("FundListViewWindow.init")
+		self.appState = appState
+		_budgetStack = appState.budgetStack.projectedValue
+	}
 
 	var body: some View {
 		VStack {
@@ -75,7 +93,7 @@ struct FundListViewWindow: View {
 						withAnimation(.none) {
 							self.budgetStack.removeLastBudget()
 							self.budgetStack.removeLastFund()
-							self.budgetStack.titleOverride = nil
+							self.appState.titleOverride = nil
 							self.editMode?.wrappedValue = .inactive
 							self.managedObjectContext.rollback()
 						}
@@ -84,28 +102,28 @@ struct FundListViewWindow: View {
 					minimumDuration: longPressDuration, maximumDistance: longPressMaxDrift,
 					pressing: {
 						if $0 {
-							self.budgetStack.titleOverride = "to Top"
+							self.appState.titleOverride = "to Top"
 						} else {
-							self.budgetStack.titleOverride = nil
+							self.appState.titleOverride = nil
 						}
 				}, perform: {
 					withAnimation(.none) {
 						self.budgetStack.toFirstBudget()
-						self.budgetStack.titleOverride = nil
+						self.appState.titleOverride = nil
 						self.editMode?.wrappedValue = .inactive
 						self.managedObjectContext.rollback()
 					}
 				}
 				)
 				Spacer()
-				Text("\(budgetStack.getTitle())")
-					.font(Font.system(size: budgetStack.getBudgetNameFontSize()))
+				Text("\(appState.title)")
+					.font(Font.system(size: appState.budgetNameFontSize))
 					.padding(Edge.Set([.trailing]), 10)
 				//							.frame(maxWidth: .infinity, alignment: .leading)
 			}
 			.frame(maxWidth: .infinity, alignment: .leading)
 			if self.budgetStack.hasTopBudget() {
-				FundListView(budgetStack: self.budgetStack, appState: appState)
+				FundListView(appState: appState)
 			}
 		}
 	}
@@ -117,11 +135,7 @@ struct TopView_Previews: PreviewProvider {
 		let appState = AppState()
 		let tdb = TestDataBuilder(context: context)
 		tdb.createTestData()
-		let budgetStack = BudgetStack()
-		//		budgetStack.push(budget: tdb.budgets.first!)
 		return TopView(appState: appState)
 			.environment(\.managedObjectContext, context)
-			.environmentObject(budgetStack)
-			.environmentObject(DayViewSettings())
 	}
 }

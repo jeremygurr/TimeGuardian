@@ -12,36 +12,43 @@ import Introspect
 import Combine
 
 struct DayView: View {
-	@EnvironmentObject var calendarSettings: DayViewSettings
-	@EnvironmentObject var budgetStack: BudgetStack
+	@Binding var budgetStack: BudgetStack
 	@FetchRequest var recentExpenses: FetchedResults<TimeExpense>
 	@Environment(\.managedObjectContext) var managedObjectContext
 	@State var startDate: Date
 	@State var endDate: Date
 	@State var timeSlots: [TimeSlot]
-	private let updateTimer = Timer(timeInterval: 5 * minutes, repeats: true, block: { _ in })
-	@State private var updateTrigger = false
+	private let updateTimer: Timer
 	@Binding var currentPosition: Int?
+	@Binding var dayViewUpdateTrigger: Bool
 	let appState: AppState
 
-	init(calendarSettings: DayViewSettings, appState: AppState) {
+	init(appState: AppState) {
 		let today = getStartOfDay()
-		let plusMinus = calendarSettings.plusMinusDays
+		let plusMinus = appState.dayViewPlusMinusDays
 		let newStartDate = today - Double(plusMinus) * days
 		let newEndDate = today + Double(plusMinus) * days
 		_startDate = State(initialValue: newStartDate)
 		_endDate = State(initialValue: newEndDate)
 		_recentExpenses = TimeExpense.fetchRequestFor(startDate: newStartDate, endDate: newEndDate)
 		var newTimeSlots: [TimeSlot] = []
+		
 		for dayOffset in -plusMinus ... plusMinus {
-			for timeSlot in 0 ..< calendarSettings.periodsPerDay {
+			for timeSlot in 0 ..< appState.dayViewPeriodsPerDay {
 				let baseDate = today + Double(dayOffset) * days
-				newTimeSlots.append(TimeSlot(baseDate: baseDate, slotIndex: timeSlot, slotSize: calendarSettings.expensePeriod))
+				newTimeSlots.append(TimeSlot(baseDate: baseDate, slotIndex: timeSlot, slotSize: appState.dayViewExpensePeriod))
 			}
 		}
+		
 		_timeSlots = State(initialValue: newTimeSlots)
 		self.appState = appState
 		_currentPosition = appState.$dayViewListPosition
+		updateTimer = Timer(timeInterval: 5 * minutes, repeats: true, block: { _ in
+			appState.dayViewUpdateTrigger.toggle()
+		})
+		
+		_dayViewUpdateTrigger = appState.$dayViewUpdateTrigger
+		_budgetStack = appState.budgetStack.projectedValue
 	}
 
 	var body: some View {
@@ -88,17 +95,21 @@ struct DayView: View {
 }
 
 struct ExpenseRowView: View {
-	@EnvironmentObject var calendarSettings: DayViewSettings
-	@EnvironmentObject var budgetStack: BudgetStack
+	@Binding var budgetStack: BudgetStack
 	var todaysExpenses: FetchedResults<TimeExpense>
 	@Environment(\.managedObjectContext) var managedObjectContext
 	@Binding var timeSlots: [TimeSlot]
 	@Binding var currentPosition: Int?
+	@Binding var dayViewExpensePeriod: TimeInterval
+	@Binding var lastSelectedFund: TimeFund?
 
 	init(todaysExpenses: FetchedResults<TimeExpense>, timeSlots: Binding<[TimeSlot]>, appState: AppState) {
 		_currentPosition = appState.$dayViewListPosition
 		self.todaysExpenses = todaysExpenses
 		_timeSlots = timeSlots
+		_budgetStack = appState.budgetStack.projectedValue
+		_dayViewExpensePeriod = appState.$dayViewExpensePeriod
+		_lastSelectedFund = appState.$lastSelectedFund
 	}
 	
 	var body: some View {
@@ -120,13 +131,13 @@ struct ExpenseRowView: View {
 				.padding(.trailing, 10)
 		}
 		.contentShape(Rectangle())
-		.background(colorOfRow(timeSlot: timeSlot, calendarSettings: self.calendarSettings))
+		.background(colorOfRow(timeSlot: timeSlot, expensePeriod: dayViewExpensePeriod))
 		.onTapGesture {
 			self.currentPosition = index
 			if let existingExpense = getExpenseFor(timeSlot: timeSlot, todaysExpenses: self.todaysExpenses) {
 				self.removeExpense(existingExpense: existingExpense)
 			} else {
-				addExpense(timeSlot: timeSlot, budgetStack: self.budgetStack, managedObjectContext: self.managedObjectContext)
+				addExpense(timeSlot: timeSlot, lastSelectedFund: self.lastSelectedFund, budgetStack: self.budgetStack, managedObjectContext: self.managedObjectContext)
 			}
 		}
 	}
@@ -162,8 +173,8 @@ struct ExpenseRowView: View {
 	}
 }
 
-func addExpense(timeSlot: TimeSlot, budgetStack: BudgetStack, managedObjectContext: NSManagedObjectContext) {
-	if let fund = budgetStack.lastSelectedFund {
+func addExpense(timeSlot: TimeSlot, lastSelectedFund: TimeFund?, budgetStack: BudgetStack, managedObjectContext: NSManagedObjectContext) {
+	if let fund = lastSelectedFund {
 		addExpense(timeSlot: timeSlot, fund: fund, budgetStack: budgetStack, managedObjectContext: managedObjectContext)
 		saveData(managedObjectContext)
 	}
@@ -193,8 +204,8 @@ func toExpenseString(timeSlot: TimeSlot, todaysExpenses: FetchedResults<TimeExpe
 	return result
 }
 
-func colorOfRow(timeSlot: TimeSlot, calendarSettings: DayViewSettings) -> some View {
-	if(timeSlot == getTimeSlotOfCurrentTime(calendarSettings: calendarSettings)) {
+func colorOfRow(timeSlot: TimeSlot, expensePeriod: TimeInterval) -> some View {
+	if(timeSlot == getTimeSlotOfCurrentTime(expensePeriod: expensePeriod)) {
 		return Color.init("HighlightBackground")
 	}
 	return Color.clear
@@ -223,32 +234,24 @@ func toDayString(timeSlot: TimeSlot) -> String {
 }
 
 struct CalendarView_Previews: PreviewProvider {
-	static let calendarSettings = DayViewSettings()
-	@State static var currentPosition: Int? = nil
-
 	static var previews: some View {
-		
 		let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
 		let testDataBuilder = TestDataBuilder(context: context)
 		testDataBuilder.createTestData()
-		let budget = testDataBuilder.budgets.first!
-		let budgetStack = BudgetStack()
-		budgetStack.push(budget: budget)
 		let appState = AppState()
+		let budget = testDataBuilder.budgets.first!
+		appState.budgetStack.wrappedValue.push(budget: budget)
 		
 		return Group {
-			DayView(calendarSettings: calendarSettings, appState: appState)
-				.environmentObject(calendarSettings)
-				.environmentObject(budgetStack)
+			DayView(appState: appState)
 				.environment(\.colorScheme, .light)
 				.environment(\.managedObjectContext, context)
 
-			DayView(calendarSettings: calendarSettings, appState: appState)
-				.environmentObject(calendarSettings)
-				.environmentObject(budgetStack)
+			DayView(appState: appState)
 				.environment(\.colorScheme, .dark)
 				.environment(\.managedObjectContext, context)
 		}
+		
 	}
 }
 

@@ -31,11 +31,11 @@
 		00659F1324C5213200670CF0 /* TimeBudget+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00659F0F24C5213200670CF0 /* TimeBudget+CoreDataClass.swift */; };
 		00659F1624C5227000670CF0 /* FundAllRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00659F1524C5227000670CF0 /* FundAllRowView.swift */; };
 		006F1C6A24CE521D005C0E1A /* DayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 006F1C6924CE521D005C0E1A /* DayView.swift */; };
-		006F1C6C24CE5374005C0E1A /* DayViewSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 006F1C6B24CE5374005C0E1A /* DayViewSettings.swift */; };
 		006F1C7324CF5ADD005C0E1A /* TimeExpense+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 006F1C7124CF5ADD005C0E1A /* TimeExpense+CoreDataClass.swift */; };
 		006F1C7424CF5ADD005C0E1A /* TimeExpense+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 006F1C7224CF5ADD005C0E1A /* TimeExpense+CoreDataProperties.swift */; };
 		00E1440D24D0B7AA0087F5C2 /* TimeSlot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00E1440C24D0B7AA0087F5C2 /* TimeSlot.swift */; };
 		00F9052224D4A313000832D3 /* NewFundRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00F9052124D4A313000832D3 /* NewFundRowView.swift */; };
+		00F9052424D7B967000832D3 /* DayViewAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00F9052324D7B967000832D3 /* DayViewAction.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -63,12 +63,12 @@
 		00659F0F24C5213200670CF0 /* TimeBudget+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "TimeBudget+CoreDataClass.swift"; path = "Time Budget/BackModel/TimeBudget+CoreDataClass.swift"; sourceTree = SOURCE_ROOT; };
 		00659F1524C5227000670CF0 /* FundAllRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FundAllRowView.swift; path = "Time Budget/FundAllRowView.swift"; sourceTree = SOURCE_ROOT; };
 		006F1C6924CE521D005C0E1A /* DayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayView.swift; sourceTree = "<group>"; };
-		006F1C6B24CE5374005C0E1A /* DayViewSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayViewSettings.swift; sourceTree = "<group>"; };
 		006F1C7124CF5ADD005C0E1A /* TimeExpense+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TimeExpense+CoreDataClass.swift"; sourceTree = "<group>"; };
 		006F1C7224CF5ADD005C0E1A /* TimeExpense+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TimeExpense+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		00BA983824C74C9500E2AD91 /* Time Budget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Time Budget.entitlements"; sourceTree = "<group>"; };
 		00E1440C24D0B7AA0087F5C2 /* TimeSlot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeSlot.swift; sourceTree = SOURCE_ROOT; };
 		00F9052124D4A313000832D3 /* NewFundRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewFundRowView.swift; sourceTree = SOURCE_ROOT; };
+		00F9052324D7B967000832D3 /* DayViewAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayViewAction.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -128,11 +128,11 @@
 				0058665D24C0FD88004E4889 /* FundListView.swift */,
 				003E0C9D24C4BDDD00AAC6C0 /* MultiRowSegmentedPickerView.swift */,
 				006F1C6924CE521D005C0E1A /* DayView.swift */,
-				006F1C6B24CE5374005C0E1A /* DayViewSettings.swift */,
 				00659F0824C511F800670CF0 /* FundRowView.swift */,
 				00F9052124D4A313000832D3 /* NewFundRowView.swift */,
 				00659F1524C5227000670CF0 /* FundAllRowView.swift */,
 				003E0C9F24C4D58200AAC6C0 /* FundAction.swift */,
+				00F9052324D7B967000832D3 /* DayViewAction.swift */,
 				002531DB24C497EC00CB7FF0 /* BudgetStack.swift */,
 				00E1440C24D0B7AA0087F5C2 /* TimeSlot.swift */,
 				0058665624C05BBB004E4889 /* Utils.swift */,
@@ -252,9 +252,9 @@
 				00659F0924C511F800670CF0 /* FundRowView.swift in Sources */,
 				00E1440D24D0B7AA0087F5C2 /* TimeSlot.swift in Sources */,
 				002531DA24C4614A00CB7FF0 /* TopView.swift in Sources */,
-				006F1C6C24CE5374005C0E1A /* DayViewSettings.swift in Sources */,
 				006F1C7324CF5ADD005C0E1A /* TimeExpense+CoreDataClass.swift in Sources */,
 				00659F1124C5213200670CF0 /* TimeBudget+CoreDataProperties.swift in Sources */,
+				00F9052424D7B967000832D3 /* DayViewAction.swift in Sources */,
 				00659F1024C5213200670CF0 /* TimeFund+CoreDataProperties.swift in Sources */,
 				003E0C9E24C4BDDE00AAC6C0 /* MultiRowSegmentedPickerView.swift in Sources */,
 			);

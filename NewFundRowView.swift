@@ -10,7 +10,7 @@ import SwiftUI
 
 struct NewFundRowView: View {
 	@Environment(\.managedObjectContext) var managedObjectContext
-	@EnvironmentObject var budgetStack: BudgetStack
+	@Binding var budgetStack: BudgetStack
 	@Binding var newFundName: String
 	var funds: FetchedResults<TimeFund>
 	let posOfNewFund: ListPosition

@@ -14,17 +14,21 @@ struct FundRowView: View {
 	@Binding var action: FundAction
 	@Environment(\.editMode) var editMode
 	@Environment(\.managedObjectContext) var managedObjectContext
-	@EnvironmentObject var budgetStack: BudgetStack
-	@EnvironmentObject var calendarSettings: DayViewSettings
+	@Binding var budgetStack: BudgetStack
 	@ObservedObject var fund: TimeFund
 	var funds: FetchedResults<TimeFund>
 	@Binding var ratioDisplayMode: RatioDisplayMode
+	@Binding var dayViewExpensePeriod: TimeInterval
+	@Binding var lastSelectedFund: TimeFund?
 
-	init(action: Binding<FundAction>, fund: ObservedObject<TimeFund>, funds: FetchedResults<TimeFund>, appState: AppState) {
-		_action = action
+	init(fund: ObservedObject<TimeFund>, funds: FetchedResults<TimeFund>, appState: AppState) {
+		_action = appState.$fundListAction
 		_fund = fund
 		self.funds = funds
 		_ratioDisplayMode = appState.$ratioDisplayMode
+		_budgetStack = appState.budgetStack.projectedValue
+		_dayViewExpensePeriod = appState.$dayViewExpensePeriod
+		_lastSelectedFund = appState.$lastSelectedFund
 	}
 
 	var balance: String {
@@ -122,7 +126,7 @@ struct FundRowView: View {
 						}
 					} else {
 						withAnimation(.none) {
-							getMainButton()
+							getMainButton(expensePeriod: self.dayViewExpensePeriod)
 						}
 					}
 				}
@@ -130,17 +134,17 @@ struct FundRowView: View {
 		}
 	}
 	
-	func getMainButton() -> some View {
+	func getMainButton(expensePeriod: TimeInterval) -> some View {
 		return FundRowLabel(fund: self.fund)
 			.contentShape(Rectangle())
 			.onTapGesture {
 				debugLog("clicked on main action button")
 				switch self.action {
 					case .view:
-						self.budgetStack.lastSelectedFund = self.fund
+						self.lastSelectedFund = self.fund
 						return
 					case .spend:
-						addExpenseToCurrentTimeIfEmpty(fund: self.fund, budgetStack: self.budgetStack, calendarSettings: self.calendarSettings, managedObjectContext: self.managedObjectContext)
+						addExpenseToCurrentTimeIfEmpty(fund: self.fund, budgetStack: self.budgetStack, expensePeriod: expensePeriod, managedObjectContext: self.managedObjectContext)
 						self.budgetStack.toFirstBudget()
 					case .reset:
 						self.fund.resetBalance()
@@ -188,7 +192,6 @@ enum RatioDisplayMode: CaseIterable {
 
 struct FundRowLabel: View {
 	@ObservedObject var fund: TimeFund
-	@EnvironmentObject var budgetStack: BudgetStack
 	
 	var body: some View {
 		Text(fund.name)
@@ -246,7 +249,7 @@ struct FundRowView_PreviewHelper: View {
 	}
 		
 	var body: some View {
-		FundRowView(action: $action, fund: ObservedObject(initialValue: fund), funds: allFunds, appState: appState)
+		FundRowView(fund: ObservedObject(initialValue: fund), funds: allFunds, appState: appState)
 	}
 }
 
@@ -258,15 +261,13 @@ struct FundRowView_Previews: PreviewProvider {
 		testDataBuilder.createTestData()
 		let budget = testDataBuilder.budgets.first!
 		let fund = testDataBuilder.funds.first!
-		let budgetStack = BudgetStack()
-		let calendarSettings = DayViewSettings()
 		let appState = AppState()
-		budgetStack.push(budget: budget)
+		appState.budgetStack.wrappedValue.push(budget: budget)
+		
 		return FundRowView_PreviewHelper(budget: budget, fund: fund, appState: appState)
 			.environment(\.managedObjectContext, context)
-			.environmentObject(budgetStack)
-			.environmentObject(calendarSettings)
 			.frame(maxHeight: 50)
 			.border(Color.black, width: 2)
+		
 	}
 }

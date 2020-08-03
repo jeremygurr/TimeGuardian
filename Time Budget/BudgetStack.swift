@@ -9,28 +9,14 @@
 import Foundation
 import SwiftUI
 
-class BudgetStack: ObservableObject {
+struct BudgetStack {
 	
-	@Published private var budgetStack: [TimeBudget] = []
+	private var budgetStack: [TimeBudget] = []
 	// fundStack will typically be one element shorter than budgetStack,
 	//   unless budgetStack is empty
-	@Published private var fundStack: [TimeFund] = []
-	@Published var lastSelectedFund: TimeFund? = nil
-	
-	var titleOverride: String? = nil {
-		willSet {
-			objectWillChange.send()
-		}
-	}
-	
-	var actionDetail: String = "No action selected" {
-		willSet {
-			objectWillChange.send()
-		}
-	}
-	
+	private var fundStack: [TimeFund] = []
 	private var fundRatioStack: [Float] = []
-	
+
 	func getBudgets() -> [TimeBudget] {
 		return budgetStack
 	}
@@ -43,30 +29,34 @@ class BudgetStack: ObservableObject {
 		return budgetStack.count == 0
 	}
 	
-	func push(budget: TimeBudget) {
+	mutating func push(budget: TimeBudget) {
+		debugLog("budgetStack.push budget \(budget.name)")
 		budgetStack.append(budget)
+		debugLog("budgetStack has \(budgetStack.count) items")
 	}
 	
-	func push(fund: TimeFund) {
+	mutating func push(fund: TimeFund) {
+		debugLog("budgetStack.push fund \(fund.name)")
 		let ratio = fund.getRatio()
 		fundStack.append(fund)
 		fundRatioStack.append(ratio)
+		debugLog("fundStack has \(fundStack.count) items")
 	}
 	
-	func removeLastBudget() {
+	mutating func removeLastBudget() {
 		if budgetStack.count > 0 {
 			budgetStack.removeLast()
 		}
 	}
 	
-	func removeLastFund() {
+	mutating func removeLastFund() {
 		if fundStack.count > 0 {
 			fundStack.removeLast()
 			fundRatioStack.removeLast()
 		}
 	}
 	
-	func toFirstBudget() {
+	mutating func toFirstBudget() {
 		fundStack.removeAll()
 		fundRatioStack.removeAll()
 		var s = budgetStack
@@ -83,33 +73,6 @@ class BudgetStack: ObservableObject {
   // should never get called if the stack is empty
 	func getTopBudget() -> TimeBudget {
 		return budgetStack.last!
-	}
-	
-	func getTitle() -> String {
-		var title: String
-		if titleOverride != nil {
-			title = titleOverride!
-		} else {
-			if budgetStack.count > 0 {
-				title = getTopBudget().name
-			} else {
-				title = "None"
-			}
-		}
-		return title
-	}
-	
-	func getBudgetNameFontSize() -> CGFloat {
-		let budgetNameSize = getTitle().count
-		var size: CGFloat
-		if budgetNameSize > 20 {
-			size = 15
-		} else if budgetNameSize > 10 {
-			size = 20
-		} else {
-			size = 30
-		}
-		return size
 	}
 	
 	func getCurrentRatio() -> Float {

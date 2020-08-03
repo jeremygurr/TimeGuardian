@@ -72,9 +72,13 @@ extension CaseIterable where Self: Equatable {
 }
 
 let seconds:TimeInterval = 1.0
+let oneSecond = seconds
 let minutes:TimeInterval = 60.0
+let oneMinute = minutes
 let hours:TimeInterval = 60.0 * minutes
+let oneHour = hours
 let days:TimeInterval = 24 * hours
+let oneDay = days
 
 let space : Character = " "
 let newline : Character = "\n"
