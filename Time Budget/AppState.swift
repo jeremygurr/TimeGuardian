@@ -15,7 +15,7 @@ let listViewExtension: CGFloat = 200
 let interestThreshold: Float = -1000
 
 enum ViewRefreshKey {
-	case none, budgetStack
+	case none, topView, budgetStack, fundList, dayView
 }
 
 class AppState {
@@ -30,28 +30,26 @@ class AppState {
 	@Bindable(send: .budgetStack, to: subject)
 	var budgetStack: BudgetStack = BudgetStack()
 	
-	@Bindable(send: .budgetStack, to: subject)
+	@Bindable(send: .dayView, to: subject)
 	var dayViewListPosition: Int? = nil
-	@Bindable(send: .budgetStack, to: subject)
-	var dayViewUpdateTrigger = false
-	@Bindable(send: .budgetStack, to: subject)
+	@Bindable(send: .dayView, to: subject)
 	var dayViewExpensePeriod: TimeInterval = 30 * minutes
-	@Bindable(send: .budgetStack, to: subject)
+	@Bindable(send: .dayView, to: subject)
 	var dayViewPlusMinusDays: Int = 1
-	@Bindable(send: .budgetStack, to: subject)
+	@Bindable(send: .dayView, to: subject)
 	var dayViewAction: DayViewAction = .add
 	var dayViewPeriodsPerDay: Int {
 		return Int(oneDay / dayViewExpensePeriod)
 	}
 	
-	@Bindable(send: .budgetStack, to: subject)
+	@Bindable(send: .fundList, to: subject)
 	var fundListAction: FundAction = .view
-	@Bindable(send: .budgetStack, to: subject)
+	@Bindable(send: .fundList, to: subject)
 	var fundListActionDetail: String = "No action selected"
-	@Bindable(send: .budgetStack, to: subject)
+	@Bindable(send: .none, to: subject)
 	var lastSelectedFund: TimeFund? = nil
 	
-	@Bindable(send: .budgetStack, to: subject)
+	@Bindable(send: .topView, to: subject)
 	var titleOverride: String? = nil
 	
 	var title: String {
@@ -81,6 +79,11 @@ class AppState {
 		return size
 	}
 	
-	@Bindable(send: .budgetStack, to: subject)
+	@Bindable(send: .fundList, to: subject)
 	var ratioDisplayMode: RatioDisplayMode = .percentage
+	
+	private let updateTimer: Timer = Timer(timeInterval: 5 * minutes, repeats: true, block: { _ in
+		subject.send(.dayView)
+	})
+
 }

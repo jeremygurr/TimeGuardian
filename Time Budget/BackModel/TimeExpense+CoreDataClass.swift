@@ -46,7 +46,7 @@ public class TimeExpense: NSManagedObject {
 }
 
 func addExpense(timeSlot: TimeSlot, fund: TimeFund, budgetStack: BudgetStack, managedObjectContext: NSManagedObjectContext) {
-	debugLog("addExpense: { timeSlot: \(timeSlot), fund: \(fund) }")
+	debugLog("addExpense: { timeSlot: \(timeSlot), fund: \(fund.name) }")
 
 	let expense = TimeExpense(context: managedObjectContext)
 	expense.fund = fund

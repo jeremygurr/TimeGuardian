@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import Combine
 
 struct TopView: View {
 	@Binding var budgetStack: BudgetStack
@@ -35,7 +36,7 @@ struct TopView: View {
 						.imageScale(.large)
 					Text("Budget")
 			}
-			DayView(appState: AppState.get())
+			DayView()
 				.tabItem {
 					Image(systemName: "calendar")
 						.imageScale(.large)
@@ -45,9 +46,10 @@ struct TopView: View {
 		.onReceive(
 			AppState.subject
 				.filter({ $0 == .budgetStack })
-		) { _ in
+				.collect(.byTime(RunLoop.main, .milliseconds(100)))
+		) { x in
 			self.viewState += 1
-			debugLog("TopView: view state changed to \(self.viewState)")
+			debugLog("TopView: view state changed to \(self.viewState) (\(x.count) events)")
 		}
 	}
 }
@@ -123,7 +125,7 @@ struct FundListViewWindow: View {
 			}
 			.frame(maxWidth: .infinity, alignment: .leading)
 			if self.budgetStack.hasTopBudget() {
-				FundListView(appState: AppState.get())
+				FundListView()
 			}
 		}
 	}

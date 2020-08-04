@@ -18,12 +18,11 @@ struct DayView: View {
 	@State var startDate: Date
 	@State var endDate: Date
 	@State var timeSlots: [TimeSlot]
-	private let updateTimer: Timer
 	@Binding var currentPosition: Int?
-	@Binding var dayViewUpdateTrigger: Bool
-	let appState: AppState
 
-	init(appState: AppState) {
+	init() {
+		
+		let appState = AppState.get()
 		let today = getStartOfDay()
 		let plusMinus = appState.dayViewPlusMinusDays
 		let newStartDate = today - Double(plusMinus) * days
@@ -41,20 +40,15 @@ struct DayView: View {
 		}
 		
 		_timeSlots = State(initialValue: newTimeSlots)
-		self.appState = appState
 		_currentPosition = appState.$dayViewListPosition
-		updateTimer = Timer(timeInterval: 5 * minutes, repeats: true, block: { _ in
-			appState.dayViewUpdateTrigger.toggle()
-		})
-		
-		_dayViewUpdateTrigger = appState.$dayViewUpdateTrigger
 		_budgetStack = appState.$budgetStack
+
 	}
 
 	var body: some View {
 		List {
 			Text("").frame(height: listViewExtension)
-			ExpenseRowView(todaysExpenses: self.recentExpenses, timeSlots: $timeSlots, appState: self.appState)
+			ExpenseRowView(todaysExpenses: self.recentExpenses, timeSlots: $timeSlots)
 				.listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 00))
 			Text("").frame(height: listViewExtension)
 		}
@@ -103,7 +97,8 @@ struct ExpenseRowView: View {
 	@Binding var dayViewExpensePeriod: TimeInterval
 	@Binding var lastSelectedFund: TimeFund?
 
-	init(todaysExpenses: FetchedResults<TimeExpense>, timeSlots: Binding<[TimeSlot]>, appState: AppState) {
+	init(todaysExpenses: FetchedResults<TimeExpense>, timeSlots: Binding<[TimeSlot]>) {
+		let appState = AppState.get()
 		_currentPosition = appState.$dayViewListPosition
 		self.todaysExpenses = todaysExpenses
 		_timeSlots = timeSlots
@@ -243,11 +238,11 @@ struct CalendarView_Previews: PreviewProvider {
 		appState.budgetStack.push(budget: budget)
 		
 		return Group {
-			DayView(appState: appState)
+			DayView()
 				.environment(\.colorScheme, .light)
 				.environment(\.managedObjectContext, context)
 
-			DayView(appState: appState)
+			DayView()
 				.environment(\.colorScheme, .dark)
 				.environment(\.managedObjectContext, context)
 		}

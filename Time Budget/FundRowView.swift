@@ -21,7 +21,8 @@ struct FundRowView: View {
 	@Binding var dayViewExpensePeriod: TimeInterval
 	@Binding var lastSelectedFund: TimeFund?
 
-	init(fund: ObservedObject<TimeFund>, funds: FetchedResults<TimeFund>, appState: AppState) {
+	init(fund: ObservedObject<TimeFund>, funds: FetchedResults<TimeFund>) {
+		let appState = AppState.get()
 		_action = appState.$fundListAction
 		_fund = fund
 		self.funds = funds
@@ -240,16 +241,14 @@ struct FundRowView_PreviewHelper: View {
 	@FetchRequest var allFunds: FetchedResults<TimeFund>
 	@State var action: FundAction = .view
 	let fund: TimeFund
-	let appState: AppState
 
-	init(budget: TimeBudget, fund: TimeFund, appState: AppState) {
+	init(budget: TimeBudget, fund: TimeFund) {
 		_allFunds = TimeFund.fetchAllRequest(budget: budget)
 		self.fund = fund
-		self.appState = appState
 	}
 		
 	var body: some View {
-		FundRowView(fund: ObservedObject(initialValue: fund), funds: allFunds, appState: appState)
+		FundRowView(fund: ObservedObject(initialValue: fund), funds: allFunds)
 	}
 }
 
@@ -264,7 +263,7 @@ struct FundRowView_Previews: PreviewProvider {
 		let appState = AppState.get()
 		appState.budgetStack.push(budget: budget)
 		
-		return FundRowView_PreviewHelper(budget: budget, fund: fund, appState: appState)
+		return FundRowView_PreviewHelper(budget: budget, fund: fund)
 			.environment(\.managedObjectContext, context)
 			.frame(maxHeight: 50)
 			.border(Color.black, width: 2)
