@@ -142,7 +142,6 @@ struct FundRowView: View {
 			self.viewState += 1
 			debugLog("FundRowView: view state changed to \(self.viewState) (\(x.count) events)")
 		}
-
 	}
 	
 	func getMainButton(expensePeriod: TimeInterval) -> some View {

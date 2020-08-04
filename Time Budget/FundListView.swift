@@ -10,6 +10,7 @@ import SwiftUI
 import Combine
 
 struct FundListView: View {
+	@State var viewState = 0
 	@Environment(\.editMode) var editMode
 	@Environment(\.managedObjectContext) var managedObjectContext
 	@Binding var budgetStack: BudgetStack
@@ -69,6 +70,14 @@ struct FundListView: View {
 				)
 				Text("").frame(height: listViewExtension)
 			}
+		}
+		.onReceive(
+			AppState.subject
+				.filter({ $0 == .fundList })
+				.collect(.byTime(RunLoop.main, .milliseconds(100)))
+		) { x in
+			self.viewState += 1
+			debugLog("FundListView: view state changed to \(self.viewState) (\(x.count) events)")
 		}
 	}
 }
