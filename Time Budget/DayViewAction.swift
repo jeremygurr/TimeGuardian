@@ -9,6 +9,38 @@
 import Foundation
 import SwiftUI
 
-enum DayViewAction {
-	case add, remove
+enum DayViewAction: Int, CaseIterable, Buttonable {
+	case add = 0
+	case remove
+	
+	var asInt: Int {
+		return self.rawValue
+	}
+	
+	var asString: String {
+		switch self {
+			case .add: return "Add"
+			case .remove: return "Remove"
+		}
+	}
+	
+	var longDescription: String {
+		switch self {
+			case .add: return "add the previously selected fund"
+			case .remove: return "remove fund from time slot"
+		}
+	}
+	
+	var longPressVersion: DayViewAction? {
+		switch self {
+			default: return nil
+		}
+	}
+	
+	static var allCasesInRows: [[DayViewAction]] {
+		[
+			[.add, .remove],
+		]
+	}
+
 }

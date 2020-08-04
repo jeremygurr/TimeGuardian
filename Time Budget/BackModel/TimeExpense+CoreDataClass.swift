@@ -70,7 +70,7 @@ func getTimeSlotOfCurrentTime(expensePeriod: TimeInterval) -> TimeSlot {
 	let now = Date()
 	let startOfDay = getStartOfDay()
 	let difference = startOfDay.distance(to: now)
-	let itemIndex = Int(difference / 60 / expensePeriod)
+	let itemIndex = Int(difference / expensePeriod)
 	return TimeSlot(baseDate: startOfDay, slotIndex: itemIndex, slotSize: expensePeriod)
 }
 

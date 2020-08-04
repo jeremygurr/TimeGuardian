@@ -9,10 +9,11 @@
 import SwiftUI
 import Combine
 
-let longPressDuration = 0.15
+let longPressDuration = 0.25
 let longPressMaxDrift: CGFloat = 0.1
 let listViewExtension: CGFloat = 200
 let interestThreshold: Float = -1000
+let stateChangeCollectionTime: Int = 10
 
 enum ViewRefreshKey {
 	case none, topView, budgetStack, fundList, dayView
@@ -32,20 +33,29 @@ class AppState {
 	
 	@Bindable(send: .dayView, to: subject)
 	var dayViewListPosition: Int? = nil
+	
 	@Bindable(send: .dayView, to: subject)
 	var dayViewExpensePeriod: TimeInterval = 30 * minutes
+	
 	@Bindable(send: .dayView, to: subject)
 	var dayViewPlusMinusDays: Int = 1
+	
 	@Bindable(send: .dayView, to: subject)
 	var dayViewAction: DayViewAction = .add
+	
+	@Bindable(send: .dayView, to: subject)
+	var dayViewActionDetail: String = "No action selected"
+	
 	var dayViewPeriodsPerDay: Int {
 		return Int(oneDay / dayViewExpensePeriod)
 	}
 	
 	@Bindable(send: .fundList, to: subject)
 	var fundListAction: FundAction = .view
+	
 	@Bindable(send: .fundList, to: subject)
 	var fundListActionDetail: String = "No action selected"
+	
 	@Bindable(send: .fundList, to: subject)
 	var ratioDisplayMode: RatioDisplayMode = .percentage
 	

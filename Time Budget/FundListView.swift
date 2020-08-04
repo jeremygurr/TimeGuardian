@@ -11,6 +11,7 @@ import Combine
 
 struct FundListView: View {
 	@State var viewState = 0
+	
 	@Environment(\.editMode) var editMode
 	@Environment(\.managedObjectContext) var managedObjectContext
 	@Binding var budgetStack: BudgetStack
@@ -74,7 +75,7 @@ struct FundListView: View {
 		.onReceive(
 			AppState.subject
 				.filter({ $0 == .fundList })
-				.collect(.byTime(RunLoop.main, .milliseconds(100)))
+				.collect(.byTime(RunLoop.main, .milliseconds(stateChangeCollectionTime)))
 		) { x in
 			self.viewState += 1
 			debugLog("FundListView: view state changed to \(self.viewState) (\(x.count) events)")
@@ -96,6 +97,7 @@ struct FundSectionAvailableView: View {
 	@Environment(\.managedObjectContext) var managedObjectContext
 
 	init(
+		
 		availableFunds: FetchedResults<TimeFund>,
 		allFunds: FetchedResults<TimeFund>,
 		newFundTop: Binding<String>,

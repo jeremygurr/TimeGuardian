@@ -12,6 +12,8 @@ import Introspect
 import Combine
 
 struct DayView: View {
+	@State var viewState = 0
+
 	@Binding var budgetStack: BudgetStack
 	@FetchRequest var recentExpenses: FetchedResults<TimeExpense>
 	@Environment(\.managedObjectContext) var managedObjectContext
@@ -19,10 +21,14 @@ struct DayView: View {
 	@State var endDate: Date
 	@State var timeSlots: [TimeSlot]
 	@Binding var currentPosition: Int?
+	@Binding var action: DayViewAction
+	@Binding var actionDetail: String
 
 	init() {
 		
 		let appState = AppState.get()
+		_action = appState.$dayViewAction
+		_actionDetail = appState.$dayViewActionDetail
 		let today = getStartOfDay()
 		let plusMinus = appState.dayViewPlusMinusDays
 		let newStartDate = today - Double(plusMinus) * days
@@ -42,23 +48,41 @@ struct DayView: View {
 		_timeSlots = State(initialValue: newTimeSlots)
 		_currentPosition = appState.$dayViewListPosition
 		_budgetStack = appState.$budgetStack
-
+		
 	}
-
+	
 	var body: some View {
-		List {
-			Text("").frame(height: listViewExtension)
-			ExpenseRowView(todaysExpenses: self.recentExpenses, timeSlots: $timeSlots)
-				.listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 00))
-			Text("").frame(height: listViewExtension)
-		}
-		.introspectTableView { tableView in
-			tableView.scrollToRow(
-				at: IndexPath(
-					item: self.getCurrentPosition() + 1, section: 0)
-				, at: .middle
-				, animated: false
+		VStack {
+			MultiRowSegmentedPickerView(
+				actionDetail: self.$actionDetail,
+				choices: DayViewAction.allCasesInRows,
+				selectedIndex: self.$action,
+				onChange: { _ in }
 			)
+			Text(actionDetail)
+				.font(.body)
+			List {
+				Text("").frame(height: listViewExtension)
+				ExpenseRowView(todaysExpenses: self.recentExpenses, timeSlots: $timeSlots)
+					.listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+				Text("").frame(height: listViewExtension)
+			}
+			.introspectTableView { tableView in
+				tableView.scrollToRow(
+					at: IndexPath(
+						item: self.getCurrentPosition() + 1, section: 0)
+					, at: .middle
+					, animated: false
+				)
+			}
+			.onReceive(
+				AppState.subject
+					.filter({ $0 == .dayView })
+					.collect(.byTime(RunLoop.main, .milliseconds(stateChangeCollectionTime)))
+			) { x in
+				self.viewState += 1
+				debugLog("DayView: view state changed to \(self.viewState) (\(x.count) events)")
+			}
 		}
 	}
 	
@@ -73,7 +97,7 @@ struct DayView: View {
 		}
 		return result
 	}
-
+	
 	func getCalendarOffsetForCurrentTime() -> Int {
 		var result: Int = 0
 		for i in 0 ..< timeSlots.count {
@@ -96,7 +120,8 @@ struct ExpenseRowView: View {
 	@Binding var currentPosition: Int?
 	@Binding var dayViewExpensePeriod: TimeInterval
 	@Binding var lastSelectedFund: TimeFund?
-
+	@Binding var action: DayViewAction
+	
 	init(todaysExpenses: FetchedResults<TimeExpense>, timeSlots: Binding<[TimeSlot]>) {
 		let appState = AppState.get()
 		_currentPosition = appState.$dayViewListPosition
@@ -105,6 +130,7 @@ struct ExpenseRowView: View {
 		_budgetStack = appState.$budgetStack
 		_dayViewExpensePeriod = appState.$dayViewExpensePeriod
 		_lastSelectedFund = appState.$lastSelectedFund
+		_action = appState.$dayViewAction
 	}
 	
 	var body: some View {
@@ -129,10 +155,19 @@ struct ExpenseRowView: View {
 		.background(colorOfRow(timeSlot: timeSlot, expensePeriod: dayViewExpensePeriod))
 		.onTapGesture {
 			self.currentPosition = index
-			if let existingExpense = getExpenseFor(timeSlot: timeSlot, todaysExpenses: self.todaysExpenses) {
-				self.removeExpense(existingExpense: existingExpense)
-			} else {
-				addExpense(timeSlot: timeSlot, lastSelectedFund: self.lastSelectedFund, budgetStack: self.budgetStack, managedObjectContext: self.managedObjectContext)
+			debugLog("DayView: expense row pressed")
+			let existingExpense = getExpenseFor(timeSlot: timeSlot, todaysExpenses: self.todaysExpenses)
+			switch self.action {
+				case .add:
+					debugLog("DayView: add action")
+					if existingExpense == nil {
+						addExpense(timeSlot: timeSlot, lastSelectedFund: self.lastSelectedFund, budgetStack: self.budgetStack, managedObjectContext: self.managedObjectContext)
+					}
+				case .remove:
+					debugLog("DayView: remove action")
+					if existingExpense != nil {
+						self.removeExpense(existingExpense: existingExpense!)
+				}
 			}
 		}
 	}
@@ -177,7 +212,7 @@ func addExpense(timeSlot: TimeSlot, lastSelectedFund: TimeFund?, budgetStack: Bu
 
 func getExpenseFor(timeSlot: TimeSlot, todaysExpenses: FetchedResults<TimeExpense>) -> TimeExpense? {
 	var result: TimeExpense? = nil
-
+	
 	for expense in todaysExpenses {
 		if expense.when == timeSlot.baseDate && expense.timeSlot == timeSlot.slotIndex {
 			result = expense
@@ -208,7 +243,7 @@ func colorOfRow(timeSlot: TimeSlot, expensePeriod: TimeInterval) -> some View {
 
 func toTimeString(timeSlot: TimeSlot) -> String {
 	let startOfDay = getStartOfDay()
-	let interval = timeSlot.minutesFromBeginning * minutes
+	let interval = timeSlot.secondsFromBeginning
 	let currentPeriod = startOfDay.advanced(by: interval)
 	let timeFormat = DateFormatter()
 	timeFormat.dateFormat = "HH:mm"
@@ -219,12 +254,12 @@ func toTimeString(timeSlot: TimeSlot) -> String {
 
 func toDayString(timeSlot: TimeSlot) -> String {
 	let startOfDay = timeSlot.baseDate
-	let interval = timeSlot.minutesFromBeginning * minutes
+	let interval = timeSlot.secondsFromBeginning
 	let currentPeriod = startOfDay.advanced(by: interval)
 	let timeFormat = DateFormatter()
 	timeFormat.dateFormat = "E"
 	let timeString = timeFormat.string(from: currentPeriod)
-//	debugLog("toTimeString -> \(timeString)")
+	//	debugLog("toTimeString -> \(timeString)")
 	return timeString
 }
 
@@ -241,7 +276,7 @@ struct CalendarView_Previews: PreviewProvider {
 			DayView()
 				.environment(\.colorScheme, .light)
 				.environment(\.managedObjectContext, context)
-
+			
 			DayView()
 				.environment(\.colorScheme, .dark)
 				.environment(\.managedObjectContext, context)
@@ -249,4 +284,5 @@ struct CalendarView_Previews: PreviewProvider {
 		
 	}
 }
+
 

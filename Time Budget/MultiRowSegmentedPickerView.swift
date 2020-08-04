@@ -128,7 +128,7 @@ struct MultiRowSegmentedPickerView<T: Buttonable>: View {
 							height: self.selectionHeight - 2.0 * self.selectorInset
 					)
 						.position(x: self.selectionOffsetX, y: self.selectionOffsetY)
-						.animation(.easeInOut(duration: 0.2))
+//						.animation(.easeInOut(duration: 0.2))
 				}
 				.background(self.backgroundColor)
 				.cornerRadius(self.cornerRadius)
@@ -170,7 +170,8 @@ struct MultiRowSegmentedPickerView<T: Buttonable>: View {
 					.onTapGesture(
 						count: 2,
 						perform: {
-							withAnimation {
+							debugLog("MultiRowSegmentPickerView: double tap \(item.asString)")
+							withAnimation(.none) {
 								self.updateSelectionOffset(item: item, row: row, col: col, longPress: true)
 							}
 					}
@@ -178,26 +179,28 @@ struct MultiRowSegmentedPickerView<T: Buttonable>: View {
 					.onTapGesture(
 						count: 1,
 						perform: {
-							withAnimation {
+							debugLog("MultiRowSegmentPickerView: single tap \(item.asString)")
+							withAnimation(.none) {
 								self.updateSelectionOffset(item: item, row: row, col: col, longPress: false)
 							}
 					}
 				)
-					.onLongPressGesture(
-						minimumDuration: longPressDuration,
-						maximumDistance: longPressMaxDrift,
-						pressing: { down in
-							withAnimation(.none) {
-								if down {
-									self.actionDetail = item.longDescription
-								}
-							}
-					}, perform: {
-						withAnimation {
-							self.updateSelectionOffset(item: item, row: row, col: col, longPress: true)
-						}
-					}
-				)
+//					.onLongPressGesture(
+//						minimumDuration: Double(longPressDuration),
+//						maximumDistance: longPressMaxDrift,
+//						pressing: { down in
+//							debugLog("MultiRowSegmentPickerView: long press \(item.asString)")
+//							withAnimation(.none) {
+//								if down {
+//									self.actionDetail = item.longDescription
+//								}
+//							}
+//					}, perform: {
+//						withAnimation {
+//							self.updateSelectionOffset(item: item, row: row, col: col, longPress: true)
+//						}
+//					}
+//				)
 			}
 		}
 	}

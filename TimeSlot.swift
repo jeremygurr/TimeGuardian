@@ -13,23 +13,23 @@ struct TimeSlot: Equatable, CustomStringConvertible {
 	let baseDate: Date
 	let slotIndex: Int
 	let slotSize: TimeInterval
-	let minutesFromBeginning: TimeInterval
+	let secondsFromBeginning: TimeInterval
 
 	init(baseDate: Date, slotIndex: Int, slotSize: TimeInterval) {
 		self.baseDate = baseDate
 		self.slotIndex = slotIndex
 		self.slotSize = slotSize
-		self.minutesFromBeginning = slotSize * Double(slotIndex)
+		self.secondsFromBeginning = slotSize * Double(slotIndex)
 	}
 	
 	public var description: String {
-		return "TimeSlot: { baseDate: \(baseDate), slotIndex: \(slotIndex), slotSize: \(slotSize), minutesFromBeginning: \(minutesFromBeginning) }"
+		return "TimeSlot: { baseDate: \(baseDate), slotIndex: \(slotIndex), slotSize: \(slotSize / minutes), minutesFromBeginning: \(secondsFromBeginning) }"
 	}
 
 	var coversCurrentTime: Bool {
 		let today = Date()
 		let currentDate = getStartOfDay()
-		let currentSlot = Int(currentDate.distance(to: today) / 60 / slotSize)
+		let currentSlot = Int(currentDate.distance(to: today) / slotSize)
 		let slotSame = currentSlot == slotIndex
 		let dateSame = baseDate == currentDate
 		return slotSame && dateSame

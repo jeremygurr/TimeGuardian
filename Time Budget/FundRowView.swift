@@ -137,7 +137,7 @@ struct FundRowView: View {
 		.onReceive(
 			AppState.subject
 				.filter({ $0 == .fundList })
-				.collect(.byTime(RunLoop.main, .milliseconds(100)))
+				.collect(.byTime(RunLoop.main, .milliseconds(stateChangeCollectionTime)))
 		) { x in
 			self.viewState += 1
 			debugLog("FundRowView: view state changed to \(self.viewState) (\(x.count) events)")

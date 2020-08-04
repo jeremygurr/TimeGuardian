@@ -46,7 +46,7 @@ struct TopView: View {
 		.onReceive(
 			AppState.subject
 				.filter({ $0 == .budgetStack })
-				.collect(.byTime(RunLoop.main, .milliseconds(100)))
+				.collect(.byTime(RunLoop.main, .milliseconds(stateChangeCollectionTime)))
 		) { x in
 			self.viewState += 1
 			debugLog("TopView: view state changed to \(self.viewState) (\(x.count) events)")
@@ -102,7 +102,7 @@ struct FundListViewWindow: View {
 						}
 				}
 				.onLongPressGesture(
-					minimumDuration: longPressDuration, maximumDistance: longPressMaxDrift,
+					minimumDuration: Double(longPressDuration), maximumDistance: longPressMaxDrift,
 					pressing: {
 						if $0 {
 							AppState.get().titleOverride = "to Top"
