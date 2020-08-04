@@ -10,7 +10,6 @@ import SwiftUI
 import Introspect
 
 struct BudgetListView: View {
-	let appState: AppState
 	@Environment(\.editMode) var editMode
 	@Environment(\.managedObjectContext) var managedObjectContext
 	@FetchRequest var mainBudgets: FetchedResults<TimeBudget>
@@ -18,10 +17,9 @@ struct BudgetListView: View {
 	@State var newBudgetTop = ""
 	@State var newBudgetBottom = ""
 
-	init(appState: AppState) {
+	init() {
 		_mainBudgets = TimeBudget.fetchRequestMain()
 		_subBudgets = TimeBudget.fetchRequestSub()
-		self.appState = appState
 	}
 
 	var body: some View {
@@ -29,12 +27,12 @@ struct BudgetListView: View {
 			Section(header: Text("Top Level Budgets")) {
 				NewBudgetRowView(newBudgetName: $newBudgetTop, budgets: mainBudgets, posOfNewBudget: .before)
 					.disabled(self.editMode?.wrappedValue == .active)
-				BudgetListSection(budgets: self.mainBudgets, appState: self.appState)
+				BudgetListSection(budgets: self.mainBudgets)
 				NewBudgetRowView(newBudgetName: $newBudgetBottom, budgets: mainBudgets, posOfNewBudget: .after)
 					.disabled(self.editMode?.wrappedValue == .active)
 			}
 			Section(header: Text("Sub Budgets")) {
-				BudgetListSection(budgets: self.subBudgets, appState: self.appState)
+				BudgetListSection(budgets: self.subBudgets)
 			}
 			Text("").frame(height: listViewExtension)
 		}
@@ -44,11 +42,10 @@ struct BudgetListView: View {
 struct BudgetListSection: View {
 	var budgets: FetchedResults<TimeBudget>
 	@Environment(\.managedObjectContext) var managedObjectContext
-	let appState: AppState
 
 	var body: some View {
 		ForEach(budgets, id: \.self) { budget in
-			BudgetRowView(appState: self.appState, budget: budget)
+			BudgetRowView(budget: budget)
 		}.onDelete { indexSet in
 			debugLog("BudgetListView.onDelete")
 			withAnimation(.none) {
@@ -82,8 +79,8 @@ struct BudgetRowView: View {
 	@State var budget: TimeBudget
 	@Binding var budgetStack: BudgetStack
 
-	init(appState: AppState, budget: TimeBudget	) {
-		_budgetStack = appState.budgetStack.projectedValue
+	init(budget: TimeBudget) {
+		_budgetStack = AppState.get().$budgetStack
 		_budget = State(initialValue: budget)
 	}
 	
@@ -120,7 +117,9 @@ struct BudgetRowView: View {
 			} else {
 				Button(
 					action: {
-						_ = self.budgetStack.push(budget: self.budget)
+						debugLog("Selected budget \(self.budget.name)")
+						self.budgetStack.push(budget: self.budget)
+						debugLog("BudgetStack count = \(self.budgetStack.getBudgets().count)")
 					},
 					label: {
 						Text(budget.name)
@@ -203,7 +202,7 @@ enum ListPosition {
 struct BudgetListView_Previews: PreviewProvider {
 	static var previews: some View {
 		let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-		return BudgetListView(appState: AppState())
+		return BudgetListView()
 			.environment(\.managedObjectContext, context)
 	}
 }

@@ -36,6 +36,7 @@
 		00E1440D24D0B7AA0087F5C2 /* TimeSlot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00E1440C24D0B7AA0087F5C2 /* TimeSlot.swift */; };
 		00F9052224D4A313000832D3 /* NewFundRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00F9052124D4A313000832D3 /* NewFundRowView.swift */; };
 		00F9052424D7B967000832D3 /* DayViewAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00F9052324D7B967000832D3 /* DayViewAction.swift */; };
+		00F9052624D96AD1000832D3 /* Bindable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00F9052524D96AD1000832D3 /* Bindable.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -69,6 +70,7 @@
 		00E1440C24D0B7AA0087F5C2 /* TimeSlot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeSlot.swift; sourceTree = SOURCE_ROOT; };
 		00F9052124D4A313000832D3 /* NewFundRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewFundRowView.swift; sourceTree = SOURCE_ROOT; };
 		00F9052324D7B967000832D3 /* DayViewAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayViewAction.swift; sourceTree = "<group>"; };
+		00F9052524D96AD1000832D3 /* Bindable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bindable.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -136,6 +138,7 @@
 				002531DB24C497EC00CB7FF0 /* BudgetStack.swift */,
 				00E1440C24D0B7AA0087F5C2 /* TimeSlot.swift */,
 				0058665624C05BBB004E4889 /* Utils.swift */,
+				00F9052524D96AD1000832D3 /* Bindable.swift */,
 				002590E624B90F1000F703C5 /* Assets.xcassets */,
 				002590EB24B90F1000F703C5 /* LaunchScreen.storyboard */,
 				002590EE24B90F1000F703C5 /* Info.plist */,
@@ -253,6 +256,7 @@
 				00E1440D24D0B7AA0087F5C2 /* TimeSlot.swift in Sources */,
 				002531DA24C4614A00CB7FF0 /* TopView.swift in Sources */,
 				006F1C7324CF5ADD005C0E1A /* TimeExpense+CoreDataClass.swift in Sources */,
+				00F9052624D96AD1000832D3 /* Bindable.swift in Sources */,
 				00659F1124C5213200670CF0 /* TimeBudget+CoreDataProperties.swift in Sources */,
 				00F9052424D7B967000832D3 /* DayViewAction.swift in Sources */,
 				00659F1024C5213200670CF0 /* TimeFund+CoreDataProperties.swift in Sources */,

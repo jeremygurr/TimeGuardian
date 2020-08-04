@@ -24,8 +24,8 @@ struct FundListView: View {
 
 	init(appState: AppState) {
 		self.appState = appState
-		_budgetStack = appState.budgetStack.projectedValue
-		let budget = appState.budgetStack.wrappedValue.getTopBudget()
+		_budgetStack = appState.$budgetStack
+		let budget = appState.budgetStack.getTopBudget()
 		_availableFunds = TimeFund.fetchAvailableRequest(budget: budget)
 		_spentFunds = TimeFund.fetchSpentRequest(budget: budget)
 		_allFunds = TimeFund.fetchAllRequest(budget: budget)
@@ -108,7 +108,7 @@ struct FundSectionAvailableView: View {
 		Section(header: Text("Available")) {
 			if self.editMode?.wrappedValue == .inactive {
 				NewFundRowView(
-					budgetStack: self.appState.budgetStack.projectedValue,
+					budgetStack: self.appState.$budgetStack,
 					newFundName: $newFundTop,
 					funds: availableFunds,
 					posOfNewFund: .before
@@ -134,7 +134,7 @@ struct FundSectionAvailableView: View {
 			.listRowInsets(fundInsets())
 			if self.editMode?.wrappedValue == .inactive {
 				NewFundRowView(
-					budgetStack: self.appState.budgetStack.projectedValue,
+					budgetStack: self.appState.$budgetStack,
 					newFundName: $newFundBottom,
 					funds: availableFunds,
 					posOfNewFund: .after
@@ -161,7 +161,7 @@ struct FundSectionSpentView: View {
 		self.allFunds = allFunds
 		self.appState = appState
 		_action = appState.$fundListAction
-		_budgetStack = appState.budgetStack.projectedValue
+		_budgetStack = appState.$budgetStack
 	}
 
 	var body: some View {
@@ -188,9 +188,9 @@ struct FundListView_Previews: PreviewProvider {
 		let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
 		let testDataBuilder = TestDataBuilder(context: context)
 		testDataBuilder.createTestData()
-		let appState = AppState()
+		let appState = AppState.get()
 		let budget = testDataBuilder.budgets.first!
-		appState.budgetStack.wrappedValue.push(budget: budget)
+		appState.budgetStack.push(budget: budget)
 		return FundListView(appState: appState)
 			.environment(\.managedObjectContext, context)
 //			.environment(\.colorScheme, .dark)

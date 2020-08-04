@@ -26,7 +26,7 @@ struct FundRowView: View {
 		_fund = fund
 		self.funds = funds
 		_ratioDisplayMode = appState.$ratioDisplayMode
-		_budgetStack = appState.budgetStack.projectedValue
+		_budgetStack = appState.$budgetStack
 		_dayViewExpensePeriod = appState.$dayViewExpensePeriod
 		_lastSelectedFund = appState.$lastSelectedFund
 	}
@@ -261,8 +261,8 @@ struct FundRowView_Previews: PreviewProvider {
 		testDataBuilder.createTestData()
 		let budget = testDataBuilder.budgets.first!
 		let fund = testDataBuilder.funds.first!
-		let appState = AppState()
-		appState.budgetStack.wrappedValue.push(budget: budget)
+		let appState = AppState.get()
+		appState.budgetStack.push(budget: budget)
 		
 		return FundRowView_PreviewHelper(budget: budget, fund: fund, appState: appState)
 			.environment(\.managedObjectContext, context)

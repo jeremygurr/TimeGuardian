@@ -16,6 +16,10 @@ struct BudgetStack {
 	//   unless budgetStack is empty
 	private var fundStack: [TimeFund] = []
 	private var fundRatioStack: [Float] = []
+	
+	init() {
+		debugLog("BudgetStack.init")
+	}
 
 	func getBudgets() -> [TimeBudget] {
 		return budgetStack
@@ -44,12 +48,14 @@ struct BudgetStack {
 	}
 	
 	mutating func removeLastBudget() {
+		debugLog("budgetStack.removeLastBudget")
 		if budgetStack.count > 0 {
 			budgetStack.removeLast()
 		}
 	}
 	
 	mutating func removeLastFund() {
+		debugLog("budgetStack.removeLastFund")
 		if fundStack.count > 0 {
 			fundStack.removeLast()
 			fundRatioStack.removeLast()
@@ -57,6 +63,7 @@ struct BudgetStack {
 	}
 	
 	mutating func toFirstBudget() {
+		debugLog("budgetStack.toFirstBudget")
 		fundStack.removeAll()
 		fundRatioStack.removeAll()
 		var s = budgetStack

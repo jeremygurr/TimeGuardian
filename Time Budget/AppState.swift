@@ -14,35 +14,53 @@ let longPressMaxDrift: CGFloat = 0.1
 let listViewExtension: CGFloat = 200
 let interestThreshold: Float = -1000
 
+enum ViewRefreshKey {
+	case none, budgetStack
+}
+
 class AppState {
-	init() {
+	private init() {
 		debugLog("AppState.init")
 	}
 	
-	var budgetStack: State<BudgetStack> = State(initialValue: BudgetStack())
+	static let subject = CurrentValueSubject<ViewRefreshKey, Never>(.none)
+	private static let singleton = AppState()
+	static func get() -> AppState { singleton }
 	
-	@State var dayViewListPosition: Int? = nil
-	@State var dayViewUpdateTrigger = false
-	@State var dayViewExpensePeriod: TimeInterval = 30 * minutes
-	@State var dayViewPlusMinusDays: Int = 1
-	@State var dayViewAction: DayViewAction = .add
+	@Bindable(send: .budgetStack, to: subject)
+	var budgetStack: BudgetStack = BudgetStack()
+	
+	@Bindable(send: .budgetStack, to: subject)
+	var dayViewListPosition: Int? = nil
+	@Bindable(send: .budgetStack, to: subject)
+	var dayViewUpdateTrigger = false
+	@Bindable(send: .budgetStack, to: subject)
+	var dayViewExpensePeriod: TimeInterval = 30 * minutes
+	@Bindable(send: .budgetStack, to: subject)
+	var dayViewPlusMinusDays: Int = 1
+	@Bindable(send: .budgetStack, to: subject)
+	var dayViewAction: DayViewAction = .add
 	var dayViewPeriodsPerDay: Int {
 		return Int(oneDay / dayViewExpensePeriod)
 	}
-
-	@State var fundListAction: FundAction = .view
-	@State var fundListActionDetail: String = "No action selected"
-	@State var lastSelectedFund: TimeFund? = nil
-
-	@State var titleOverride: String? = nil
-
+	
+	@Bindable(send: .budgetStack, to: subject)
+	var fundListAction: FundAction = .view
+	@Bindable(send: .budgetStack, to: subject)
+	var fundListActionDetail: String = "No action selected"
+	@Bindable(send: .budgetStack, to: subject)
+	var lastSelectedFund: TimeFund? = nil
+	
+	@Bindable(send: .budgetStack, to: subject)
+	var titleOverride: String? = nil
+	
 	var title: String {
 		var title: String
 		if titleOverride != nil {
 			title = titleOverride!
 		} else {
-			if budgetStack.wrappedValue.hasTopBudget() {
-				title = budgetStack.wrappedValue.getTopBudget().name
+			if budgetStack.hasTopBudget() {
+				title = budgetStack.getTopBudget().name
 			} else {
 				title = "None"
 			}
@@ -63,5 +81,6 @@ class AppState {
 		return size
 	}
 	
-	@State var ratioDisplayMode: RatioDisplayMode = .percentage
+	@Bindable(send: .budgetStack, to: subject)
+	var ratioDisplayMode: RatioDisplayMode = .percentage
 }

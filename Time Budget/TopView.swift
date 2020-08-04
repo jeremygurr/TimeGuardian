@@ -9,21 +9,20 @@
 import SwiftUI
 
 struct TopView: View {
-	@State var budgetStack: BudgetStack
-	let appState: AppState
+	@Binding var budgetStack: BudgetStack
+	@State var viewState = 0
 	
-	init(appState: AppState) {
+	init() {
 		debugLog("TopView.init")
-		_budgetStack = appState.budgetStack
-		self.appState = appState
+		_budgetStack = AppState.get().$budgetStack
 	}
-
+	
 	private func budgetFundView() -> some View {
 		VStack {
 			if self.budgetStack.isEmpty() {
-				BudgetListViewWindow(appState: self.appState)
+				BudgetListViewWindow()
 			} else {
-				FundListViewWindow(appState: appState)
+				FundListViewWindow()
 			}
 		}
 	}
@@ -36,24 +35,26 @@ struct TopView: View {
 						.imageScale(.large)
 					Text("Budget")
 			}
-			DayView(appState: self.appState)
+			DayView(appState: AppState.get())
 				.tabItem {
 					Image(systemName: "calendar")
 						.imageScale(.large)
 					Text("Day")
 			}
 		}
+		.onReceive(
+			AppState.subject
+				.filter({ $0 == .budgetStack })
+				.removeDuplicates()
+		) { _ in self.viewState += 1 }
 	}
 }
 
 struct BudgetListViewWindow: View {
-	let appState: AppState
-	
-	init(appState: AppState) {
+	init() {
 		debugLog("BudgetListViewWindow.init")
-		self.appState = appState
 	}
-
+	
 	var body: some View {
 		VStack {
 			ZStack {
@@ -65,7 +66,7 @@ struct BudgetListViewWindow: View {
 					.font(.body)
 					.frame(maxWidth: .infinity, alignment: .trailing)
 			}
-			BudgetListView(appState: self.appState)
+			BudgetListView()
 		}
 	}
 }
@@ -74,14 +75,12 @@ struct FundListViewWindow: View {
 	@Binding var budgetStack: BudgetStack
 	@Environment(\.editMode) var editMode
 	@Environment(\.managedObjectContext) var managedObjectContext
-	let appState: AppState
 	
-	init(appState: AppState) {
+	init() {
 		debugLog("FundListViewWindow.init")
-		self.appState = appState
-		_budgetStack = appState.budgetStack.projectedValue
+		_budgetStack = AppState.get().$budgetStack
 	}
-
+	
 	var body: some View {
 		VStack {
 			HStack {
@@ -93,7 +92,7 @@ struct FundListViewWindow: View {
 						withAnimation(.none) {
 							self.budgetStack.removeLastBudget()
 							self.budgetStack.removeLastFund()
-							self.appState.titleOverride = nil
+							AppState.get().titleOverride = nil
 							self.editMode?.wrappedValue = .inactive
 							self.managedObjectContext.rollback()
 						}
@@ -102,28 +101,27 @@ struct FundListViewWindow: View {
 					minimumDuration: longPressDuration, maximumDistance: longPressMaxDrift,
 					pressing: {
 						if $0 {
-							self.appState.titleOverride = "to Top"
+							AppState.get().titleOverride = "to Top"
 						} else {
-							self.appState.titleOverride = nil
+							AppState.get().titleOverride = nil
 						}
 				}, perform: {
 					withAnimation(.none) {
 						self.budgetStack.toFirstBudget()
-						self.appState.titleOverride = nil
+						AppState.get().titleOverride = nil
 						self.editMode?.wrappedValue = .inactive
 						self.managedObjectContext.rollback()
 					}
 				}
 				)
 				Spacer()
-				Text("\(appState.title)")
-					.font(Font.system(size: appState.budgetNameFontSize))
+				Text("\(AppState.get().title)")
+					.font(Font.system(size: AppState.get().budgetNameFontSize))
 					.padding(Edge.Set([.trailing]), 10)
-				//							.frame(maxWidth: .infinity, alignment: .leading)
 			}
 			.frame(maxWidth: .infinity, alignment: .leading)
 			if self.budgetStack.hasTopBudget() {
-				FundListView(appState: appState)
+				FundListView(appState: AppState.get())
 			}
 		}
 	}
@@ -132,10 +130,10 @@ struct FundListViewWindow: View {
 struct TopView_Previews: PreviewProvider {
 	static var previews: some View {
 		let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-		let appState = AppState()
 		let tdb = TestDataBuilder(context: context)
 		tdb.createTestData()
-		return TopView(appState: appState)
+		return TopView()
 			.environment(\.managedObjectContext, context)
 	}
 }
+

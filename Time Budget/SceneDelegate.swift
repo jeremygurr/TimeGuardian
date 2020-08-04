@@ -25,11 +25,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 //			let tdb = TestDataBuilder(context: context)
 //			tdb.createTestData()
 		
-		let appState = AppState()
-
 		// Create the SwiftUI view and set the context as the value for the managedObjectContext environment keyPath.
 		// Add `@Environment(\.managedObjectContext)` in the views that will need the context.
-		let contentView = TopView(appState: appState)
+		let contentView = TopView()
 			.environment(\.managedObjectContext, context)
 		
 		// Use a UIHostingController as window root view controller.

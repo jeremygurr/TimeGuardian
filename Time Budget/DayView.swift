@@ -48,7 +48,7 @@ struct DayView: View {
 		})
 		
 		_dayViewUpdateTrigger = appState.$dayViewUpdateTrigger
-		_budgetStack = appState.budgetStack.projectedValue
+		_budgetStack = appState.$budgetStack
 	}
 
 	var body: some View {
@@ -107,7 +107,7 @@ struct ExpenseRowView: View {
 		_currentPosition = appState.$dayViewListPosition
 		self.todaysExpenses = todaysExpenses
 		_timeSlots = timeSlots
-		_budgetStack = appState.budgetStack.projectedValue
+		_budgetStack = appState.$budgetStack
 		_dayViewExpensePeriod = appState.$dayViewExpensePeriod
 		_lastSelectedFund = appState.$lastSelectedFund
 	}
@@ -238,9 +238,9 @@ struct CalendarView_Previews: PreviewProvider {
 		let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
 		let testDataBuilder = TestDataBuilder(context: context)
 		testDataBuilder.createTestData()
-		let appState = AppState()
+		let appState = AppState.get()
 		let budget = testDataBuilder.budgets.first!
-		appState.budgetStack.wrappedValue.push(budget: budget)
+		appState.budgetStack.push(budget: budget)
 		
 		return Group {
 			DayView(appState: appState)
