@@ -45,8 +45,10 @@ struct TopView: View {
 		.onReceive(
 			AppState.subject
 				.filter({ $0 == .budgetStack })
-				.removeDuplicates()
-		) { _ in self.viewState += 1 }
+		) { _ in
+			self.viewState += 1
+			debugLog("TopView: view state changed to \(self.viewState)")
+		}
 	}
 }
 

@@ -23,6 +23,7 @@ struct FundListView: View {
 	let appState: AppState
 
 	init(appState: AppState) {
+		debugLog("FundListView init()")
 		self.appState = appState
 		_budgetStack = appState.$budgetStack
 		let budget = appState.budgetStack.getTopBudget()

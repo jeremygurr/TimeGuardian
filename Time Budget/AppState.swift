@@ -23,7 +23,7 @@ class AppState {
 		debugLog("AppState.init")
 	}
 	
-	static let subject = CurrentValueSubject<ViewRefreshKey, Never>(.none)
+	static let subject = PassthroughSubject<ViewRefreshKey, Never>()
 	private static let singleton = AppState()
 	static func get() -> AppState { singleton }
 	

@@ -10,13 +10,17 @@ import SwiftUI
 import Combine
 
 @propertyWrapper
-class Bindable<T, M> {
+class Bindable<T: Equatable, M> {
 	
 	private var internalValue: T
 	private let messageToSend: M
-	private var subject: CurrentValueSubject<M, Never>
+	private var subject: PassthroughSubject<M, Never>
 	
-	init(wrappedValue: T, send message: M, to subject: CurrentValueSubject<M, Never>) {
+	init(
+		wrappedValue: T,
+		send message: M,
+		to subject: PassthroughSubject<M, Never>
+	) {
 		self.internalValue = wrappedValue
 		self.messageToSend = message
 		self.subject = subject
@@ -27,8 +31,11 @@ class Bindable<T, M> {
 			internalValue
 		}
 		set {
-			internalValue = newValue
-			subject.send(messageToSend)
+			if internalValue != newValue {
+				internalValue = newValue
+				debugLog("sending \(messageToSend)")
+				subject.send(messageToSend)
+			}
 		}
 	}
 	
@@ -38,8 +45,11 @@ class Bindable<T, M> {
 				self.internalValue
 		},
 			set: {
-				self.internalValue = $0
-				self.subject.send(self.messageToSend)
+				if self.internalValue != $0 {
+					self.internalValue = $0
+					debugLog("sending \(self.messageToSend)")
+					self.subject.send(self.messageToSend)
+				}
 		}
 		)
 	}

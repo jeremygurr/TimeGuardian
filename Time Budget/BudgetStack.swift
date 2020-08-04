@@ -9,7 +9,7 @@
 import Foundation
 import SwiftUI
 
-struct BudgetStack {
+struct BudgetStack: Equatable {
 	
 	private var budgetStack: [TimeBudget] = []
 	// fundStack will typically be one element shorter than budgetStack,
