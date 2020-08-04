@@ -11,6 +11,7 @@ import SwiftUI
 import Combine
 
 struct FundRowView: View {
+	@State var viewState = 0
 	@Binding var action: FundAction
 	@Environment(\.editMode) var editMode
 	@Environment(\.managedObjectContext) var managedObjectContext
@@ -133,6 +134,15 @@ struct FundRowView: View {
 				}
 			}
 		}
+		.onReceive(
+			AppState.subject
+				.filter({ $0 == .fundList })
+				.collect(.byTime(RunLoop.main, .milliseconds(100)))
+		) { x in
+			self.viewState += 1
+			debugLog("FundRowView: view state changed to \(self.viewState) (\(x.count) events)")
+		}
+
 	}
 	
 	func getMainButton(expensePeriod: TimeInterval) -> some View {

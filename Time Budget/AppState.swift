@@ -46,6 +46,9 @@ class AppState {
 	var fundListAction: FundAction = .view
 	@Bindable(send: .fundList, to: subject)
 	var fundListActionDetail: String = "No action selected"
+	@Bindable(send: .fundList, to: subject)
+	var ratioDisplayMode: RatioDisplayMode = .percentage
+	
 	@Bindable(send: .none, to: subject)
 	var lastSelectedFund: TimeFund? = nil
 	
@@ -78,9 +81,6 @@ class AppState {
 		}
 		return size
 	}
-	
-	@Bindable(send: .fundList, to: subject)
-	var ratioDisplayMode: RatioDisplayMode = .percentage
 	
 	private let updateTimer: Timer = Timer(timeInterval: 5 * minutes, repeats: true, block: { _ in
 		subject.send(.dayView)
