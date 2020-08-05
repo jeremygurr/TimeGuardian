@@ -28,7 +28,7 @@ struct FundAllRowView: View {
 					}
 					case .earn:
 						for fund in self.allFunds {
-							fund.adjustBalance(1)
+							fund.earn()
 					}
 					case .delete:
 						for fund in self.allFunds {

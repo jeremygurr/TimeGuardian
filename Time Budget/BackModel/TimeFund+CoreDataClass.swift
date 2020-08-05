@@ -94,7 +94,7 @@ public class TimeFund: NSManagedObject, Identifiable {
 	}
 	
 	func deepSpend(budgetStack: BudgetStack) {
-		debugLog("deepSpend on \(self.name)")
+		debugLog("TimeFund.deepSpend on \(self.name)")
 		
 		balancedSpend()
 		budget.rechargeIfSpent()
@@ -107,7 +107,7 @@ public class TimeFund: NSManagedObject, Identifiable {
 	}
 	
 	func adjustBalance(_ amount: Float) {
-		debugLog("adjustBalance on \(self.name) amount: \(amount)")
+		debugLog("TimeFund.adjustBalance on \(self.name) amount: \(amount)")
 		if !frozen {
 			balance += amount
 			if balance < interestThreshold && amount < 0 {
@@ -120,8 +120,13 @@ public class TimeFund: NSManagedObject, Identifiable {
 		debugLog("new balance on \(self.name) is: \(balance)")
 	}
 	
+	func earn() {
+		debugLog("TimeFund.earn on \(self.name)")
+		adjustBalance(recharge)
+	}
+	
 	func resetBalance() {
-		debugLog("resetBalance on \(self.name)")
+		debugLog("TimeFund.resetBalance on \(self.name)")
 		if !frozen {
 			balance = recharge
 		}

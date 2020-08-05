@@ -159,7 +159,7 @@ struct FundRowView: View {
 					case .reset:
 						self.fund.resetBalance()
 					case .earn:
-						self.fund.adjustBalance(1)
+						self.fund.earn()
 					case .subBudget:
 						do {
 							var subBudget: TimeBudget
