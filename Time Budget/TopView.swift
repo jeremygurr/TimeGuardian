@@ -29,29 +29,34 @@ struct TopView: View {
 	}
 	
 	var body: some View {
-		TabView {
+		TabView(selection: AppState.get().$mainTabSelection) {
 			budgetFundView()
 				.tabItem {
 					Image(systemName: "list.bullet")
 						.imageScale(.large)
 					Text("Budget")
-			}
+			}.tag(MainTabSelection.fund)
 			DayView()
 				.tabItem {
 					Image(systemName: "calendar")
 						.imageScale(.large)
 					Text("Day")
-			}
+			}.tag(MainTabSelection.day)
 		}
 		.onReceive(
 			AppState.subject
-				.filter({ $0 == .budgetStack })
+				.filter({ $0 == .budgetStack || $0 == .topView })
 				.collect(.byTime(RunLoop.main, .milliseconds(stateChangeCollectionTime)))
 		) { x in
 			self.viewState += 1
 			debugLog("TopView: view state changed to \(self.viewState) (\(x.count) events)")
 		}
 	}
+}
+
+enum MainTabSelection: Int, Hashable {
+	case fund = 0
+	case day
 }
 
 struct BudgetListViewWindow: View {

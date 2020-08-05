@@ -16,7 +16,7 @@ let interestThreshold: Float = -1000
 let stateChangeCollectionTime: Int = 10
 
 enum ViewRefreshKey {
-	case none, topView, budgetStack, fundList, dayView
+	case topView, budgetStack, fundList, dayView
 }
 
 class AppState {
@@ -28,11 +28,22 @@ class AppState {
 	private static let singleton = AppState()
 	static func get() -> AppState { singleton }
 	
+	@Bindable(send: .topView, to: subject, beforeSet: {
+		(beforeValue, afterValue) in
+		if beforeValue == afterValue && afterValue == .day {
+			AppState.get().dayViewResetListPosition = true
+		}
+	})
+	var mainTabSelection = MainTabSelection.fund
+	
 	@Bindable(send: .budgetStack, to: subject)
 	var budgetStack: BudgetStack = BudgetStack()
 	
 	@Bindable(send: .dayView, to: subject)
-	var dayViewListPosition: Int? = nil
+	var dayViewResetListPosition: Bool = true
+	
+	@Bindable(send: false)
+	var dayViewPosition: CGPoint = CGPoint(x: 0, y: 0)
 	
 	@Bindable(send: .dayView, to: subject)
 	var dayViewExpensePeriod: TimeInterval = 30 * minutes
@@ -59,7 +70,7 @@ class AppState {
 	@Bindable(send: .fundList, to: subject)
 	var ratioDisplayMode: RatioDisplayMode = .percentage
 	
-	@Bindable(send: .none, to: subject)
+	@Bindable(send: false)
 	var lastSelectedFund: TimeFund? = nil
 	
 	@Bindable(send: .topView, to: subject)

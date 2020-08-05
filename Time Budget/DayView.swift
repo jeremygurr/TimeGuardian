@@ -20,11 +20,14 @@ struct DayView: View {
 	@State var startDate: Date
 	@State var endDate: Date
 	@State var timeSlots: [TimeSlot]
-	@Binding var currentPosition: Int?
 	@Binding var action: DayViewAction
 	@Binding var actionDetail: String
+	
+	@State private var tableView: UITableView?
 
 	init() {
+		
+		debugLog("DayView.init")
 		
 		let appState = AppState.get()
 		_action = appState.$dayViewAction
@@ -46,7 +49,6 @@ struct DayView: View {
 		}
 		
 		_timeSlots = State(initialValue: newTimeSlots)
-		_currentPosition = appState.$dayViewListPosition
 		_budgetStack = appState.$budgetStack
 		
 	}
@@ -68,12 +70,24 @@ struct DayView: View {
 				Text("").frame(height: listViewExtension)
 			}
 			.introspectTableView { tableView in
-				tableView.scrollToRow(
-					at: IndexPath(
-						item: self.getCurrentPosition() + 1, section: 0)
-					, at: .middle
-					, animated: false
-				)
+				if self.tableView != tableView {
+					self.tableView = tableView
+				}
+
+				if AppState.get().dayViewResetListPosition {
+					debugLog("DayView: resetting list position")
+					tableView.scrollToRow(
+						at: IndexPath(
+							item: self.getCalendarOffsetForCurrentTime() + 1, section: 0)
+						, at: .middle
+						, animated: false
+					)
+					AppState.get().dayViewPosition = tableView.contentOffset
+					AppState.get().dayViewResetListPosition = false
+				} else {
+					tableView.setContentOffset(AppState.get().dayViewPosition, animated: false)
+					debugLog("DayView list position updated to \(tableView.contentOffset)")
+				}
 			}
 			.onReceive(
 				AppState.subject
@@ -83,19 +97,16 @@ struct DayView: View {
 				self.viewState += 1
 				debugLog("DayView: view state changed to \(self.viewState) (\(x.count) events)")
 			}
+		
+		}.onAppear {
+			debugLog("DayView appeared")
+		}.onDisappear {
+			debugLog("DayView disappeared")
+			if let t = self.tableView {
+				AppState.get().dayViewPosition = t.contentOffset
+				debugLog("AppState dayViewPosition updated to \(t.contentOffset)")
+			}
 		}
-	}
-	
-	func getCurrentPosition() -> Int {
-		var result: Int
-		if let c = self.currentPosition {
-			result = c
-		} else {
-			let c = self.getCalendarOffsetForCurrentTime()
-			self.currentPosition = c
-			result = c
-		}
-		return result
 	}
 	
 	func getCalendarOffsetForCurrentTime() -> Int {
@@ -117,14 +128,12 @@ struct ExpenseRowView: View {
 	var todaysExpenses: FetchedResults<TimeExpense>
 	@Environment(\.managedObjectContext) var managedObjectContext
 	@Binding var timeSlots: [TimeSlot]
-	@Binding var currentPosition: Int?
 	@Binding var dayViewExpensePeriod: TimeInterval
 	@Binding var lastSelectedFund: TimeFund?
 	@Binding var action: DayViewAction
 	
 	init(todaysExpenses: FetchedResults<TimeExpense>, timeSlots: Binding<[TimeSlot]>) {
 		let appState = AppState.get()
-		_currentPosition = appState.$dayViewListPosition
 		self.todaysExpenses = todaysExpenses
 		_timeSlots = timeSlots
 		_budgetStack = appState.$budgetStack
@@ -154,7 +163,6 @@ struct ExpenseRowView: View {
 		.contentShape(Rectangle())
 		.background(colorOfRow(timeSlot: timeSlot, expensePeriod: dayViewExpensePeriod))
 		.onTapGesture {
-			self.currentPosition = index
 			debugLog("DayView: expense row pressed")
 			let existingExpense = getExpenseFor(timeSlot: timeSlot, todaysExpenses: self.todaysExpenses)
 			switch self.action {
