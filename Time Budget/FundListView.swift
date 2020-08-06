@@ -53,12 +53,12 @@ struct FundListView: View {
 			Text(actionDetail)
 				.font(.body)
 			List {
-				if self.action.canApplyToAll {
+//				if self.action.canApplyToAll {
 					FundAllRowView(
-						allFunds: self.allFunds,
-						action: $action
+						allFunds: self.allFunds
 					)
-				}
+						.listRowInsets(fundInsets())
+//				}
 				FundSectionAvailableView(
 					availableFunds: self.availableFunds,
 					allFunds: self.allFunds,
@@ -171,9 +171,11 @@ struct FundSectionSpentView: View {
 
 	var body: some View {
 		Section(header: Text("Spent")) {
-			if self.action.canApplyToAll {
-				FundAllSpentRowView(spentFunds: self.spentFunds)
-			}
+//			if self.action.canApplyToAll {
+			FundAllSpentRowView(spentFunds: self.spentFunds)
+				.listRowInsets(fundInsets())
+
+//			}
 			ForEach(self.spentFunds, id: \.self) { fund in
 				FundRowView(fund: ObservedObject(initialValue: fund), funds: self.allFunds)
 			}.onMove() { (source: IndexSet, destination: Int) in
