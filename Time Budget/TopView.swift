@@ -12,7 +12,8 @@ import Combine
 struct TopView: View {
 	@Binding var budgetStack: BudgetStack
 	@State var viewState = 0
-	
+	@Environment(\.editMode) var editMode
+
 	init() {
 		debugLog("TopView.init")
 		_budgetStack = AppState.get().$budgetStack
@@ -106,23 +107,23 @@ struct FundListViewWindow: View {
 							self.managedObjectContext.rollback()
 						}
 				}
-				.onLongPressGesture(
-					minimumDuration: Double(longPressDuration), maximumDistance: longPressMaxDrift,
-					pressing: {
-						if $0 {
-							AppState.get().titleOverride = "to Top"
-						} else {
-							AppState.get().titleOverride = nil
-						}
-				}, perform: {
-					withAnimation(.none) {
-						self.budgetStack.toFirstBudget()
-						AppState.get().titleOverride = nil
-						self.editMode?.wrappedValue = .inactive
-						self.managedObjectContext.rollback()
-					}
-				}
-				)
+//				.onLongPressGesture(
+//					minimumDuration: Double(longPressDuration), maximumDistance: longPressMaxDrift,
+//					pressing: {
+//						if $0 {
+//							AppState.get().titleOverride = "to Top"
+//						} else {
+//							AppState.get().titleOverride = nil
+//						}
+//				}, perform: {
+//					withAnimation(.none) {
+//						self.budgetStack.toFirstBudget()
+//						AppState.get().titleOverride = nil
+//						self.editMode?.wrappedValue = .inactive
+//						self.managedObjectContext.rollback()
+//					}
+//				}
+//				)
 				Spacer()
 				Text("\(AppState.get().title)")
 					.font(Font.system(size: AppState.get().budgetNameFontSize))

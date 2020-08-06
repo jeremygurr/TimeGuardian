@@ -6,6 +6,7 @@
 //  Copyright © 2020 Pure Logic Enterprises. All rights reserved.
 //
 
+import CoreData
 import SwiftUI
 import Combine
 
@@ -29,10 +30,21 @@ class AppState {
 	private static let singleton = AppState()
 	static func get() -> AppState { singleton }
 	
+	var managedObjectContext: NSManagedObjectContext? = nil
+	
 	@Bindable(send: .topView, to: subject, beforeSet: {
 		(beforeValue, afterValue) in
-		if beforeValue == afterValue && afterValue == .day {
-			AppState.get().dayViewResetListPosition = true
+		if beforeValue == afterValue {
+			if afterValue == .day {
+				AppState.get().dayViewResetListPosition = true
+			} else if afterValue == .fund {
+				AppState.get().titleOverride = nil
+//				editMode?.wrappedValue = .inactive
+				if let context = AppState.get().managedObjectContext {
+					context.rollback()
+				}
+				AppState.get().budgetStack.toFirstBudget()
+			}
 		}
 	})
 	var mainTabSelection = MainTabSelection.fund
