@@ -40,7 +40,7 @@ struct FundRowView: View {
 	var ratioString: String {
 		let ratioString: String
 		let percentage = fund.frozen ? "∞" : formatPercentage(fund.getRatio() * budgetStack.getCurrentRatio())
-		let time = fund.frozen ? "∞" : formatTime(fund.getRatio() * budgetStack.getCurrentRatio() * Float(days))
+		let time = fund.frozen ? "∞" : formatTime(fund.getRatio() * budgetStack.getCurrentRatio() * longPeriod)
 		let rechargeAmount = formatRecharge(fund.recharge)
 		switch self.ratioDisplayMode {
 			case .percentage:

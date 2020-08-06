@@ -82,6 +82,10 @@ struct BudgetStack: Equatable {
 		return budgetStack.last!
 	}
 	
+	func getTopFund() -> TimeFund? {
+		return fundStack.last
+	}
+	
 	func getCurrentRatio() -> Float {
 		var p: Float = 1
 		for r in fundRatioStack {

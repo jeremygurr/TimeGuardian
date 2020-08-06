@@ -65,7 +65,7 @@ struct DayView: View {
 				.font(.body)
 			List {
 				Text("").frame(height: listViewExtension)
-				ExpenseRowView(todaysExpenses: self.recentExpenses, timeSlots: $timeSlots)
+				ExpenseRowView(tableView: self.$tableView, todaysExpenses: self.recentExpenses, timeSlots: $timeSlots)
 					.listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
 				Text("").frame(height: listViewExtension)
 			}
@@ -86,7 +86,7 @@ struct DayView: View {
 					AppState.get().dayViewResetListPosition = false
 				} else {
 					tableView.setContentOffset(AppState.get().dayViewPosition, animated: false)
-					debugLog("DayView list position updated to \(tableView.contentOffset)")
+					debugLog("DayView: list position updated to \(tableView.contentOffset)")
 				}
 			}
 			.onReceive(
@@ -94,6 +94,11 @@ struct DayView: View {
 					.filter({ $0 == .dayView })
 					.collect(.byTime(RunLoop.main, .milliseconds(stateChangeCollectionTime)))
 			) { x in
+				if let t = self.tableView {
+					AppState.get().dayViewPosition = t.contentOffset
+					debugLog("AppState dayViewPosition updated to \(t.contentOffset)")
+				}
+
 				self.viewState += 1
 				debugLog("DayView: view state changed to \(self.viewState) (\(x.count) events)")
 			}
@@ -124,6 +129,7 @@ struct DayView: View {
 }
 
 struct ExpenseRowView: View {
+	@Binding private var tableView: UITableView?
 	@Binding var budgetStack: BudgetStack
 	var todaysExpenses: FetchedResults<TimeExpense>
 	@Environment(\.managedObjectContext) var managedObjectContext
@@ -132,7 +138,9 @@ struct ExpenseRowView: View {
 	@Binding var lastSelectedFund: TimeFund?
 	@Binding var action: DayViewAction
 	
-	init(todaysExpenses: FetchedResults<TimeExpense>, timeSlots: Binding<[TimeSlot]>) {
+	init(tableView: Binding<UITableView?>, todaysExpenses: FetchedResults<TimeExpense>, timeSlots: Binding<[TimeSlot]>) {
+		debugLog("ExpenseRowView.init")
+		_tableView = tableView
 		let appState = AppState.get()
 		self.todaysExpenses = todaysExpenses
 		_timeSlots = timeSlots
@@ -165,6 +173,12 @@ struct ExpenseRowView: View {
 		.onTapGesture {
 			debugLog("DayView: expense row pressed")
 			let existingExpense = getExpenseFor(timeSlot: timeSlot, todaysExpenses: self.todaysExpenses)
+			
+			if let t = self.tableView {
+				AppState.get().dayViewPosition = t.contentOffset
+				debugLog("AppState dayViewPosition updated to \(t.contentOffset)")
+			}
+
 			switch self.action {
 				case .add:
 					debugLog("DayView: add action")

@@ -172,7 +172,7 @@ struct FundSectionSpentView: View {
 	var body: some View {
 		Section(header: Text("Spent")) {
 			if self.action.canApplyToAll {
-				FundAllSpentRowView(spentFunds: self.spentFunds, action: self.$action)
+				FundAllSpentRowView(spentFunds: self.spentFunds)
 			}
 			ForEach(self.spentFunds, id: \.self) { fund in
 				FundRowView(fund: ObservedObject(initialValue: fund), funds: self.allFunds)

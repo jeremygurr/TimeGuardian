@@ -14,6 +14,7 @@ let longPressMaxDrift: CGFloat = 0.1
 let listViewExtension: CGFloat = 200
 let interestThreshold: Float = -1000
 let stateChangeCollectionTime: Int = 10
+let longPeriod: Float = Float(days)
 
 enum ViewRefreshKey {
 	case topView, budgetStack, fundList, dayView

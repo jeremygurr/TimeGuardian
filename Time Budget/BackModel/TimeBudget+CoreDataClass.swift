@@ -107,7 +107,7 @@ public class TimeBudget: NSManagedObject, Identifiable {
 	}
 	
 	func balancedSpend(fundName: String) {
-		debugLog("balancedSpend(\(fundName))")
+		debugLog("TimeBudget.balancedSpend(\(fundName))")
 		if let funds = funds?.allObjects as! [TimeFund]? {
 			var highestFund: TimeFund? = nil
 			var highestAmount: Float = -9999999
