@@ -56,10 +56,17 @@ struct DayView: View {
 	var body: some View {
 		VStack {
 			MultiRowSegmentedPickerView(
-				actionDetail: self.$actionDetail,
 				choices: DayViewAction.allCasesInRows,
 				selectedIndex: self.$action,
-				onChange: { _ in }
+				onChange: { (newValue: DayViewAction) in
+					var message = newValue.longDescription
+					if let fundName = AppState.get().lastSelectedFund?.name {
+						message = message.replacingOccurrences(of: "***", with: fundName)
+					} else {
+						message = "Will do nothing since no fund was selected"
+					}
+					self.actionDetail = message
+			}
 			)
 			Text(actionDetail)
 				.font(.body)

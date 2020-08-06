@@ -39,7 +39,6 @@ struct SegmentedPickerElementView<T>: Hashable, View where T: Buttonable {
 struct MultiRowSegmentedPickerView<T: Buttonable>: View {
 	var elementWidth: CGFloat = 0
 	@Binding private var selectedIndex: T
-	@Binding var actionDetail: String
 
 	@State private var width: CGFloat = 380
 	@State private var height: CGFloat = 84
@@ -55,12 +54,10 @@ struct MultiRowSegmentedPickerView<T: Buttonable>: View {
 	private let onChange: (_ newValue: T) -> Void
 	
 	init(
-		actionDetail: Binding<String>,
 		choices: [[T]],
 		selectedIndex: Binding<T>,
 		onChange: @escaping (_ newValue: T) -> Void = { _ in }
 	) {
-		_actionDetail = actionDetail
 		self.choices = choices
 		self.onChange = onChange
 		_selectedIndex = selectedIndex
@@ -100,10 +97,6 @@ struct MultiRowSegmentedPickerView<T: Buttonable>: View {
 			longPressState[row][col] = false
 		}
 		
-		withAnimation(.none) {
-			actionDetail = newItem.longDescription
-		}
-
 		if newItem != selectedIndex || force {
 			selectedIndex = newItem
 			selectionWidth = self.width/CGFloat(self.choices[row].count)
@@ -223,14 +216,12 @@ struct SegmentedPickerView_Previews: PreviewProvider {
 	static var previews: some View {
 		Group {
 			MultiRowSegmentedPickerView(
-				actionDetail: self.$actionDetail,
 				choices: FundAction.allCasesInRows,
 				selectedIndex: $selectedAction
 			)
 				.environment(\.colorScheme, .light)
 			
 			MultiRowSegmentedPickerView(
-				actionDetail: self.$actionDetail,
 				choices: FundAction.allCasesInRows,
 				selectedIndex: $selectedAction
 			)

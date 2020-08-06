@@ -26,7 +26,7 @@ enum DayViewAction: Int, CaseIterable, Buttonable {
 	
 	var longDescription: String {
 		switch self {
-			case .add: return "add the previously selected fund"
+			case .add: return "add [***] to time slot"
 			case .remove: return "remove fund from time slot"
 		}
 	}

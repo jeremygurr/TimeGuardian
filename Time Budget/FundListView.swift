@@ -38,10 +38,11 @@ struct FundListView: View {
 	var body: some View {
 		VStack {
 			MultiRowSegmentedPickerView(
-				actionDetail: self.$actionDetail,
 				choices: FundAction.allCasesInRows,
 				selectedIndex: self.$action,
 				onChange: { (newValue: FundAction) in
+					self.actionDetail = newValue.longDescription
+
 					if newValue == .edit {
 						self.editMode?.wrappedValue = .active
 					} else {
