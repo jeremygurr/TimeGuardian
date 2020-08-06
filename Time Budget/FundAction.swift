@@ -90,7 +90,7 @@ enum FundAction: Int, CaseIterable, Buttonable {
 	static var allCasesInRows: [[FundAction]] {
 		[
 			[.view, .spend, .qspend, .earn],
-			[.subBudget, .copy, .edit, .delete]
+			[.subBudget, .unSubBudget, .edit, .delete]
 		]
 	}
 	
