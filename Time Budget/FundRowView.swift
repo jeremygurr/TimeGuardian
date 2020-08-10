@@ -117,7 +117,7 @@ struct FundRowView: View {
 						&& self.action.goesToSubIfPossible {
 						HStack {
 							FundRowLabel(fund: self.fund)
-							Image(systemName: "list.bufllet")
+							Image(systemName: "list.bullet")
 								.imageScale(.large)
 						}
 						.contentShape(Rectangle())

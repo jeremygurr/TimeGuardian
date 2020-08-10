@@ -56,23 +56,78 @@ struct DayView: View {
 	}
 	
 	func fundRowView(_ i: Int) -> some View {
-		let fundPath = recentFunds[i]
-		if let fund = fundPath.last {
+		if let fund = recentFunds[i].last {
+			debugLog("fundRowView(\(i)) fund = \(fund.name)")
 			return
-				Text("\(fund.name)")
+				AnyView {
+				VStack {
+					Text("Nothing")
+						.frame(maxWidth: .infinity, maxHeight: 40, alignment: .leading)
+					Text("Fund = \(fund.name)")
+						.font(.body)
+						.padding(.vertical, 3)
+						.padding(.leading, 15)
+						.frame(maxWidth: .infinity, minHeight: 40, maxHeight: 40, alignment: .leading)
+			}
+			}
 		} else {
-			return Text("")
+			debugLog("fundRowView(\(i)) no fund")
+			return
+				AnyView {
+				VStack {
+					Text("Nothing")
+						.frame(maxWidth: .infinity, maxHeight: 40, alignment: .leading)
+			}
+			}
+		}
+	}
+	
+	struct RecentFundViewRow: View {
+		let recentFunds: [FundPath]
+		let index: Int
+		let lastRecentFund: TimeFund?
+		
+		init(recentFunds: [FundPath], index: Int) {
+			self.recentFunds = recentFunds
+			self.index = index
+			self.lastRecentFund = recentFunds[index].last
+		}
+		
+		var body: some View {
+			if self.lastRecentFund == nil {
+				return Text("Nothing")
+					.font(.body)
+					.padding(.vertical, 3)
+					.padding(.leading, 15)
+					.frame(maxWidth: .infinity, minHeight: 40, maxHeight: 40, alignment: .leading)
+			} else {
+				return Text("\(self.lastRecentFund!.name)")
+					.font(.body)
+					.padding(.vertical, 3)
+					.padding(.leading, 15)
+					.frame(maxWidth: .infinity, minHeight: 40, maxHeight: 40, alignment: .leading)
+			}
 		}
 	}
 	
 	var body: some View {
-		VStack {
-			List {
-				Section(header: Text("Recently Selected Funds")) {
-					ForEach(recentFunds.indices) { i in
-						self.fundRowView(i)
-					}
+		VStack(alignment: .leading) {
+			Text("Recently Selected Funds")
+				.font(.headline)
+				.padding(.vertical, 3)
+				.padding(.leading, 15)
+				.frame(maxWidth: .infinity, alignment: .leading)
+				.background(Color(UIColor.secondarySystemFill))
+			if recentFunds.count > 0 {
+				ForEach(recentFunds.indices, id: \.self) { i in
+					RecentFundViewRow(recentFunds: self.recentFunds, index: i)
 				}
+			} else {
+				Text("No funds have been selected")
+					.font(.body)
+					.padding(.vertical, 3)
+					.padding(.leading, 15)
+					.frame(maxWidth: .infinity, minHeight: 40, maxHeight: 40, alignment: .leading)
 			}
 			List {
 				Section(header: Text("Time Slots")) {
@@ -317,15 +372,18 @@ struct CalendarView_Previews: PreviewProvider {
 		let appState = AppState.get()
 		let budget = testDataBuilder.budgets.first!
 		appState.budgetStack.push(budget: budget)
+		let fund = testDataBuilder.funds.first!
+		let fundPath = FundPath(fundPath: [fund])
+		appState.lastSelectedFundPaths.append(fundPath)
 		
 		return Group {
 			DayView()
 				.environment(\.colorScheme, .light)
 				.environment(\.managedObjectContext, context)
 			
-			DayView()
-				.environment(\.colorScheme, .dark)
-				.environment(\.managedObjectContext, context)
+//			DayView()
+//				.environment(\.colorScheme, .dark)
+//				.environment(\.managedObjectContext, context)
 		}
 		
 	}

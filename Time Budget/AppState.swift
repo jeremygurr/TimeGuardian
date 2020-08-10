@@ -94,7 +94,7 @@ class AppState {
 		let afterName: String? = afterLastPath?.last?.name
 		let b = beforeName ?? "nil"
 		let a = afterName ?? "nil"
-		let out = "Bindable: lastSelectedFund changed from \(b) to \(a)"
+		let out = "Bindable: lastSelectedFundPaths.last changed from \(b) to \(a)"
 		debugLog(out)
 	})
 	var lastSelectedFundPaths: [FundPath] = []
