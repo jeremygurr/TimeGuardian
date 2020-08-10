@@ -123,7 +123,9 @@ struct FundRowView: View {
 						.contentShape(Rectangle())
 						.onTapGesture {
 							debugLog("clicked on sub")
-							AppState.get().push(fundPath: self.budgetStack.getFundPath())
+							var fundPath = self.budgetStack.getFundPath()
+							fundPath.append(self.fund)
+							AppState.get().push(fundPath: fundPath)
 							self.budgetStack.push(budget: self.fund.subBudget!)
 							self.budgetStack.push(fund: self.fund)
 						}
