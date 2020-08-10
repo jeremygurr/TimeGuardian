@@ -22,6 +22,7 @@ struct DayView: View {
 	@State var timeSlots: [TimeSlot]
 	@Binding var action: DayViewAction
 	@Binding var actionDetail: String
+	@Binding var recentFunds: [FundPath]
 	
 	@State private var tableView: UITableView?
 
@@ -50,31 +51,34 @@ struct DayView: View {
 		
 		_timeSlots = State(initialValue: newTimeSlots)
 		_budgetStack = appState.$budgetStack
+		_recentFunds = appState.$lastSelectedFundPaths
 		
+	}
+	
+	func fundRowView(_ i: Int) -> some View {
+		let fundPath = recentFunds[i]
+		if let fund = fundPath.last {
+			return
+				Text("\(fund.name)")
+		} else {
+			return Text("")
+		}
 	}
 	
 	var body: some View {
 		VStack {
-			MultiRowSegmentedPickerView(
-				choices: DayViewAction.allCasesInRows,
-				selectedIndex: self.$action,
-				onChange: { (newValue: DayViewAction) in
-					var message = newValue.longDescription
-					if let fundName = AppState.get().lastSelectedFund?.name {
-						message = message.replacingOccurrences(of: "***", with: fundName)
-					} else {
-						message = "Will do nothing since no fund was selected"
-					}
-					self.actionDetail = message
-			}
-			)
-			Text(actionDetail)
-				.font(.body)
 			List {
-				Text("").frame(height: listViewExtension)
+				Section(header: Text("Recently Selected Funds")) {
+					ForEach(recentFunds.indices) { i in
+						self.fundRowView(i)
+					}
+				}
+			}
+			List {
+				Section(header: Text("Time Slots")) {
 				ExpenseRowView(tableView: self.$tableView, todaysExpenses: self.recentExpenses, timeSlots: $timeSlots)
 					.listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
-				Text("").frame(height: listViewExtension)
+				}
 			}
 			.introspectTableView { tableView in
 				if self.tableView != tableView {
@@ -96,20 +100,6 @@ struct DayView: View {
 					debugLog("DayView: list position updated to \(tableView.contentOffset)")
 				}
 			}
-			.onReceive(
-				AppState.subject
-					.filter({ $0 == .dayView })
-					.collect(.byTime(RunLoop.main, .milliseconds(stateChangeCollectionTime)))
-			) { x in
-				if let t = self.tableView {
-					AppState.get().dayViewPosition = t.contentOffset
-					debugLog("AppState dayViewPosition updated to \(t.contentOffset)")
-				}
-
-				self.viewState += 1
-				debugLog("DayView: view state changed to \(self.viewState) (\(x.count) events)")
-			}
-		
 		}.onAppear {
 			debugLog("DayView appeared")
 		}.onDisappear {
@@ -118,6 +108,22 @@ struct DayView: View {
 				AppState.get().dayViewPosition = t.contentOffset
 				debugLog("AppState dayViewPosition updated to \(t.contentOffset)")
 			}
+		}.onReceive(
+			AppState.subject
+				.filter({ $0 == .dayView })
+				.collect(
+					.byTime(
+						RunLoop.main, .milliseconds(stateChangeCollectionTime)
+					)
+			)
+		) { x in
+			if let t = self.tableView {
+				AppState.get().dayViewPosition = t.contentOffset
+				debugLog("AppState dayViewPosition updated to \(t.contentOffset)")
+			}
+			
+			self.viewState += 1
+			debugLog("DayView: view state changed to \(self.viewState) (\(x.count) events)")
 		}
 	}
 	
@@ -142,7 +148,7 @@ struct ExpenseRowView: View {
 	@Environment(\.managedObjectContext) var managedObjectContext
 	@Binding var timeSlots: [TimeSlot]
 	@Binding var dayViewExpensePeriod: TimeInterval
-	@Binding var lastSelectedFund: TimeFund?
+	@Binding var lastSelectedFundPaths: [FundPath]
 	@Binding var action: DayViewAction
 	
 	init(tableView: Binding<UITableView?>, todaysExpenses: FetchedResults<TimeExpense>, timeSlots: Binding<[TimeSlot]>) {
@@ -153,7 +159,7 @@ struct ExpenseRowView: View {
 		_timeSlots = timeSlots
 		_budgetStack = appState.$budgetStack
 		_dayViewExpensePeriod = appState.$dayViewExpensePeriod
-		_lastSelectedFund = appState.$lastSelectedFund
+		_lastSelectedFundPaths = appState.$lastSelectedFundPaths
 		_action = appState.$dayViewAction
 	}
 	
@@ -186,18 +192,29 @@ struct ExpenseRowView: View {
 				debugLog("AppState dayViewPosition updated to \(t.contentOffset)")
 			}
 
-			switch self.action {
-				case .add:
-					debugLog("DayView: add action")
-					if existingExpense == nil {
-						addExpense(timeSlot: timeSlot, lastSelectedFund: self.lastSelectedFund, budgetStack: self.budgetStack, managedObjectContext: self.managedObjectContext)
-					}
-				case .remove:
-					debugLog("DayView: remove action")
+//			switch self.action {
+//				case .add:
+//					debugLog("DayView: add action")
+//					if existingExpense == nil {
+//						addExpense(timeSlot: timeSlot, lastSelectedFund: self.lastSelectedFund, budgetStack: self.budgetStack, managedObjectContext: self.managedObjectContext)
+//					}
+//				case .remove:
+//					debugLog("DayView: remove action")
+//					if existingExpense != nil {
+//						self.lastSelectedFund = existingExpense!.fund
+//						self.removeExpense(existingExpense: existingExpense!)
+//				}
+//				case .toggle:
+					debugLog("DayView: toggle action")
 					if existingExpense != nil {
+						AppState.get().push(fundPath: existingExpense!.fundPath)
 						self.removeExpense(existingExpense: existingExpense!)
+					} else {
+						if let lastFundPath = self.lastSelectedFundPaths.last {
+							addExpense(timeSlot: timeSlot, fundPath: lastFundPath, managedObjectContext: self.managedObjectContext)
+						}
 				}
-			}
+//			}
 		}
 	}
 	
@@ -232,9 +249,9 @@ struct ExpenseRowView: View {
 	}
 }
 
-func addExpense(timeSlot: TimeSlot, lastSelectedFund: TimeFund?, budgetStack: BudgetStack, managedObjectContext: NSManagedObjectContext) {
-	if let fund = lastSelectedFund {
-		addExpense(timeSlot: timeSlot, fund: fund, budgetStack: budgetStack, managedObjectContext: managedObjectContext)
+func addExpense(timeSlot: TimeSlot, fundPath: FundPath?, budgetStack: BudgetStack, managedObjectContext: NSManagedObjectContext) {
+	if fundPath != nil {
+		addExpense(timeSlot: timeSlot, fundPath: fundPath!, budgetStack: budgetStack, managedObjectContext: managedObjectContext)
 		saveData(managedObjectContext)
 	}
 }

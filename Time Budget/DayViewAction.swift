@@ -12,6 +12,7 @@ import SwiftUI
 enum DayViewAction: Int, CaseIterable, Buttonable {
 	case add = 0
 	case remove
+	case toggle
 	
 	var asInt: Int {
 		return self.rawValue
@@ -21,6 +22,7 @@ enum DayViewAction: Int, CaseIterable, Buttonable {
 		switch self {
 			case .add: return "Add"
 			case .remove: return "Remove"
+			case .toggle: return "Toggle"
 		}
 	}
 	
@@ -28,6 +30,7 @@ enum DayViewAction: Int, CaseIterable, Buttonable {
 		switch self {
 			case .add: return "add [***] to time slot"
 			case .remove: return "remove fund from time slot"
+			case .toggle: return "removes or adds [***]"
 		}
 	}
 	
@@ -39,7 +42,7 @@ enum DayViewAction: Int, CaseIterable, Buttonable {
 	
 	static var allCasesInRows: [[DayViewAction]] {
 		[
-			[.add, .remove],
+			[.add, .remove, .toggle],
 		]
 	}
 

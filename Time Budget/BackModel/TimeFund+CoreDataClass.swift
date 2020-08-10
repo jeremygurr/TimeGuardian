@@ -106,6 +106,19 @@ public class TimeFund: NSManagedObject, Identifiable {
 		}
 	}
 	
+	func deepSpend(fundPath: FundPath) {
+		debugLog("TimeFund.deepSpend on \(self.name)")
+		
+//		balancedSpend()
+//		budget.rechargeIfSpent()
+		for f: TimeFund in fundPath.fundPath.reversed() {
+			f.balancedSpend()
+			if !f.frozen {
+				f.budget.rechargeIfSpent()
+			}
+		}
+	}
+	
 	func adjustBalance(_ amount: Float) {
 		debugLog("TimeFund.adjustBalance on \(self.name) amount: \(amount)")
 		if !frozen {

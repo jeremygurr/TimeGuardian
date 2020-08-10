@@ -20,7 +20,7 @@ struct FundRowView: View {
 	var funds: FetchedResults<TimeFund>
 	@Binding var ratioDisplayMode: RatioDisplayMode
 	@Binding var dayViewExpensePeriod: TimeInterval
-	@Binding var lastSelectedFund: TimeFund?
+	@Binding var lastSelectedFundPaths: [FundPath]
 
 	init(fund: ObservedObject<TimeFund>, funds: FetchedResults<TimeFund>) {
 		let appState = AppState.get()
@@ -30,13 +30,13 @@ struct FundRowView: View {
 		_ratioDisplayMode = appState.$ratioDisplayMode
 		_budgetStack = appState.$budgetStack
 		_dayViewExpensePeriod = appState.$dayViewExpensePeriod
-		_lastSelectedFund = appState.$lastSelectedFund
+		_lastSelectedFundPaths = appState.$lastSelectedFundPaths
 	}
 
 	var balance: String {
 		fund.frozen ? "∞" : "\(fund.roundedBalance)"
 	}
-	
+
 	var ratioString: String {
 		let ratioString: String
 		let percentage = fund.frozen ? "∞" : formatPercentage(fund.getRatio() * budgetStack.getCurrentRatio())
@@ -117,12 +117,13 @@ struct FundRowView: View {
 						&& self.action.goesToSubIfPossible {
 						HStack {
 							FundRowLabel(fund: self.fund)
-							Image(systemName: "list.bullet")
+							Image(systemName: "list.bufllet")
 								.imageScale(.large)
 						}
 						.contentShape(Rectangle())
 						.onTapGesture {
 							debugLog("clicked on sub")
+							AppState.get().push(fundPath: self.budgetStack.getFundPath())
 							self.budgetStack.push(budget: self.fund.subBudget!)
 							self.budgetStack.push(fund: self.fund)
 						}
@@ -151,10 +152,14 @@ struct FundRowView: View {
 				debugLog("clicked on main action button")
 				switch self.action {
 					case .view:
-						self.lastSelectedFund = self.fund
+						var fundPath = self.budgetStack.getFundPath()
+						fundPath.append(self.fund)
+						AppState.get().push(fundPath: fundPath)
 						return
 					case .spend:
-						addExpenseToCurrentTimeIfEmpty(fund: self.fund, budgetStack: self.budgetStack, expensePeriod: expensePeriod, managedObjectContext: self.managedObjectContext)
+						var fundPath = self.budgetStack.getFundPath()
+						fundPath.append(self.fund)
+						addExpenseToCurrentTimeIfEmpty(fundPath: fundPath, expensePeriod: expensePeriod, managedObjectContext: self.managedObjectContext)
 						self.budgetStack.toFirstBudget()
 					case .reset:
 						self.fund.resetBalance()

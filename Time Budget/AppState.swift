@@ -67,7 +67,10 @@ class AppState {
 	@Bindable(send: .dayView, to: subject)
 	var dayViewAction: DayViewAction = .add
 	
-	@Bindable(send: .dayView, to: subject)
+	@Bindable(send: .dayView, to: subject, beforeSet: {
+		(beforeValue, afterValue) in
+		debugLog("Bindable: dayViewActionDetail changed from " + beforeValue + "  to " + afterValue)
+	})
 	var dayViewActionDetail: String = "No action selected"
 	
 	var dayViewPeriodsPerDay: Int {
@@ -83,8 +86,27 @@ class AppState {
 	@Bindable(send: .fundList, to: subject)
 	var ratioDisplayMode: RatioDisplayMode = .percentage
 	
-	@Bindable(send: false)
-	var lastSelectedFund: TimeFund? = nil
+	@Bindable(send: .dayView, to: subject, beforeSet: {
+		(beforeValue: [FundPath], afterValue: [FundPath]) in
+		let beforeLastPath: FundPath? = beforeValue.last
+		let afterLastPath: FundPath? = afterValue.last
+		let beforeName: String? = beforeLastPath?.last?.name
+		let afterName: String? = afterLastPath?.last?.name
+		let b = beforeName ?? "nil"
+		let a = afterName ?? "nil"
+		let out = "Bindable: lastSelectedFund changed from \(b) to \(a)"
+		debugLog(out)
+	})
+	var lastSelectedFundPaths: [FundPath] = []
+	
+	func push(fundPath: FundPath) {
+		var newFundPaths = lastSelectedFundPaths
+		if newFundPaths.count > 2 {
+			newFundPaths.removeFirst()
+		}
+		newFundPaths.append(fundPath)
+		lastSelectedFundPaths = newFundPaths
+	}
 	
 	@Bindable(send: .topView, to: subject)
 	var titleOverride: String? = nil

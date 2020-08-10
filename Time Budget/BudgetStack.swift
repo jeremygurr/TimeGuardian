@@ -14,7 +14,7 @@ struct BudgetStack: Equatable {
 	private var budgetStack: [TimeBudget] = []
 	// fundStack will typically be one element shorter than budgetStack,
 	//   unless budgetStack is empty
-	private var fundStack: [TimeFund] = []
+	private var fundStack = FundPath(fundPath: [])
 	private var fundRatioStack: [Float] = []
 	
 	init() {
@@ -26,6 +26,10 @@ struct BudgetStack: Equatable {
 	}
 	
 	func getFunds() -> [TimeFund] {
+		return fundStack.fundPath
+	}
+	
+	func getFundPath() -> FundPath {
 		return fundStack
 	}
 	
@@ -95,3 +99,26 @@ struct BudgetStack: Equatable {
 	}
 }
 
+struct FundPath: Equatable, Sequence {
+
+	var fundPath: [TimeFund]
+	var count: Int {fundPath.count}
+	var last: TimeFund? {fundPath.last}
+	
+	func makeIterator() -> IndexingIterator<[TimeFund]> {
+		fundPath.makeIterator()
+	}
+	
+	mutating func removeLast() {
+		fundPath.removeLast()
+	}
+	
+	mutating func removeAll() {
+		fundPath.removeAll()
+	}
+	
+	mutating func append(_ fund: TimeFund) {
+		fundPath.append(fund)
+	}
+	
+}

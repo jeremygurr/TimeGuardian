@@ -58,6 +58,8 @@ struct MultiRowSegmentedPickerView<T: Buttonable>: View {
 		selectedIndex: Binding<T>,
 		onChange: @escaping (_ newValue: T) -> Void = { _ in }
 	) {
+		debugLog("MultiRowSegmentedPickerView.init")
+		
 		self.choices = choices
 		self.onChange = onChange
 		_selectedIndex = selectedIndex
@@ -72,6 +74,8 @@ struct MultiRowSegmentedPickerView<T: Buttonable>: View {
 			newLongPressState.append(rowLongPress)
 		}
 		_longPressState = State(initialValue: newLongPressState)
+		
+		updateSelectionOffset(item: selectedIndex.wrappedValue, force: true)
 	}
 	
 	@State var selectionIndex: CGFloat = 0
@@ -79,12 +83,20 @@ struct MultiRowSegmentedPickerView<T: Buttonable>: View {
 	@State var selectionOffsetY: CGFloat = 0
 	@State var selectionWidth: CGFloat = 0
 	@State var selectionHeight: CGFloat = 0
-	func updateSelectionOffset(item: T, row: Int, col: Int, force: Bool = false, longPress: Bool) {
+	func updateSelectionOffset(item: T, force: Bool = false, longPress: Bool = false) {
 		
+		debugLog("MultiRowSegmentedPickerView.updateSelectionOffset(\(item))")
+		
+		var row = 0
+		var col = 0
 		for r in 0 ..< choices.count {
 			let choiceRow = choices[r]
 			for c in 0 ..< choiceRow.count {
 				longPressState[r][c] = false
+				if choices[r][c] == item {
+					row = r
+					col = c
+				}
 			}
 		}
 		
@@ -130,7 +142,7 @@ struct MultiRowSegmentedPickerView<T: Buttonable>: View {
 				perform: {
 					self.width = geo.size.width
 					self.height = geo.size.height
-					self.updateSelectionOffset(item: self.choices[0][0], row: 0, col: 0, force: true, longPress: false)
+					self.updateSelectionOffset(item: self.choices[0][0], force: true)
 			}
 			)
 		}
@@ -165,7 +177,7 @@ struct MultiRowSegmentedPickerView<T: Buttonable>: View {
 						perform: {
 							debugLog("MultiRowSegmentPickerView: double tap \(item.asString)")
 							withAnimation(.none) {
-								self.updateSelectionOffset(item: item, row: row, col: col, longPress: true)
+								self.updateSelectionOffset(item: item, longPress: true)
 							}
 					}
 				)
@@ -174,7 +186,7 @@ struct MultiRowSegmentedPickerView<T: Buttonable>: View {
 						perform: {
 							debugLog("MultiRowSegmentPickerView: single tap \(item.asString)")
 							withAnimation(.none) {
-								self.updateSelectionOffset(item: item, row: row, col: col, longPress: false)
+								self.updateSelectionOffset(item: item, longPress: false)
 							}
 					}
 				)
