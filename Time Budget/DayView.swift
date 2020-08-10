@@ -86,26 +86,42 @@ struct DayView: View {
 		let recentFunds: [FundPath]
 		let index: Int
 		let lastRecentFund: TimeFund?
+		let fundPath: FundPath?
 		
 		init(recentFunds: [FundPath], index: Int) {
 			self.recentFunds = recentFunds
 			self.index = index
 			self.lastRecentFund = recentFunds[index].last
+			self.fundPath = recentFunds[index]
+		}
+		
+		var noLastRecentFund: Bool {
+			self.lastRecentFund == nil
 		}
 		
 		var body: some View {
-			if self.lastRecentFund == nil {
-				return Text("Nothing")
-					.font(.body)
-					.padding(.vertical, 3)
-					.padding(.leading, 15)
-					.frame(maxWidth: .infinity, minHeight: 40, maxHeight: 40, alignment: .leading)
-			} else {
-				return Text("\(self.lastRecentFund!.name)")
-					.font(.body)
-					.padding(.vertical, 3)
-					.padding(.leading, 15)
-					.frame(maxWidth: .infinity, minHeight: 40, maxHeight: 40, alignment: .leading)
+			VStack {
+				if noLastRecentFund {
+					Button(action: {
+					}) {
+						Text("Nothing")
+							.font(.body)
+							.padding(.vertical, 3)
+							.padding(.leading, 15)
+							.frame(maxWidth: .infinity, minHeight: 40, maxHeight: 40, alignment: .leading)
+					}
+				} else {
+					Button(action: {
+						AppState.get().push(fundPath: self.fundPath!)
+					}) {
+						Text("\(self.lastRecentFund!.name)")
+							.font(.body)
+							.padding(.vertical, 3)
+							.padding(.leading, 15)
+							.frame(maxWidth: .infinity, minHeight: 40, maxHeight: 40, alignment: .leading)
+							.contentShape(Rectangle())
+					}
+				}
 			}
 		}
 	}
