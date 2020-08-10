@@ -104,6 +104,7 @@ class AppState {
 		if newFundPaths.count > 2 {
 			newFundPaths.removeFirst()
 		}
+		newFundPaths.removeAll(where: { $0 == fundPath })
 		newFundPaths.append(fundPath)
 		lastSelectedFundPaths = newFundPaths
 	}
