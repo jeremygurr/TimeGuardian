@@ -12,35 +12,57 @@ import Combine
 
 struct FundRowView: View {
 	@State var viewState = 0
-	@Binding var action: FundAction
+	@Binding var fundAction: FundAction
 	@Environment(\.editMode) var editMode
 	@Environment(\.managedObjectContext) var managedObjectContext
 	@Binding var budgetStack: BudgetStack
 	@ObservedObject var fund: TimeFund
 	var funds: FetchedResults<TimeFund>
 	@Binding var ratioDisplayMode: RatioDisplayMode
+	@Binding var balanceDisplayMode: BalanceDisplayMode
 	@Binding var dayViewExpensePeriod: TimeInterval
 	@Binding var lastSelectedFundPaths: [FundPath]
 
 	init(fund: ObservedObject<TimeFund>, funds: FetchedResults<TimeFund>) {
 		let appState = AppState.get()
-		_action = appState.$fundListAction
+		_fundAction = appState.$fundListAction
 		_fund = fund
 		self.funds = funds
 		_ratioDisplayMode = appState.$ratioDisplayMode
+		_balanceDisplayMode = appState.$balanceDisplayMode
 		_budgetStack = appState.$budgetStack
 		_dayViewExpensePeriod = appState.$dayViewExpensePeriod
 		_lastSelectedFundPaths = appState.$lastSelectedFundPaths
 	}
 
-	var balance: String {
-		fund.frozen ? "∞" : "\(fund.roundedBalance)"
+	func handleFrozen(_ s: String) -> String {
+		fund.frozen ? "∞" : s
 	}
 
+	var balanceString: String {
+		let balanceString: String
+//		let t = fund.getRatio() * budgetStack.getCurrentRatio() * longPeriod * fund.balance / fund.recharge
+		let t = shortPeriod * fund.balance
+		let time = formatTime(t)
+		switch self.balanceDisplayMode {
+			case .unit:
+				balanceString = "\(Int(fund.balance))"
+			case .time:
+				balanceString = time
+		}
+		return handleFrozen(balanceString)
+	}
+	
 	var ratioString: String {
 		let ratioString: String
-		let percentage = fund.frozen ? "∞" : formatPercentage(fund.getRatio() * budgetStack.getCurrentRatio())
-		let time = fund.frozen ? "∞" : formatTime(fund.getRatio() * budgetStack.getCurrentRatio() * longPeriod)
+		let percentage =
+			formatPercentage(
+				fund.getRatio() * budgetStack.getCurrentRatio()
+		)
+		let time =
+			formatTime(
+				fund.getRatio() * budgetStack.getCurrentRatio() * longPeriod
+		)
 		let rechargeAmount = formatRecharge(fund.recharge)
 		switch self.ratioDisplayMode {
 			case .percentage:
@@ -50,7 +72,7 @@ struct FundRowView: View {
 			case .rechargeAmount:
 				ratioString = rechargeAmount
 		}
-		return ratioString
+		return handleFrozen(ratioString)
 	}
          
 	func commitRenameFund() {
@@ -91,15 +113,19 @@ struct FundRowView: View {
 				)
 			} else {
 				HStack {
-					Text(balance)
-						.frame(width: 30, alignment: .trailing)
+					Text("\(balanceString)")
+						.frame(width: 55, alignment: .trailing)
+						.onTapGesture {
+							debugLog("clicked on balance button")
+							self.balanceDisplayMode = self.balanceDisplayMode.next()
+					}
 					Divider()
 					Text("\(ratioString)")
 						.frame(width: 55, alignment: .trailing)
 						.contentShape(Rectangle())
 						.onTapGesture {
 							debugLog("clicked on ratio button")
-							switch self.action {
+							switch self.fundAction {
 								case .earn:
 									self.fund.recharge += 1
 									saveData(self.managedObjectContext)
@@ -114,7 +140,7 @@ struct FundRowView: View {
 					}
 					Divider()
 					if fund.subBudget != nil
-						&& self.action.goesToSubIfPossible {
+						&& self.fundAction.goesToSubIfPossible {
 						HStack {
 							FundRowLabel(fund: self.fund)
 							Image(systemName: "list.bullet")
@@ -152,7 +178,7 @@ struct FundRowView: View {
 			.contentShape(Rectangle())
 			.onTapGesture {
 				debugLog("clicked on main action button")
-				switch self.action {
+				switch self.fundAction {
 					case .view:
 						var fundPath = self.budgetStack.getFundPath()
 						fundPath.append(self.fund)
@@ -203,10 +229,6 @@ struct FundRowView: View {
 	}
 }
 
-enum RatioDisplayMode: CaseIterable {
-	case percentage, timePerDay, rechargeAmount
-}
-
 struct FundRowLabel: View {
 	@ObservedObject var fund: TimeFund
 	
@@ -217,17 +239,40 @@ struct FundRowLabel: View {
 }
 
 func formatTime(_ x: Float) -> String {
-	let y = Double(x)
-	var result: String
-	if y < 1 * minutes {
-		result = String(format: "%.1fs", y / seconds)
-	} else if y < 1 * hours {
-		result = String(format: "%.1fm", y / minutes)
-	} else {
-		result = String(format: "%.1fh", y / hours)
+	var y = Double(x)
+
+	var sign = ""
+	if y < 0 {
+		sign = "-"
+		y = -y
 	}
 	
-	return result
+	var unit: String
+	if y < 1 * minutes {
+		y /= seconds
+		unit = "s"
+	} else if y < 1 * hours {
+		y /= minutes
+		unit = "m"
+	} else {
+		y /= hours
+		unit = "h"
+	}
+
+	var result: String
+	if y < 0.1 {
+		result = ""
+		unit = ""
+		sign = ""
+	} else {
+		if y - y.rounded(.down) < 0.1 {
+			result = String(format: "%.0f", y / seconds)
+		} else {
+			result = String(format: "%.1f", y / seconds)
+		}
+	}
+	
+	return sign + result + unit
 }
 
 func formatRecharge(_ x: Float) -> String {

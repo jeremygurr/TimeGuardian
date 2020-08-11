@@ -84,7 +84,7 @@ struct FundAllRowView: View {
 			}, label: {
 				HStack {
 					Text("\(allFundBalance)")
-						.frame(width: 30, alignment: .trailing)
+						.frame(width: 55, alignment: .trailing)
 					Divider()
 					Text("\(ratioString)")
 						.frame(width: 55, alignment: .trailing)
@@ -177,7 +177,7 @@ struct FundAllSpentRowView: View {
 			}, label: {
 				HStack {
 					Text("\(allSpentFundBalance)")
-						.frame(width: 30, alignment: .trailing)
+						.frame(width: 55, alignment: .trailing)
 					Divider()
 					Text("\(ratioString)")
 						.frame(width: 55, alignment: .trailing)

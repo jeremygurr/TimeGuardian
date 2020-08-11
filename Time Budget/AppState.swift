@@ -15,7 +15,8 @@ let longPressMaxDrift: CGFloat = 0.1
 let listViewExtension: CGFloat = 200
 let interestThreshold: Float = -1000
 let stateChangeCollectionTime: Int = 10
-let longPeriod: Float = Float(days)
+let longPeriod: Float = Float(oneDay)
+let shortPeriod: Float = Float(30 * minutes)
 
 enum ViewRefreshKey {
 	case topView, budgetStack, fundList, dayView
@@ -84,6 +85,9 @@ class AppState {
 	var fundListActionDetail: String = "No action selected"
 	
 	@Bindable(send: .fundList, to: subject)
+	var balanceDisplayMode: BalanceDisplayMode = .unit
+	
+	@Bindable(send: .fundList, to: subject)
 	var ratioDisplayMode: RatioDisplayMode = .percentage
 	
 	@Bindable(send: .dayView, to: subject, beforeSet: {
@@ -143,4 +147,12 @@ class AppState {
 		subject.send(.dayView)
 	})
 
+}
+
+enum BalanceDisplayMode: CaseIterable {
+	case unit, time
+}
+
+enum RatioDisplayMode: CaseIterable {
+	case percentage, timePerDay, rechargeAmount
 }

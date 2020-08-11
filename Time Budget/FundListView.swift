@@ -160,6 +160,7 @@ struct FundSectionSpentView: View {
 		Section(header: Text("Spent")) {
 //			if self.action.canApplyToAll {
 			FundAllSpentRowView(spentFunds: self.spentFunds)
+				.foregroundColor(Color.accentColor)
 				.listRowInsets(fundInsets())
 
 //			}
