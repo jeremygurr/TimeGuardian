@@ -23,7 +23,8 @@ struct DayView: View {
 	@Binding var action: DayViewAction
 	@Binding var actionDetail: String
 	@Binding var recentFunds: [FundPath]
-	
+	@State var timeSlotOfCurrentTime: TimeSlot
+
 	@State private var tableView: UITableView?
 
 	init() {
@@ -53,6 +54,8 @@ struct DayView: View {
 		_budgetStack = appState.$budgetStack
 		_recentFunds = appState.$lastSelectedFundPaths
 		
+		_timeSlotOfCurrentTime = State(initialValue: getTimeSlotOfCurrentTime(expensePeriod: appState.dayViewExpensePeriod))
+
 	}
 	
 	struct RecentFundViewRow: View {
@@ -72,6 +75,14 @@ struct DayView: View {
 			self.lastRecentFund == nil
 		}
 		
+		func recentFundColor() -> Color {
+			if index == recentFunds.count - 1 {
+				return Color.init("HighlightBackground")
+			} else {
+				return Color.clear
+			}
+		}
+		
 		var body: some View {
 			VStack(alignment: .leading, spacing: 5) {
 				if noLastRecentFund {
@@ -86,6 +97,7 @@ struct DayView: View {
 						.padding(.vertical, 5)
 						.padding(.leading, 15)
 						.frame(maxWidth: .infinity, minHeight: 30, alignment: .leading)
+						.background(recentFundColor())
 						.onTapGesture {
 							AppState.get().push(fundPath: self.fundPath!)
 					}
@@ -104,6 +116,7 @@ struct DayView: View {
 				.font(.headline)
 				.padding(.vertical, 3)
 				.padding(.leading, 15)
+
 				.frame(maxWidth: .infinity, alignment: .leading)
 				.background(Color(UIColor.secondarySystemFill))
 			if recentFunds.count > 0 {
@@ -120,7 +133,12 @@ struct DayView: View {
 			}
 			List {
 				Section(header: Text("Time Slots")) {
-				ExpenseRowView(tableView: self.$tableView, todaysExpenses: self.recentExpenses, timeSlots: $timeSlots)
+					ExpenseRowView(
+						tableView: self.$tableView,
+						todaysExpenses: self.recentExpenses,
+						timeSlots: $timeSlots,
+						timeSlotOfCurrentTime: self.$timeSlotOfCurrentTime
+					)
 					.listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
 				}
 			}
@@ -146,12 +164,14 @@ struct DayView: View {
 			}
 		}.onAppear {
 			debugLog("DayView appeared")
+			self.updateCurrentTimeSlot()
 		}.onDisappear {
 			debugLog("DayView disappeared")
 			if let t = self.tableView {
 				AppState.get().dayViewPosition = t.contentOffset
 				debugLog("AppState dayViewPosition updated to \(t.contentOffset)")
 			}
+			self.updateCurrentTimeSlot()
 		}.onReceive(
 			AppState.subject
 				.filter({ $0 == .dayView })
@@ -168,6 +188,13 @@ struct DayView: View {
 			
 			self.viewState += 1
 			debugLog("DayView: view state changed to \(self.viewState) (\(x.count) events)")
+		}
+	}
+	
+	func updateCurrentTimeSlot() {
+		let ts = getTimeSlotOfCurrentTime(expensePeriod: AppState.get().dayViewExpensePeriod)
+		if ts != self.timeSlotOfCurrentTime {
+			self.timeSlotOfCurrentTime = ts
 		}
 	}
 	
@@ -194,8 +221,9 @@ struct ExpenseRowView: View {
 	@Binding var dayViewExpensePeriod: TimeInterval
 	@Binding var lastSelectedFundPaths: [FundPath]
 	@Binding var action: DayViewAction
+	@Binding var timeSlotOfCurrentTime: TimeSlot
 	
-	init(tableView: Binding<UITableView?>, todaysExpenses: FetchedResults<TimeExpense>, timeSlots: Binding<[TimeSlot]>) {
+	init(tableView: Binding<UITableView?>, todaysExpenses: FetchedResults<TimeExpense>, timeSlots: Binding<[TimeSlot]>, timeSlotOfCurrentTime: Binding<TimeSlot>) {
 		debugLog("ExpenseRowView.init")
 		_tableView = tableView
 		let appState = AppState.get()
@@ -205,12 +233,20 @@ struct ExpenseRowView: View {
 		_dayViewExpensePeriod = appState.$dayViewExpensePeriod
 		_lastSelectedFundPaths = appState.$lastSelectedFundPaths
 		_action = appState.$dayViewAction
+		_timeSlotOfCurrentTime = timeSlotOfCurrentTime
 	}
 	
 	var body: some View {
 		ForEach(0 ..< self.timeSlots.count, id: \.self) { index in
 			self.RowView(index)
 		}
+	}
+	
+	func colorOfRow(timeSlot: TimeSlot) -> some View {
+		if(timeSlot == timeSlotOfCurrentTime) {
+			return Color.init("HighlightBackground")
+		}
+		return Color.clear
 	}
 	
 	func RowView(_ index: Int) -> some View {
@@ -226,7 +262,7 @@ struct ExpenseRowView: View {
 				.padding(.trailing, 10)
 		}
 		.contentShape(Rectangle())
-		.background(colorOfRow(timeSlot: timeSlot, expensePeriod: dayViewExpensePeriod))
+		.background(colorOfRow(timeSlot: timeSlot))
 		.onTapGesture {
 			debugLog("DayView: expense row pressed")
 			let existingExpense = getExpenseFor(timeSlot: timeSlot, todaysExpenses: self.todaysExpenses)
@@ -316,13 +352,6 @@ func toExpenseString(timeSlot: TimeSlot, todaysExpenses: FetchedResults<TimeExpe
 		result = existingExpense.fund.name
 	}
 	return result
-}
-
-func colorOfRow(timeSlot: TimeSlot, expensePeriod: TimeInterval) -> some View {
-	if(timeSlot == getTimeSlotOfCurrentTime(expensePeriod: expensePeriod)) {
-		return Color.init("HighlightBackground")
-	}
-	return Color.clear
 }
 
 func toTimeString(timeSlot: TimeSlot) -> String {
