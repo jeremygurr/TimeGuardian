@@ -51,13 +51,10 @@ struct FundListView: View {
 			)
 			Text(actionDetail)
 				.font(.body)
+			FundAllRowView(
+				allFunds: self.allFunds
+			).frame(maxHeight: 20)
 			List {
-//				if self.action.canApplyToAll {
-					FundAllRowView(
-						allFunds: self.allFunds
-					)
-						.listRowInsets(fundInsets())
-//				}
 				FundSectionAvailableView(
 					availableFunds: self.availableFunds,
 					allFunds: self.allFunds
