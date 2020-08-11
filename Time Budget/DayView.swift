@@ -160,7 +160,7 @@ struct DayView: View {
 					)
 			)
 		) { x in
-			if let t = self.tableView {
+			if let t = self.tableView, t.contentOffset.y > 0 {
 				AppState.get().dayViewPosition = t.contentOffset
 				debugLog("AppState dayViewPosition updated to \(t.contentOffset)")
 			}
