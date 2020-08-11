@@ -83,7 +83,7 @@ struct DayView: View {
 				} else {
 					Text("\(self.lastRecentFund!.name)")
 						.font(.body)
-						.padding(.vertical, 10)
+						.padding(.vertical, 5)
 						.padding(.leading, 15)
 						.frame(maxWidth: .infinity, minHeight: 30, alignment: .leading)
 						.onTapGesture {
@@ -110,6 +110,7 @@ struct DayView: View {
 				ForEach(recentFunds.indices, id: \.self) { i in
 					RecentFundViewRow(recentFunds: self.recentFunds, index: i)
 				}
+				.offset(x: 0, y: 8)
 			} else {
 				Text("No funds have been selected")
 					.font(.body)
@@ -255,6 +256,7 @@ struct ExpenseRowView: View {
 					} else {
 						if let lastFundPath = self.lastSelectedFundPaths.last {
 							addExpense(timeSlot: timeSlot, fundPath: lastFundPath, managedObjectContext: self.managedObjectContext)
+							saveData(self.managedObjectContext)
 						}
 				}
 //			}
@@ -289,13 +291,6 @@ struct ExpenseRowView: View {
 		}
 		self.managedObjectContext.delete(existingExpense)
 		saveData(self.managedObjectContext)
-	}
-}
-
-func addExpense(timeSlot: TimeSlot, fundPath: FundPath?, budgetStack: BudgetStack, managedObjectContext: NSManagedObjectContext) {
-	if fundPath != nil {
-		addExpense(timeSlot: timeSlot, fundPath: fundPath!, budgetStack: budgetStack, managedObjectContext: managedObjectContext)
-		saveData(managedObjectContext)
 	}
 }
 
