@@ -55,33 +55,6 @@ struct DayView: View {
 		
 	}
 	
-	func fundRowView(_ i: Int) -> some View {
-		if let fund = recentFunds[i].last {
-			debugLog("fundRowView(\(i)) fund = \(fund.name)")
-			return
-				AnyView {
-				VStack {
-					Text("Nothing")
-						.frame(maxWidth: .infinity, maxHeight: 40, alignment: .leading)
-					Text("Fund = \(fund.name)")
-						.font(.body)
-						.padding(.vertical, 3)
-						.padding(.leading, 15)
-						.frame(maxWidth: .infinity, minHeight: 40, maxHeight: 40, alignment: .leading)
-			}
-			}
-		} else {
-			debugLog("fundRowView(\(i)) no fund")
-			return
-				AnyView {
-				VStack {
-					Text("Nothing")
-						.frame(maxWidth: .infinity, maxHeight: 40, alignment: .leading)
-			}
-			}
-		}
-	}
-	
 	struct RecentFundViewRow: View {
 		let recentFunds: [FundPath]
 		let index: Int
@@ -100,27 +73,26 @@ struct DayView: View {
 		}
 		
 		var body: some View {
-			VStack {
+			VStack(alignment: .leading, spacing: 5) {
 				if noLastRecentFund {
-					Button(action: {
-					}) {
-						Text("Nothing")
-							.font(.body)
-							.padding(.vertical, 3)
-							.padding(.leading, 15)
-							.frame(maxWidth: .infinity, minHeight: 40, maxHeight: 40, alignment: .leading)
-					}
+					Text("Nothing")
+						.font(.body)
+						.padding(.top, 3)
+						.padding(.leading, 15)
+						.frame(maxWidth: .infinity, minHeight: 30, maxHeight: 30, alignment: .leading)
 				} else {
-					Button(action: {
-						AppState.get().push(fundPath: self.fundPath!)
-					}) {
-						Text("\(self.lastRecentFund!.name)")
-							.font(.body)
-							.padding(.vertical, 3)
-							.padding(.leading, 15)
-							.frame(maxWidth: .infinity, minHeight: 40, maxHeight: 40, alignment: .leading)
-							.contentShape(Rectangle())
+					Text("\(self.lastRecentFund!.name)")
+						.font(.body)
+						.padding(.vertical, 10)
+						.padding(.leading, 15)
+						.frame(maxWidth: .infinity, minHeight: 30, alignment: .leading)
+						.onTapGesture {
+							AppState.get().push(fundPath: self.fundPath!)
 					}
+					Rectangle()
+						.frame(height: 1)
+						.padding(.all, 0)
+						.foregroundColor(Color(UIColor.separator))
 				}
 			}
 		}

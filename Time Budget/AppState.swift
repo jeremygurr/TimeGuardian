@@ -102,7 +102,7 @@ class AppState {
 	func push(fundPath: FundPath) {
 		var newFundPaths = lastSelectedFundPaths
 		newFundPaths.removeAll(where: { $0 == fundPath })
-		if newFundPaths.count > 2 {
+		while newFundPaths.count > 2 {
 			newFundPaths.removeFirst()
 		}
 		newFundPaths.append(fundPath)

@@ -18,8 +18,6 @@ struct FundListView: View {
 	@FetchRequest var availableFunds: FetchedResults<TimeFund>
 	@FetchRequest var spentFunds: FetchedResults<TimeFund>
 	@FetchRequest var allFunds: FetchedResults<TimeFund>
-	@State var newFundTop = ""
-	@State var newFundBottom = ""
 	@Binding var action: FundAction
 	@Binding var actionDetail: String
 
@@ -62,9 +60,7 @@ struct FundListView: View {
 //				}
 				FundSectionAvailableView(
 					availableFunds: self.availableFunds,
-					allFunds: self.allFunds,
-					newFundTop: self.$newFundTop,
-					newFundBottom: self.$newFundBottom
+					allFunds: self.allFunds
 				)
 				FundSectionSpentView(
 					spentFunds: self.spentFunds,
@@ -91,8 +87,6 @@ func fundInsets() -> EdgeInsets {
 struct FundSectionAvailableView: View {
 	var availableFunds: FetchedResults<TimeFund>
 	var allFunds: FetchedResults<TimeFund>
-	@Binding var newFundTop: String
-	@Binding var newFundBottom: String
 	@Binding var action : FundAction
 	@Environment(\.editMode) var editMode
 	@Environment(\.managedObjectContext) var managedObjectContext
@@ -100,15 +94,12 @@ struct FundSectionAvailableView: View {
 	init(
 		
 		availableFunds: FetchedResults<TimeFund>,
-		allFunds: FetchedResults<TimeFund>,
-		newFundTop: Binding<String>,
-		newFundBottom: Binding<String>) {
+		allFunds: FetchedResults<TimeFund>
+	) {
 
 		let appState = AppState.get()
 		self.availableFunds = availableFunds
 		self.allFunds = allFunds
-		_newFundTop = newFundTop
-		_newFundBottom = newFundBottom
 		_action = appState.$fundListAction
 		
 	}
@@ -118,7 +109,6 @@ struct FundSectionAvailableView: View {
 			if self.editMode?.wrappedValue == .inactive {
 				NewFundRowView(
 					budgetStack: AppState.get().$budgetStack,
-					newFundName: $newFundTop,
 					funds: availableFunds,
 					posOfNewFund: .before
 				)
@@ -143,7 +133,6 @@ struct FundSectionAvailableView: View {
 			if self.editMode?.wrappedValue == .inactive {
 				NewFundRowView(
 					budgetStack: AppState.get().$budgetStack,
-					newFundName: $newFundBottom,
 					funds: availableFunds,
 					posOfNewFund: .after
 				)
