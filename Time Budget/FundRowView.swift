@@ -42,7 +42,7 @@ struct FundRowView: View {
 	var balanceString: String {
 		let balanceString: String
 //		let t = fund.getRatio() * budgetStack.getCurrentRatio() * longPeriod * fund.balance / fund.recharge
-		let t = shortPeriod * fund.balance
+		let t = shortPeriod * TimeInterval(fund.balance)
 		let time = formatTime(t)
 		switch self.balanceDisplayMode {
 			case .unit:
@@ -61,7 +61,7 @@ struct FundRowView: View {
 		)
 		let time =
 			formatTime(
-				fund.getRatio() * budgetStack.getCurrentRatio() * longPeriod
+				TimeInterval(fund.getRatio() * budgetStack.getCurrentRatio()) * longPeriod
 		)
 		let rechargeAmount = formatRecharge(fund.recharge)
 		switch self.ratioDisplayMode {
@@ -238,7 +238,7 @@ struct FundRowLabel: View {
 	}
 }
 
-func formatTime(_ x: Float) -> String {
+func formatTime(_ x: TimeInterval) -> String {
 	var y = Double(x)
 
 	var sign = ""

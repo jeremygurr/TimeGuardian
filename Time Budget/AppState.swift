@@ -15,8 +15,8 @@ let longPressMaxDrift: CGFloat = 0.1
 let listViewExtension: CGFloat = 200
 let interestThreshold: Float = -1000
 let stateChangeCollectionTime: Int = 10
-let longPeriod: Float = Float(oneDay)
-let shortPeriod: Float = Float(30 * minutes)
+let longPeriod: TimeInterval = oneDay
+let shortPeriod: TimeInterval = 30 * minutes
 
 enum ViewRefreshKey {
 	case topView, budgetStack, fundList, dayView
@@ -77,6 +77,9 @@ class AppState {
 	var dayViewPeriodsPerDay: Int {
 		return Int(oneDay / dayViewExpensePeriod)
 	}
+	
+	@Bindable(send: .dayView, to: subject)
+	var dayViewTimeSlotOfCurrentTime: TimeSlot = getTimeSlotOfCurrentTime(expensePeriod: shortPeriod)
 	
 	@Bindable(send: .fundList, to: subject)
 	var fundListAction: FundAction = .view

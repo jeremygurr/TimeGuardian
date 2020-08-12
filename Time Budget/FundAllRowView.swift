@@ -39,7 +39,7 @@ struct FundAllRowView: View {
 		}
 		
 		let percentage = formatPercentage(ratioSum * budgetStack.getCurrentRatio())
-		let time = formatTime(ratioSum * budgetStack.getCurrentRatio() * longPeriod)
+		let time = formatTime(TimeInterval(ratioSum * budgetStack.getCurrentRatio()) * longPeriod)
 		let rechargeAmount = formatRecharge(rechargeSum)
 		switch self.ratioDisplayMode {
 			case .percentage:
@@ -123,7 +123,7 @@ struct FundAllSpentRowView: View {
 		}
 		
 		let percentage = formatPercentage(ratioSum * budgetStack.getCurrentRatio())
-		let time = formatTime(ratioSum * budgetStack.getCurrentRatio() * longPeriod)
+		let time = formatTime(TimeInterval(ratioSum * budgetStack.getCurrentRatio()) * longPeriod)
 		let rechargeAmount = formatRecharge(rechargeSum)
 		switch self.ratioDisplayMode {
 			case .percentage:

@@ -23,7 +23,7 @@ struct DayView: View {
 	@Binding var action: DayViewAction
 	@Binding var actionDetail: String
 	@Binding var recentFunds: [FundPath]
-	@State var timeSlotOfCurrentTime: TimeSlot
+	@Binding var timeSlotOfCurrentTime: TimeSlot
 
 	@State private var tableView: UITableView?
 
@@ -54,7 +54,7 @@ struct DayView: View {
 		_budgetStack = appState.$budgetStack
 		_recentFunds = appState.$lastSelectedFundPaths
 		
-		_timeSlotOfCurrentTime = State(initialValue: getTimeSlotOfCurrentTime(expensePeriod: appState.dayViewExpensePeriod))
+		_timeSlotOfCurrentTime = appState.$dayViewTimeSlotOfCurrentTime
 
 	}
 	
