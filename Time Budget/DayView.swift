@@ -58,58 +58,6 @@ struct DayView: View {
 
 	}
 	
-	struct RecentFundViewRow: View {
-		let recentFunds: [FundPath]
-		let index: Int
-		let lastRecentFund: TimeFund?
-		let fundPath: FundPath?
-		
-		init(recentFunds: [FundPath], index: Int) {
-			self.recentFunds = recentFunds
-			self.index = index
-			self.lastRecentFund = recentFunds[index].last
-			self.fundPath = recentFunds[index]
-		}
-		
-		var noLastRecentFund: Bool {
-			self.lastRecentFund == nil
-		}
-		
-		func recentFundColor() -> Color {
-			if index == recentFunds.count - 1 {
-				return Color.init("HighlightBackground")
-			} else {
-				return Color.clear
-			}
-		}
-		
-		var body: some View {
-			VStack(alignment: .leading, spacing: 5) {
-				if noLastRecentFund {
-					Text("Nothing")
-						.font(.body)
-						.padding(.top, 3)
-						.padding(.leading, 15)
-						.frame(maxWidth: .infinity, minHeight: 30, maxHeight: 30, alignment: .leading)
-				} else {
-					Text("\(self.lastRecentFund!.name)")
-						.font(.body)
-						.padding(.vertical, 5)
-						.padding(.leading, 15)
-						.frame(maxWidth: .infinity, minHeight: 30, alignment: .leading)
-						.background(recentFundColor())
-						.onTapGesture {
-							AppState.get().push(fundPath: self.fundPath!)
-					}
-					Rectangle()
-						.frame(height: 1)
-						.padding(.all, 0)
-						.foregroundColor(Color(UIColor.separator))
-				}
-			}
-		}
-	}
-	
 	var body: some View {
 		VStack(alignment: .leading) {
 			Text("Recently Selected Funds")
@@ -210,6 +158,59 @@ struct DayView: View {
 		return result
 	}
 	
+}
+
+struct RecentFundViewRow: View {
+	let recentFunds: [FundPath]
+	let index: Int
+	let lastRecentFund: TimeFund?
+	let fundPath: FundPath?
+	
+	init(recentFunds: [FundPath], index: Int) {
+		self.recentFunds = recentFunds
+		self.index = index
+		self.lastRecentFund = recentFunds[index].last
+		self.fundPath = recentFunds[index]
+	}
+	
+	var noLastRecentFund: Bool {
+		self.lastRecentFund == nil
+	}
+	
+	func recentFundColor() -> Color {
+		if index == recentFunds.count - 1 {
+			return Color.init("HighlightBackground")
+		} else {
+			return Color.clear
+		}
+	}
+	
+	var body: some View {
+		VStack(alignment: .leading, spacing: 5) {
+			if noLastRecentFund {
+				Text("Nothing")
+					.font(.body)
+					.padding(.top, 3)
+					.padding(.leading, 15)
+					.frame(maxWidth: .infinity, minHeight: 30, maxHeight: 30, alignment: .leading)
+			} else {
+				Text("\(self.lastRecentFund!.name)")
+					.font(.body)
+					.padding(.vertical, 5)
+					.padding(.leading, 15)
+					.frame(maxWidth: .infinity, minHeight: 30, alignment: .leading)
+					.contentShape(Rectangle())
+					.background(recentFundColor())
+					.onTapGesture {
+						AppState.get().push(fundPath: self.fundPath!)
+				}
+				Rectangle()
+					.frame(height: 1)
+					.padding(.all, 0)
+					.foregroundColor(Color(UIColor.separator))
+			}
+		}
+	}
 }
 
 struct ExpenseRowView: View {
