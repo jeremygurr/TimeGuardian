@@ -288,7 +288,9 @@ struct ExpenseRowView: View {
 //				case .toggle:
 					debugLog("DayView: toggle action")
 					if existingExpense != nil {
-						AppState.get().push(fundPath: existingExpense!.fundPath)
+						var newFundPath = existingExpense!.fundPath
+						newFundPath.append(existingExpense!.fund)
+						AppState.get().push(fundPath: newFundPath)
 						self.removeExpense(existingExpense: existingExpense!)
 					} else {
 						if let lastFundPath = self.lastSelectedFundPaths.last {
