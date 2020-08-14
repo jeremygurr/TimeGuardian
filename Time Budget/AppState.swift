@@ -152,10 +152,10 @@ class AppState {
 
 }
 
-enum BalanceDisplayMode: CaseIterable {
-	case unit, time
+enum BalanceDisplayMode: Int, CaseIterable {
+	case unit = 0, time
 }
 
-enum RatioDisplayMode: CaseIterable {
-	case percentage, timePerDay, rechargeAmount
+enum RatioDisplayMode: Int, CaseIterable {
+	case percentage = 0, timePerDay, rechargeAmount
 }

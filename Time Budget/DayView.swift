@@ -288,9 +288,7 @@ struct ExpenseRowView: View {
 //				case .toggle:
 					debugLog("DayView: toggle action")
 					if existingExpense != nil {
-						var newFundPath = existingExpense!.fundPath
-						newFundPath.append(existingExpense!.fund)
-						AppState.get().push(fundPath: newFundPath)
+						AppState.get().push(fundPath: existingExpense!.fundPath)
 						self.removeExpense(existingExpense: existingExpense!)
 					} else {
 						if let lastFundPath = self.lastSelectedFundPaths.last {
@@ -304,7 +302,7 @@ struct ExpenseRowView: View {
 	
 	func removeExpense(existingExpense: TimeExpense) {
 		debugLog("removeExpense: \(existingExpense)")
-		existingExpense.fund.adjustBalance(1)
+		existingExpense.lastFund.adjustBalance(1)
 		var path = existingExpense.path.split(separator: newline)
 		if path.count > 0 {
 			path.reverse()
@@ -352,7 +350,7 @@ func getExpenseFor(timeSlot: TimeSlot, todaysExpenses: FetchedResults<TimeExpens
 func toExpenseString(timeSlot: TimeSlot, todaysExpenses: FetchedResults<TimeExpense>) -> String {
 	var result = ""
 	if let existingExpense = getExpenseFor(timeSlot: timeSlot, todaysExpenses: todaysExpenses) {
-		result = existingExpense.fund.name
+		result = existingExpense.fundName
 	}
 	return result
 }

@@ -14,6 +14,43 @@ import SwiftUI
 @objc(TimeExpense)
 public class TimeExpense: NSManagedObject {
 	
+	var fundName: String {
+		let paths = path.split(separator: newline)
+		return String(paths.last!)
+	}
+	
+	var lastFund: TimeFund {
+		return fundPath.last!
+	}
+	
+	var fundPath: FundPath {
+		var fundPath: [TimeFund] = []
+		var paths = path.split(separator: newline)
+		
+		if paths.count > 0 {
+			paths.reverse()
+			for i in 0 ..< paths.count - 1 {
+				let fundName = String(paths[i])
+				let budgetName = String(paths[i+1])
+				let request = TimeFund.fetchRequest(budgetName: budgetName, fundName: fundName)
+				
+				do {
+					let funds = try self.managedObjectContext?.fetch(request)
+					if let fund = funds?.first {
+						fundPath.append(fund)
+					} else {
+						errorLog("Missing fund: budgetName = \(budgetName), fundName = \(fundName)")
+					}
+				} catch {
+					errorLog("Error fetching fund: budgetName = \(budgetName), fundName = \(fundName), \(error)")
+				}
+				
+			}
+		}
+		
+		return FundPath(fundPath: fundPath)
+	}
+	
 	@nonobjc class func fetchRequestFor(startDate: Date, endDate: Date) -> FetchRequest<TimeExpense> {
 		
 		let request = FetchRequest<TimeExpense>(
@@ -42,34 +79,6 @@ public class TimeExpense: NSManagedObject {
 //	public override var description: String {
 //		return "TimeExpense: { fund: \(fund), when: \(when), timeSlot: \(timeSlot), path: \(path) }"
 //	}
-	
-	var fundPath: FundPath {
-		var fundPath: [TimeFund] = []
-		var paths = path.split(separator: newline)
-
-		if paths.count > 0 {
-			paths.reverse()
-			for i in 0 ..< paths.count - 1 {
-				let fundName = String(paths[i])
-				let budgetName = String(paths[i+1])
-				let request = TimeFund.fetchRequest(budgetName: budgetName, fundName: fundName)
-				
-				do {
-					let funds = try self.managedObjectContext?.fetch(request)
-					if let fund = funds?.first {
-						fundPath.append(fund)
-					} else {
-						errorLog("Missing fund: budgetName = \(budgetName), fundName = \(fundName)")
-					}
-				} catch {
-					errorLog("Error fetching fund: budgetName = \(budgetName), fundName = \(fundName), \(error)")
-				}
-
-			}
-		}
-		
-		return FundPath(fundPath: fundPath)
-	}
 	
 }
 
