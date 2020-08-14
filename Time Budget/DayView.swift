@@ -46,7 +46,13 @@ struct DayView: View {
 		for dayOffset in -plusMinus ... plusMinus {
 			for timeSlot in 0 ..< appState.dayViewPeriodsPerDay {
 				let baseDate = today + Double(dayOffset) * days
-				newTimeSlots.append(TimeSlot(baseDate: baseDate, slotIndex: timeSlot, slotSize: appState.dayViewExpensePeriod))
+				newTimeSlots.append(
+					TimeSlot(
+						baseDate: baseDate,
+						slotIndex: timeSlot,
+						slotSize: appState.dayViewSettings.shortPeriod
+					)
+				)
 			}
 		}
 		
@@ -140,7 +146,9 @@ struct DayView: View {
 	}
 	
 	func updateCurrentTimeSlot() {
-		let ts = getTimeSlotOfCurrentTime(expensePeriod: AppState.get().dayViewExpensePeriod)
+		let ts = getTimeSlotOfCurrentTime(
+			expensePeriod: AppState.get().dayViewSettings.shortPeriod
+		)
 		if ts != self.timeSlotOfCurrentTime {
 			self.timeSlotOfCurrentTime = ts
 		}
@@ -156,6 +164,24 @@ struct DayView: View {
 			}
 		}
 		return result
+	}
+
+	func updateTimeSlots() {
+		var newTimeSlots: [TimeSlot] = []
+		let appState = AppState.get()
+		let today = getStartOfDay()
+		let plusMinus = appState.dayViewPlusMinusDays
+
+		for dayOffset in -plusMinus ... plusMinus {
+			for timeSlot in 0 ..< appState.dayViewPeriodsPerDay {
+				let baseDate = today + Double(dayOffset) * days
+				newTimeSlots.append(TimeSlot(baseDate: baseDate, slotIndex: timeSlot, slotSize: appState.dayViewSettings.shortPeriod))
+			}
+		}
+		
+		if timeSlots[0] != newTimeSlots[0] {
+			timeSlots = newTimeSlots
+		}
 	}
 	
 }
@@ -219,7 +245,6 @@ struct ExpenseRowView: View {
 	var todaysExpenses: FetchedResults<TimeExpense>
 	@Environment(\.managedObjectContext) var managedObjectContext
 	@Binding var timeSlots: [TimeSlot]
-	@Binding var dayViewExpensePeriod: TimeInterval
 	@Binding var lastSelectedFundPaths: [FundPath]
 	@Binding var action: DayViewAction
 	@Binding var timeSlotOfCurrentTime: TimeSlot
@@ -231,7 +256,6 @@ struct ExpenseRowView: View {
 		self.todaysExpenses = todaysExpenses
 		_timeSlots = timeSlots
 		_budgetStack = appState.$budgetStack
-		_dayViewExpensePeriod = appState.$dayViewExpensePeriod
 		_lastSelectedFundPaths = appState.$lastSelectedFundPaths
 		_action = appState.$dayViewAction
 		_timeSlotOfCurrentTime = timeSlotOfCurrentTime

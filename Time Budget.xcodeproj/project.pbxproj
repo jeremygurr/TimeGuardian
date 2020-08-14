@@ -33,6 +33,8 @@
 		006F1C6A24CE521D005C0E1A /* DayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 006F1C6924CE521D005C0E1A /* DayView.swift */; };
 		006F1C7324CF5ADD005C0E1A /* TimeExpense+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 006F1C7124CF5ADD005C0E1A /* TimeExpense+CoreDataClass.swift */; };
 		006F1C7424CF5ADD005C0E1A /* TimeExpense+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 006F1C7224CF5ADD005C0E1A /* TimeExpense+CoreDataProperties.swift */; };
+		0090232724E702FB00E17B79 /* Settings+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0090232524E702FB00E17B79 /* Settings+CoreDataClass.swift */; };
+		0090232824E702FB00E17B79 /* Settings+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0090232624E702FB00E17B79 /* Settings+CoreDataProperties.swift */; };
 		00E1440D24D0B7AA0087F5C2 /* TimeSlot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00E1440C24D0B7AA0087F5C2 /* TimeSlot.swift */; };
 		00F9052224D4A313000832D3 /* NewFundRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00F9052124D4A313000832D3 /* NewFundRowView.swift */; };
 		00F9052424D7B967000832D3 /* DayViewAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00F9052324D7B967000832D3 /* DayViewAction.swift */; };
@@ -66,6 +68,8 @@
 		006F1C6924CE521D005C0E1A /* DayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayView.swift; sourceTree = "<group>"; };
 		006F1C7124CF5ADD005C0E1A /* TimeExpense+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TimeExpense+CoreDataClass.swift"; sourceTree = "<group>"; };
 		006F1C7224CF5ADD005C0E1A /* TimeExpense+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TimeExpense+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		0090232524E702FB00E17B79 /* Settings+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Settings+CoreDataClass.swift"; sourceTree = "<group>"; };
+		0090232624E702FB00E17B79 /* Settings+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Settings+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		00BA983824C74C9500E2AD91 /* Time Budget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Time Budget.entitlements"; sourceTree = "<group>"; };
 		00E1440C24D0B7AA0087F5C2 /* TimeSlot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeSlot.swift; sourceTree = SOURCE_ROOT; };
 		00F9052124D4A313000832D3 /* NewFundRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewFundRowView.swift; sourceTree = SOURCE_ROOT; };
@@ -89,6 +93,8 @@
 		00113D0824B913960028AB57 /* BackModel */ = {
 			isa = PBXGroup;
 			children = (
+				0090232524E702FB00E17B79 /* Settings+CoreDataClass.swift */,
+				0090232624E702FB00E17B79 /* Settings+CoreDataProperties.swift */,
 				006F1C7124CF5ADD005C0E1A /* TimeExpense+CoreDataClass.swift */,
 				006F1C7224CF5ADD005C0E1A /* TimeExpense+CoreDataProperties.swift */,
 				00659F0F24C5213200670CF0 /* TimeBudget+CoreDataClass.swift */,
@@ -247,11 +253,13 @@
 				002590E324B90F0E00F703C5 /* Time Budget.xcdatamodeld in Sources */,
 				00113D0A24B920180028AB57 /* TestDataBuilder.swift in Sources */,
 				00659F1324C5213200670CF0 /* TimeBudget+CoreDataClass.swift in Sources */,
+				0090232824E702FB00E17B79 /* Settings+CoreDataProperties.swift in Sources */,
 				0058665E24C0FD88004E4889 /* FundListView.swift in Sources */,
 				002590E024B90F0E00F703C5 /* SceneDelegate.swift in Sources */,
 				000344BE24C84E2D00CD2AAB /* AppState.swift in Sources */,
 				006F1C6A24CE521D005C0E1A /* DayView.swift in Sources */,
 				00659F1224C5213200670CF0 /* TimeFund+CoreDataClass.swift in Sources */,
+				0090232724E702FB00E17B79 /* Settings+CoreDataClass.swift in Sources */,
 				00659F0924C511F800670CF0 /* FundRowView.swift in Sources */,
 				00E1440D24D0B7AA0087F5C2 /* TimeSlot.swift in Sources */,
 				002531DA24C4614A00CB7FF0 /* TopView.swift in Sources */,

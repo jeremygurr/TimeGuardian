@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="16119" systemVersion="19F101" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
-    <entity name="Settings" representedClassName="Settings" syncable="YES" codeGenerationType="class">
+    <entity name="Settings" representedClassName="Settings" syncable="YES">
         <attribute name="balanceDisplayMode" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="dataVersion" attributeType="Double" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="dataVersion" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="longPeriod" attributeType="Double" defaultValueString="86400" usesScalarValueType="YES"/>
         <attribute name="ratioDisplayMode" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="shortPeriod" attributeType="Double" defaultValueString="1800" usesScalarValueType="YES"/>
@@ -30,7 +30,7 @@
         <relationship name="subBudget" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TimeBudget" inverseName="superFund" inverseEntity="TimeBudget"/>
     </entity>
     <elements>
-        <element name="Settings" positionX="108" positionY="54" width="128" height="28"/>
+        <element name="Settings" positionX="108" positionY="54" width="128" height="118"/>
         <element name="TimeBudget" positionX="-63" positionY="-18" width="128" height="103"/>
         <element name="TimeExpense" positionX="108" positionY="36" width="128" height="103"/>
         <element name="TimeFund" positionX="272.59765625" positionY="-15.421875" width="128" height="163"/>

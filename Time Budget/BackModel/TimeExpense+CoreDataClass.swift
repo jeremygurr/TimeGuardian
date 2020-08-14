@@ -16,7 +16,7 @@ public class TimeExpense: NSManagedObject {
 	
 	var fundName: String {
 		let paths = path.split(separator: newline)
-		return String(paths.last!)
+		return String(paths[paths.count - 2])
 	}
 	
 	var lastFund: TimeFund {

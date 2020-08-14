@@ -18,9 +18,6 @@ struct FundRowView: View {
 	@Binding var budgetStack: BudgetStack
 	@ObservedObject var fund: TimeFund
 	var funds: FetchedResults<TimeFund>
-	@Binding var ratioDisplayMode: RatioDisplayMode
-	@Binding var balanceDisplayMode: BalanceDisplayMode
-	@Binding var dayViewExpensePeriod: TimeInterval
 	@Binding var lastSelectedFundPaths: [FundPath]
 
 	init(fund: ObservedObject<TimeFund>, funds: FetchedResults<TimeFund>) {
@@ -28,10 +25,7 @@ struct FundRowView: View {
 		_fundAction = appState.$fundListAction
 		_fund = fund
 		self.funds = funds
-		_ratioDisplayMode = appState.$ratioDisplayMode
-		_balanceDisplayMode = appState.$balanceDisplayMode
 		_budgetStack = appState.$budgetStack
-		_dayViewExpensePeriod = appState.$dayViewExpensePeriod
 		_lastSelectedFundPaths = appState.$lastSelectedFundPaths
 	}
 
@@ -44,7 +38,7 @@ struct FundRowView: View {
 //		let t = fund.getRatio() * budgetStack.getCurrentRatio() * longPeriod * fund.balance / fund.recharge
 		let t = shortPeriod * TimeInterval(fund.balance)
 		let time = formatTime(t)
-		switch self.balanceDisplayMode {
+		switch AppState.get().fundListSettings.balanceDisplayMode {
 			case .unit:
 				balanceString = "\(Int(fund.balance))"
 			case .time:
@@ -64,7 +58,7 @@ struct FundRowView: View {
 				TimeInterval(fund.getRatio() * budgetStack.getCurrentRatio()) * longPeriod
 		)
 		let rechargeAmount = formatRecharge(fund.recharge)
-		switch self.ratioDisplayMode {
+		switch AppState.get().fundListSettings.ratioDisplayMode {
 			case .percentage:
 				ratioString = percentage
 			case .timePerDay:
@@ -117,7 +111,7 @@ struct FundRowView: View {
 						.frame(width: 55, alignment: .trailing)
 						.onTapGesture {
 							debugLog("clicked on balance button")
-							self.balanceDisplayMode = self.balanceDisplayMode.next()
+							AppState.get().fundListSettings.balanceDisplayMode = AppState.get().fundListSettings.balanceDisplayMode.next()
 					}
 					Divider()
 					Text("\(ratioString)")
@@ -135,7 +129,7 @@ struct FundRowView: View {
 										saveData(self.managedObjectContext)
 									}
 								default:
-									self.ratioDisplayMode = self.ratioDisplayMode.next()
+									AppState.get().fundListSettings.ratioDisplayMode = AppState.get().fundListSettings.ratioDisplayMode.next()
 							}
 					}
 					Divider()
@@ -157,7 +151,7 @@ struct FundRowView: View {
 						}
 					} else {
 						withAnimation(.none) {
-							getMainButton(expensePeriod: self.dayViewExpensePeriod)
+							getMainButton(expensePeriod: AppState.get().dayViewSettings.shortPeriod)
 						}
 					}
 				}

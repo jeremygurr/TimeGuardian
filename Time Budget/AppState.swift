@@ -13,7 +13,6 @@ import Combine
 let longPressDuration = 0.25
 let longPressMaxDrift: CGFloat = 0.1
 let listViewExtension: CGFloat = 200
-let interestThreshold: Float = -1000
 let stateChangeCollectionTime: Int = 10
 let longPeriod: TimeInterval = oneDay
 let shortPeriod: TimeInterval = 30 * minutes
@@ -27,11 +26,50 @@ class AppState {
 		debugLog("AppState.init")
 	}
 	
+	// must be run after managedObjectContext is set
+	func loadSettings() {
+		if let context = managedObjectContext {
+			do {
+				let request: NSFetchRequest<Settings> = Settings.fetchRequest()
+				let settingsArray = try context.fetch(request)
+				if let settings = settingsArray.first {
+					updateSettings(settings)
+				}
+			} catch {
+				errorLog("Error fetching settings: \(error)")
+			}
+		}
+	}
+	
+	func updateSettings(_ settings: Settings) {
+		if settings != self.settings {
+			self.settings = settings
+			
+			let newFundListSettings = FundListSettings(settings)
+			if newFundListSettings != fundListSettings {
+				fundListSettings = newFundListSettings
+			}
+			
+			let newDayViewSettings = DayViewSettings(settings)
+			if newDayViewSettings != dayViewSettings {
+				dayViewSettings = newDayViewSettings
+			}
+		}
+	}
+	
 	static let subject = PassthroughSubject<ViewRefreshKey, Never>()
 	private static let singleton = AppState()
 	static func get() -> AppState { singleton }
 	
 	var managedObjectContext: NSManagedObjectContext? = nil
+	
+	var settings: Settings? = nil
+	
+	@Bindable(send: .fundList, to: subject)
+	var fundListSettings = FundListSettings()
+	
+	@Bindable(send: .dayView, to: subject)
+	var dayViewSettings = DayViewSettings()
 	
 	@Bindable(send: .topView, to: subject, beforeSet: {
 		(beforeValue, afterValue) in
@@ -40,7 +78,7 @@ class AppState {
 				AppState.get().dayViewResetListPosition = true
 			} else if afterValue == .fund {
 				AppState.get().titleOverride = nil
-//				editMode?.wrappedValue = .inactive
+				//				editMode?.wrappedValue = .inactive
 				if let context = AppState.get().managedObjectContext {
 					context.rollback()
 				}
@@ -59,9 +97,9 @@ class AppState {
 	@Bindable(send: false)
 	var dayViewPosition: CGPoint = CGPoint(x: 0, y: 0)
 	
-	@Bindable(send: .dayView, to: subject)
-	var dayViewExpensePeriod: TimeInterval = 30 * minutes
-	
+//	@Bindable(send: .dayView, to: subject)
+//	var dayViewExpensePeriod: TimeInterval = 30 * minutes
+//
 	@Bindable(send: .dayView, to: subject)
 	var dayViewPlusMinusDays: Int = 1
 	
@@ -75,7 +113,7 @@ class AppState {
 	var dayViewActionDetail: String = "No action selected"
 	
 	var dayViewPeriodsPerDay: Int {
-		return Int(oneDay / dayViewExpensePeriod)
+		return Int(oneDay / dayViewSettings.shortPeriod)
 	}
 	
 	@Bindable(send: .dayView, to: subject)
@@ -87,12 +125,12 @@ class AppState {
 	@Bindable(send: .fundList, to: subject)
 	var fundListActionDetail: String = "No action selected"
 	
-	@Bindable(send: .fundList, to: subject)
-	var balanceDisplayMode: BalanceDisplayMode = .unit
-	
-	@Bindable(send: .fundList, to: subject)
-	var ratioDisplayMode: RatioDisplayMode = .percentage
-	
+//	@Bindable(send: .fundList, to: subject)
+//	var balanceDisplayMode: BalanceDisplayMode = .unit
+//
+//	@Bindable(send: .fundList, to: subject)
+//	var ratioDisplayMode: RatioDisplayMode = .percentage
+//
 	@Bindable(send: .dayView, to: subject, beforeSet: {
 		(beforeValue: [FundPath], afterValue: [FundPath]) in
 		let beforeLastPath: FundPath? = beforeValue.last
@@ -146,10 +184,43 @@ class AppState {
 		return size
 	}
 	
-	private let updateTimer: Timer = Timer(timeInterval: 5 * minutes, repeats: true, block: { _ in
-		subject.send(.dayView)
-	})
+//	private let updateTimer: Timer = Timer(timeInterval: 5 * minutes, repeats: true, block: { _ in
+//		subject.send(.dayView)
+//	})
+	
+}
 
+struct FundListSettings: Equatable {
+	init(_ g: Settings) {
+		shortPeriod = g.shortPeriod
+		longPeriod = g.longPeriod
+		balanceDisplayMode = BalanceDisplayMode(rawValue: Int(g.balanceDisplayMode)) ?? .unit
+		ratioDisplayMode = RatioDisplayMode(rawValue: Int(g.ratioDisplayMode)) ?? .percentage
+	}
+	
+	init() {
+		shortPeriod = 30 * minutes
+		longPeriod = oneDay
+		balanceDisplayMode = .unit
+		ratioDisplayMode = .percentage
+	}
+	
+	var shortPeriod: TimeInterval
+	var longPeriod: TimeInterval
+	var balanceDisplayMode: BalanceDisplayMode
+	var ratioDisplayMode: RatioDisplayMode
+}
+
+struct DayViewSettings: Equatable {
+	init(_ g: Settings) {
+		shortPeriod = g.shortPeriod
+	}
+	
+	init() {
+		shortPeriod = 30 * minutes
+	}
+	
+	var shortPeriod: TimeInterval
 }
 
 enum BalanceDisplayMode: Int, CaseIterable {
