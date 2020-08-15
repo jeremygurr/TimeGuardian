@@ -114,6 +114,7 @@ struct FundRowView: View {
 						.onTapGesture {
 							debugLog("clicked on balance button")
 							AppState.get().fundListSettings.balanceDisplayMode = AppState.get().fundListSettings.balanceDisplayMode.next()
+							saveData(self.managedObjectContext)
 					}
 					Divider()
 					Text("\(ratioString)")
@@ -132,6 +133,7 @@ struct FundRowView: View {
 									}
 								default:
 									AppState.get().fundListSettings.ratioDisplayMode = AppState.get().fundListSettings.ratioDisplayMode.next()
+									saveData(self.managedObjectContext)
 							}
 					}
 					Divider()

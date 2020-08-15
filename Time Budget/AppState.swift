@@ -30,9 +30,13 @@ class AppState {
 			do {
 				let request: NSFetchRequest<Settings> = Settings.fetchRequest()
 				let settingsArray = try context.fetch(request)
-				if let settings = settingsArray.first {
-					updateSettings(settings)
+				let settings: Settings
+				if let s = settingsArray.first {
+					settings = s
+				} else {
+					settings = Settings(context: context)
 				}
+				updateSettings(settings)
 			} catch {
 				errorLog("Error fetching settings: \(error)")
 			}
@@ -131,9 +135,9 @@ class AppState {
 	@Bindable(send: false)
 	var dayViewPosition: CGPoint = CGPoint(x: 0, y: 0)
 	
-//	@Bindable(send: .dayView, to: subject)
-//	var dayViewExpensePeriod: TimeInterval = 30 * minutes
-//
+	//	@Bindable(send: .dayView, to: subject)
+	//	var dayViewExpensePeriod: TimeInterval = 30 * minutes
+	//
 	@Bindable(send: .dayView, to: subject)
 	var dayViewPlusMinusDays: Int = 1
 	
@@ -159,12 +163,12 @@ class AppState {
 	@Bindable(send: .fundList, to: subject)
 	var fundListActionDetail: String = "No action selected"
 	
-//	@Bindable(send: .fundList, to: subject)
-//	var balanceDisplayMode: BalanceDisplayMode = .unit
-//
-//	@Bindable(send: .fundList, to: subject)
-//	var ratioDisplayMode: RatioDisplayMode = .percentage
-//
+	//	@Bindable(send: .fundList, to: subject)
+	//	var balanceDisplayMode: BalanceDisplayMode = .unit
+	//
+	//	@Bindable(send: .fundList, to: subject)
+	//	var ratioDisplayMode: RatioDisplayMode = .percentage
+	//
 	@Bindable(send: .dayView, to: subject, beforeSet: {
 		(beforeValue: [FundPath], afterValue: [FundPath]) in
 		let beforeLastPath: FundPath? = beforeValue.last
@@ -218,43 +222,103 @@ class AppState {
 		return size
 	}
 	
-//	private let updateTimer: Timer = Timer(timeInterval: 5 * minutes, repeats: true, block: { _ in
-//		subject.send(.dayView)
-//	})
+	//	private let updateTimer: Timer = Timer(timeInterval: 5 * minutes, repeats: true, block: { _ in
+	//		subject.send(.dayView)
+	//	})
 	
 }
 
 struct FundListSettings: Equatable {
+	
 	init(_ g: Settings) {
-		shortPeriod = g.shortPeriod
-		longPeriod = g.longPeriod
-		balanceDisplayMode = BalanceDisplayMode(rawValue: Int(g.balanceDisplayMode)) ?? .unit
-		ratioDisplayMode = RatioDisplayMode(rawValue: Int(g.ratioDisplayMode)) ?? .percentage
+		_shortPeriod = g.shortPeriod
+		_longPeriod = g.longPeriod
+		_balanceDisplayMode = BalanceDisplayMode(rawValue: Int(g.balanceDisplayMode)) ?? .unit
+		_ratioDisplayMode = RatioDisplayMode(rawValue: Int(g.ratioDisplayMode)) ?? .percentage
+		settings = g
+		debugLog("AppState: New FundListSettings created with ratioDisplayMode = \(_ratioDisplayMode)")
 	}
 	
 	init() {
-		shortPeriod = 30 * minutes
-		longPeriod = oneDay
-		balanceDisplayMode = .unit
-		ratioDisplayMode = .percentage
+		_shortPeriod = 30 * minutes
+		_longPeriod = oneDay
+		_balanceDisplayMode = .unit
+		_ratioDisplayMode = .percentage
+		debugLog("AppState: New FundListSettings created with ratioDisplayMode = \(_ratioDisplayMode)")
+		settings = nil
 	}
 	
-	var shortPeriod: TimeInterval
-	var longPeriod: TimeInterval
-	var balanceDisplayMode: BalanceDisplayMode
-	var ratioDisplayMode: RatioDisplayMode
+	let settings: Settings?
+	
+	var _shortPeriod: TimeInterval
+	var _longPeriod: TimeInterval
+	var _balanceDisplayMode: BalanceDisplayMode
+	var _ratioDisplayMode: RatioDisplayMode
+	
+	var shortPeriod: TimeInterval {
+		get { _shortPeriod }
+		
+		set {
+			_shortPeriod = newValue
+			settings?.shortPeriod = newValue
+		}
+	}
+	
+	var longPeriod: TimeInterval {
+		get { _longPeriod }
+		
+		set {
+			_longPeriod = newValue
+			settings?.longPeriod = newValue
+		}
+	}
+	
+	var balanceDisplayMode: BalanceDisplayMode {
+		get { _balanceDisplayMode }
+		
+		set {
+			_balanceDisplayMode = newValue
+			settings?.balanceDisplayMode = Int16(newValue.rawValue)
+		}
+	}
+	
+	var ratioDisplayMode: RatioDisplayMode {
+		get { _ratioDisplayMode }
+		
+		set {
+			_ratioDisplayMode = newValue
+			settings?.ratioDisplayMode = Int16(newValue.rawValue)
+			debugLog("AppState: Updated ratioDisplayMode to \(newValue)")
+		}
+	}
+	
 }
 
 struct DayViewSettings: Equatable {
+	
 	init(_ g: Settings) {
-		shortPeriod = g.shortPeriod
+		_shortPeriod = g.shortPeriod
+		settings = g
 	}
 	
 	init() {
-		shortPeriod = 30 * minutes
+		_shortPeriod = 30 * minutes
+		settings = nil
 	}
 	
-	var shortPeriod: TimeInterval
+	let settings: Settings?
+	
+	var _shortPeriod: TimeInterval
+	
+	var shortPeriod: TimeInterval {
+		get { _shortPeriod }
+		
+		set {
+			_shortPeriod = newValue
+			settings?.shortPeriod = newValue
+		}
+	}
+	
 }
 
 enum BalanceDisplayMode: Int, CaseIterable {
@@ -264,3 +328,4 @@ enum BalanceDisplayMode: Int, CaseIterable {
 enum RatioDisplayMode: Int, CaseIterable {
 	case percentage = 0, timePerDay, rechargeAmount
 }
+
