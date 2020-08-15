@@ -40,13 +40,17 @@ class AppState {
 	}
 	
 	func migrateData() {
-		if settings?.dataVersion ?? 0 < 1 {
+		let dataVersion = settings?.dataVersion ?? 0
+		if dataVersion < 1 {
+			debugLog("Older dataVersion found: \(dataVersion), migrating data to version 1")
 			if let context = managedObjectContext {
 				do {
 					let request: NSFetchRequest<TimeExpense> = TimeExpense.fetchRequest()
 					let expenses = try context.fetch(request)
+					debugLog("Found \(expenses.count) expenses to migrate")
 					for expense in expenses {
 						if let fund = expense.fund {
+							debugLog("Expense needs to be migrated: \(expense.description)")
 							var pathString = expense.path
 							pathString.append(newline)
 							pathString.append(fund.name)
@@ -57,6 +61,7 @@ class AppState {
 							when.addTimeInterval(Double(expense.timeSlot) * 30 * minutes)
 							expense.when = when
 							expense.timeSlot = -1
+							debugLog("New expense: \(expense.description)")
 						}
 					}
 					settings?.dataVersion = 1
@@ -64,6 +69,8 @@ class AppState {
 				} catch {
 					errorLog("Error migrating data: \(error)")
 				}
+			} else {
+				debugLog("No managedObjectContext, so migration can't be performed")
 			}
 		}
 	}
