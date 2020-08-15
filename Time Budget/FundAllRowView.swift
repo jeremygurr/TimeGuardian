@@ -37,6 +37,7 @@ struct FundAllRowView: View {
 		}
 		
 		let percentage = formatPercentage(ratioSum * budgetStack.getCurrentRatio())
+		let longPeriod = AppState.get().fundListSettings.longPeriod
 		let time = formatTime(TimeInterval(ratioSum * budgetStack.getCurrentRatio()) * longPeriod)
 		let rechargeAmount = formatRecharge(rechargeSum)
 		switch AppState.get().fundListSettings.ratioDisplayMode {
@@ -120,6 +121,7 @@ struct FundAllSpentRowView: View {
 		}
 		
 		let percentage = formatPercentage(ratioSum * budgetStack.getCurrentRatio())
+		let longPeriod = AppState.get().fundListSettings.longPeriod
 		let time = formatTime(TimeInterval(ratioSum * budgetStack.getCurrentRatio()) * longPeriod)
 		let rechargeAmount = formatRecharge(rechargeSum)
 		switch AppState.get().fundListSettings.ratioDisplayMode {

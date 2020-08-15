@@ -16,7 +16,7 @@ public class TimeExpense: NSManagedObject {
 	
 	var fundName: String {
 		let paths = path.split(separator: newline)
-		return String(paths[paths.count - 2])
+		return String(paths[paths.count - 1])
 	}
 	
 	var lastFund: TimeFund {
@@ -25,13 +25,11 @@ public class TimeExpense: NSManagedObject {
 	
 	var fundPath: FundPath {
 		var fundPath: [TimeFund] = []
-		var paths = path.split(separator: newline)
-		
+		let paths = path.split(separator: newline)
 		if paths.count > 0 {
-			paths.reverse()
 			for i in 0 ..< paths.count - 1 {
-				let fundName = String(paths[i])
-				let budgetName = String(paths[i+1])
+				let budgetName = String(paths[i])
+				let fundName = String(paths[i+1])
 				let request = TimeFund.fetchRequest(budgetName: budgetName, fundName: fundName)
 				
 				do {
@@ -57,7 +55,6 @@ public class TimeExpense: NSManagedObject {
 			entity: TimeExpense.entity(),
 			sortDescriptors: [
 				NSSortDescriptor(keyPath: \TimeExpense.when, ascending: true),
-				NSSortDescriptor(keyPath: \TimeExpense.timeSlot, ascending: true)
 			],
 			predicate: NSPredicate(format: "when >= %@ AND when <= %@", startDate as NSDate, endDate as NSDate)
 		)
@@ -67,13 +64,15 @@ public class TimeExpense: NSManagedObject {
 	}
 
 	@nonobjc class func fetchRequestFor(timeSlot: TimeSlot) -> NSFetchRequest<TimeExpense> {
-		
+		let startDate = timeSlot.baseDate
+		let endDate = timeSlot.baseDate + Double(timeSlot.slotIndex) * timeSlot.slotSize
 		let request = NSFetchRequest<TimeExpense>(entityName: "TimeExpense")
-		request.sortDescriptors = [ NSSortDescriptor(keyPath: \TimeExpense.timeSlot, ascending: true) ]
-		request.predicate = NSPredicate(format: "when == %@ AND timeSlot == %@", timeSlot.baseDate as NSDate, timeSlot.slotIndex as NSNumber)
-
-		return request
+		request.sortDescriptors = [
+			NSSortDescriptor(keyPath: \TimeExpense.when, ascending: true),
+		]
+		request.predicate = NSPredicate(format: "when >= %@ AND when <= %@", startDate as NSDate, endDate as NSDate)
 		
+		return request
 	}
 	
 //	public override var description: String {
@@ -87,8 +86,6 @@ func addExpense(timeSlot: TimeSlot, fundPath: FundPath, managedObjectContext: NS
 		debugLog("addExpense: { timeSlot: \(timeSlot), fund: \(fund.name) }")
 		
 		let expense = TimeExpense(context: managedObjectContext)
-		expense.fund = fund
-		expense.timeSlot = Int16(timeSlot.slotIndex)
 		var pathString = ""
 		
 		for f: TimeFund in fundPath {
@@ -99,23 +96,27 @@ func addExpense(timeSlot: TimeSlot, fundPath: FundPath, managedObjectContext: NS
 			pathString.append(contentsOf: "\(b.name)")
 		}
 		
+		pathString.append(newline)
+		pathString.append(fund.name)
+		
 		expense.path = pathString
-		expense.when = timeSlot.baseDate
+		expense.when = timeSlot.baseDate + Double(timeSlot.slotIndex) * timeSlot.slotSize
 		fund.deepSpend(fundPath: fundPath)
 	}
 }
 
-func getTimeSlotOfCurrentTime(expensePeriod: TimeInterval) -> TimeSlot {
+func getTimeSlotOfCurrentTime() -> TimeSlot {
 	let now = Date()
 	let startOfDay = getStartOfDay()
+	let expensePeriod = AppState.get().fundListSettings.shortPeriod 
 	let difference = startOfDay.distance(to: now)
 	let itemIndex = Int(difference / expensePeriod)
 	return TimeSlot(baseDate: startOfDay, slotIndex: itemIndex, slotSize: expensePeriod)
 }
 
-func addExpenseToCurrentTimeIfEmpty(fundPath: FundPath, expensePeriod: TimeInterval, managedObjectContext: NSManagedObjectContext) {
+func addExpenseToCurrentTimeIfEmpty(fundPath: FundPath, managedObjectContext: NSManagedObjectContext) {
 	if let fund = fundPath.last {
-		let slot = getTimeSlotOfCurrentTime(expensePeriod: expensePeriod)
+		let slot = getTimeSlotOfCurrentTime()
 		let request = TimeExpense.fetchRequestFor(timeSlot: slot)
 		
 		do {

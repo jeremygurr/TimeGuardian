@@ -23,7 +23,7 @@ struct TimeSlot: Equatable, CustomStringConvertible {
 	}
 	
 	public var description: String {
-		return "TimeSlot: { baseDate: \(baseDate), slotIndex: \(slotIndex), slotSize: \(slotSize / minutes), minutesFromBeginning: \(secondsFromBeginning) }"
+		return "TimeSlot: { baseDate: \(baseDate), slotIndex: \(slotIndex), slotSize: \(slotSize), minutesFromBeginning: \(secondsFromBeginning) }"
 	}
 
 	var coversCurrentTime: Bool {

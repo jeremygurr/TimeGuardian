@@ -36,6 +36,7 @@ struct FundRowView: View {
 	var balanceString: String {
 		let balanceString: String
 //		let t = fund.getRatio() * budgetStack.getCurrentRatio() * longPeriod * fund.balance / fund.recharge
+		let shortPeriod = AppState.get().fundListSettings.shortPeriod
 		let t = shortPeriod * TimeInterval(fund.balance)
 		let time = formatTime(t)
 		switch AppState.get().fundListSettings.balanceDisplayMode {
@@ -53,6 +54,7 @@ struct FundRowView: View {
 			formatPercentage(
 				fund.getRatio() * budgetStack.getCurrentRatio()
 		)
+		let longPeriod = AppState.get().fundListSettings.longPeriod
 		let time =
 			formatTime(
 				TimeInterval(fund.getRatio() * budgetStack.getCurrentRatio()) * longPeriod
@@ -181,7 +183,7 @@ struct FundRowView: View {
 					case .spend:
 						var fundPath = self.budgetStack.getFundPath()
 						fundPath.append(self.fund)
-						addExpenseToCurrentTimeIfEmpty(fundPath: fundPath, expensePeriod: expensePeriod, managedObjectContext: self.managedObjectContext)
+						addExpenseToCurrentTimeIfEmpty(fundPath: fundPath, managedObjectContext: self.managedObjectContext)
 						self.budgetStack.toFirstBudget()
 					case .reset:
 						self.fund.resetBalance()

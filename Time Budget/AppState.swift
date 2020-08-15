@@ -14,8 +14,6 @@ let longPressDuration = 0.25
 let longPressMaxDrift: CGFloat = 0.1
 let listViewExtension: CGFloat = 200
 let stateChangeCollectionTime: Int = 10
-let longPeriod: TimeInterval = oneDay
-let shortPeriod: TimeInterval = 30 * minutes
 
 enum ViewRefreshKey {
 	case topView, budgetStack, fundList, dayView
@@ -37,6 +35,35 @@ class AppState {
 				}
 			} catch {
 				errorLog("Error fetching settings: \(error)")
+			}
+		}
+	}
+	
+	func migrateData() {
+		if settings?.dataVersion ?? 0 < 1 {
+			if let context = managedObjectContext {
+				do {
+					let request: NSFetchRequest<TimeExpense> = TimeExpense.fetchRequest()
+					let expenses = try context.fetch(request)
+					for expense in expenses {
+						if let fund = expense.fund {
+							var pathString = expense.path
+							pathString.append(newline)
+							pathString.append(fund.name)
+							expense.path = pathString
+							expense.fund = nil
+							
+							var when = expense.when
+							when.addTimeInterval(Double(expense.timeSlot) * 30 * minutes)
+							expense.when = when
+							expense.timeSlot = -1
+						}
+					}
+					settings?.dataVersion = 1
+					saveData(context)
+				} catch {
+					errorLog("Error migrating data: \(error)")
+				}
 			}
 		}
 	}
@@ -63,7 +90,7 @@ class AppState {
 	
 	var managedObjectContext: NSManagedObjectContext? = nil
 	
-	var settings: Settings? = nil
+	private var settings: Settings? = nil
 	
 	@Bindable(send: .fundList, to: subject)
 	var fundListSettings = FundListSettings()
@@ -117,7 +144,7 @@ class AppState {
 	}
 	
 	@Bindable(send: .dayView, to: subject)
-	var dayViewTimeSlotOfCurrentTime: TimeSlot = getTimeSlotOfCurrentTime(expensePeriod: shortPeriod)
+	var dayViewTimeSlotOfCurrentTime: TimeSlot = TimeSlot(baseDate: Date(), slotIndex: 0, slotSize: 30 * minutes)
 	
 	@Bindable(send: .fundList, to: subject)
 	var fundListAction: FundAction = .view

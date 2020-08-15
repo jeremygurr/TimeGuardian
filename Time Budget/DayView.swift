@@ -146,9 +146,7 @@ struct DayView: View {
 	}
 	
 	func updateCurrentTimeSlot() {
-		let ts = getTimeSlotOfCurrentTime(
-			expensePeriod: AppState.get().dayViewSettings.shortPeriod
-		)
+		let ts = getTimeSlotOfCurrentTime()
 		if ts != self.timeSlotOfCurrentTime {
 			self.timeSlotOfCurrentTime = ts
 		}
@@ -263,7 +261,7 @@ struct ExpenseRowView: View {
 	
 	var body: some View {
 		ForEach(0 ..< self.timeSlots.count, id: \.self) { index in
-			self.RowView(index)
+			self.rowView(index)
 		}
 	}
 	
@@ -274,7 +272,7 @@ struct ExpenseRowView: View {
 		return Color.clear
 	}
 	
-	func RowView(_ index: Int) -> some View {
+	func rowView(_ index: Int) -> some View {
 		let timeSlot = timeSlots[index]
 		return HStack {
 			VStack {
@@ -358,13 +356,13 @@ struct ExpenseRowView: View {
 func getExpenseFor(timeSlot: TimeSlot, todaysExpenses: FetchedResults<TimeExpense>) -> TimeExpense? {
 	var result: TimeExpense? = nil
 	
+	let shortPeriod = AppState.get().fundListSettings.shortPeriod
 	for expense in todaysExpenses {
-		if expense.when == timeSlot.baseDate && expense.timeSlot == timeSlot.slotIndex {
-			result = expense
-		} else if
-			expense.when > timeSlot.baseDate ||
-				expense.when == timeSlot.baseDate &&
-				expense.timeSlot > timeSlot.slotIndex {
+		if expense.when >= timeSlot.baseDate + Double(timeSlot.slotIndex) * shortPeriod {
+			let endDate = timeSlot.baseDate + Double(timeSlot.slotIndex) * shortPeriod + shortPeriod
+			if expense.when < endDate {
+				result = expense
+			}
 			break
 		}
 	}
@@ -373,8 +371,12 @@ func getExpenseFor(timeSlot: TimeSlot, todaysExpenses: FetchedResults<TimeExpens
 
 func toExpenseString(timeSlot: TimeSlot, todaysExpenses: FetchedResults<TimeExpense>) -> String {
 	var result = ""
+//	debugLog("DayView.toExpenseString(\(timeSlot))")
 	if let existingExpense = getExpenseFor(timeSlot: timeSlot, todaysExpenses: todaysExpenses) {
 		result = existingExpense.fundName
+//		debugLog("DayView.toExpenseString: existing expense: \(result)")
+	} else {
+//		debugLog("DayView.toExpenseString: No existing expense")
 	}
 	return result
 }

@@ -15,7 +15,7 @@
     </entity>
     <entity name="TimeExpense" representedClassName="TimeExpense" syncable="YES">
         <attribute name="path" optional="YES" attributeType="String"/>
-        <attribute name="timeSlot" optional="YES" attributeType="Integer 16" minValueString="0" usesScalarValueType="YES"/>
+        <attribute name="timeSlot" optional="YES" attributeType="Integer 16" minValueString="-1" usesScalarValueType="YES"/>
         <attribute name="when" attributeType="Date" usesScalarValueType="NO"/>
         <relationship name="fund" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TimeFund" inverseName="expenses" inverseEntity="TimeFund"/>
     </entity>
