@@ -9,7 +9,6 @@
 import SwiftUI
 
 struct NewFundRowView: View {
-	@Environment(\.managedObjectContext) var managedObjectContext
 	@Binding var budgetStack: BudgetStack
 	@State var newFundName: String = ""
 	var funds: FetchedResults<TimeFund>
@@ -22,7 +21,7 @@ struct NewFundRowView: View {
 				self.newFundName = self.newFundName.trimmingCharacters(in: .whitespacesAndNewlines)
 				
 				if self.newFundName.count > 0 {
-					let fund = TimeFund(context: self.managedObjectContext)
+					let fund = TimeFund(context: managedObjectContext)
 					fund.name = self.newFundName
 					fund.budget = self.budgetStack.getTopBudget()
 					var index = 0
@@ -43,7 +42,7 @@ struct NewFundRowView: View {
 						index += 1
 					}
 					
-					saveData(self.managedObjectContext)
+					saveData()
 					self.newFundName = ""
 				}
 			}) {

@@ -13,10 +13,9 @@ import Combine
 
 struct DayView: View {
 	@State var viewState = 0
-
+	
 	@Binding var budgetStack: BudgetStack
 	@FetchRequest var recentExpenses: FetchedResults<TimeExpense>
-	@Environment(\.managedObjectContext) var managedObjectContext
 	@State var startDate: Date
 	@State var endDate: Date
 	@State var timeSlots: [TimeSlot]
@@ -24,14 +23,13 @@ struct DayView: View {
 	@Binding var actionDetail: String
 	@Binding var recentFunds: [FundPath]
 	@Binding var timeSlotOfCurrentTime: TimeSlot
-
+	
 	@State private var tableView: UITableView?
-
+	
 	init() {
 		
 		debugLog("DayView.init")
 		
-		let appState = AppState.get()
 		_action = appState.$dayViewAction
 		_actionDetail = appState.$dayViewActionDetail
 		let today = getStartOfDay()
@@ -50,7 +48,7 @@ struct DayView: View {
 					TimeSlot(
 						baseDate: baseDate,
 						slotIndex: timeSlot,
-						slotSize: appState.dayViewSettings.shortPeriod
+						slotSize: appState.settings.shortPeriod
 					)
 				)
 			}
@@ -61,7 +59,7 @@ struct DayView: View {
 		_recentFunds = appState.$lastSelectedFundPaths
 		
 		_timeSlotOfCurrentTime = appState.$dayViewTimeSlotOfCurrentTime
-
+		
 	}
 	
 	var body: some View {
@@ -70,7 +68,7 @@ struct DayView: View {
 				.font(.headline)
 				.padding(.vertical, 3)
 				.padding(.leading, 15)
-
+				
 				.frame(maxWidth: .infinity, alignment: .leading)
 				.background(Color(UIColor.secondarySystemFill))
 			if recentFunds.count > 0 {
@@ -93,15 +91,15 @@ struct DayView: View {
 						timeSlots: $timeSlots,
 						timeSlotOfCurrentTime: self.$timeSlotOfCurrentTime
 					)
-					.listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+						.listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
 				}
 			}
 			.introspectTableView { tableView in
 				if self.tableView != tableView {
 					self.tableView = tableView
 				}
-
-				if AppState.get().dayViewResetListPosition {
+				
+				if appState.dayViewResetListPosition {
 					debugLog("DayView: resetting list position")
 					tableView.scrollToRow(
 						at: IndexPath(
@@ -109,10 +107,10 @@ struct DayView: View {
 						, at: .middle
 						, animated: false
 					)
-					AppState.get().dayViewPosition = tableView.contentOffset
-					AppState.get().dayViewResetListPosition = false
+					appState.dayViewPosition = tableView.contentOffset
+					appState.dayViewResetListPosition = false
 				} else {
-					tableView.setContentOffset(AppState.get().dayViewPosition, animated: false)
+					tableView.setContentOffset(appState.dayViewPosition, animated: false)
 					debugLog("DayView: list position updated to \(tableView.contentOffset)")
 				}
 			}
@@ -122,7 +120,7 @@ struct DayView: View {
 		}.onDisappear {
 			debugLog("DayView disappeared")
 			if let t = self.tableView {
-				AppState.get().dayViewPosition = t.contentOffset
+				appState.dayViewPosition = t.contentOffset
 				debugLog("AppState dayViewPosition updated to \(t.contentOffset)")
 			}
 			self.updateCurrentTimeSlot()
@@ -136,7 +134,7 @@ struct DayView: View {
 			)
 		) { x in
 			if let t = self.tableView, t.contentOffset.y > 0 {
-				AppState.get().dayViewPosition = t.contentOffset
+				appState.dayViewPosition = t.contentOffset
 				debugLog("AppState dayViewPosition updated to \(t.contentOffset)")
 			}
 			
@@ -163,17 +161,16 @@ struct DayView: View {
 		}
 		return result
 	}
-
+	
 	func updateTimeSlots() {
 		var newTimeSlots: [TimeSlot] = []
-		let appState = AppState.get()
 		let today = getStartOfDay()
 		let plusMinus = appState.dayViewPlusMinusDays
-
+		
 		for dayOffset in -plusMinus ... plusMinus {
 			for timeSlot in 0 ..< appState.dayViewPeriodsPerDay {
 				let baseDate = today + Double(dayOffset) * days
-				newTimeSlots.append(TimeSlot(baseDate: baseDate, slotIndex: timeSlot, slotSize: appState.dayViewSettings.shortPeriod))
+				newTimeSlots.append(TimeSlot(baseDate: baseDate, slotIndex: timeSlot, slotSize: appState.settings.shortPeriod))
 			}
 		}
 		
@@ -226,7 +223,7 @@ struct RecentFundViewRow: View {
 					.contentShape(Rectangle())
 					.background(recentFundColor())
 					.onTapGesture {
-						AppState.get().push(fundPath: self.fundPath!)
+						appState.push(fundPath: self.fundPath!)
 				}
 				Rectangle()
 					.frame(height: 1)
@@ -241,7 +238,6 @@ struct ExpenseRowView: View {
 	@Binding private var tableView: UITableView?
 	@Binding var budgetStack: BudgetStack
 	var todaysExpenses: FetchedResults<TimeExpense>
-	@Environment(\.managedObjectContext) var managedObjectContext
 	@Binding var timeSlots: [TimeSlot]
 	@Binding var lastSelectedFundPaths: [FundPath]
 	@Binding var action: DayViewAction
@@ -250,7 +246,6 @@ struct ExpenseRowView: View {
 	init(tableView: Binding<UITableView?>, todaysExpenses: FetchedResults<TimeExpense>, timeSlots: Binding<[TimeSlot]>, timeSlotOfCurrentTime: Binding<TimeSlot>) {
 		debugLog("ExpenseRowView.init")
 		_tableView = tableView
-		let appState = AppState.get()
 		self.todaysExpenses = todaysExpenses
 		_timeSlots = timeSlots
 		_budgetStack = appState.$budgetStack
@@ -291,34 +286,34 @@ struct ExpenseRowView: View {
 			let existingExpense = getExpenseFor(timeSlot: timeSlot, todaysExpenses: self.todaysExpenses)
 			
 			if let t = self.tableView {
-				AppState.get().dayViewPosition = t.contentOffset
+				appState.dayViewPosition = t.contentOffset
 				debugLog("AppState dayViewPosition updated to \(t.contentOffset)")
 			}
-
-//			switch self.action {
-//				case .add:
-//					debugLog("DayView: add action")
-//					if existingExpense == nil {
-//						addExpense(timeSlot: timeSlot, lastSelectedFund: self.lastSelectedFund, budgetStack: self.budgetStack, managedObjectContext: self.managedObjectContext)
-//					}
-//				case .remove:
-//					debugLog("DayView: remove action")
-//					if existingExpense != nil {
-//						self.lastSelectedFund = existingExpense!.fund
-//						self.removeExpense(existingExpense: existingExpense!)
-//				}
-//				case .toggle:
-					debugLog("DayView: toggle action")
-					if existingExpense != nil {
-						AppState.get().push(fundPath: existingExpense!.fundPath)
-						self.removeExpense(existingExpense: existingExpense!)
-					} else {
-						if let lastFundPath = self.lastSelectedFundPaths.last {
-							addExpense(timeSlot: timeSlot, fundPath: lastFundPath, managedObjectContext: self.managedObjectContext)
-							saveData(self.managedObjectContext)
-						}
+			
+			//			switch self.action {
+			//				case .add:
+			//					debugLog("DayView: add action")
+			//					if existingExpense == nil {
+			//						addExpense(timeSlot: timeSlot, lastSelectedFund: self.lastSelectedFund, budgetStack: self.budgetStack, managedObjectContext: self.managedObjectContext)
+			//					}
+			//				case .remove:
+			//					debugLog("DayView: remove action")
+			//					if existingExpense != nil {
+			//						self.lastSelectedFund = existingExpense!.fund
+			//						self.removeExpense(existingExpense: existingExpense!)
+			//				}
+			//				case .toggle:
+			debugLog("DayView: toggle action")
+			if existingExpense != nil {
+				appState.push(fundPath: existingExpense!.fundPath)
+				self.removeExpense(existingExpense: existingExpense!)
+			} else {
+				if let lastFundPath = self.lastSelectedFundPaths.last {
+					addExpense(timeSlot: timeSlot, fundPath: lastFundPath)
+					saveData()
 				}
-//			}
+			}
+			//			}
 		}
 	}
 	
@@ -336,7 +331,7 @@ struct ExpenseRowView: View {
 				let request = TimeFund.fetchRequest(budgetName: budgetName, fundName: fundName)
 				
 				do {
-					let funds = try self.managedObjectContext.fetch(request)
+					let funds = try managedObjectContext.fetch(request)
 					if let fund = funds.first {
 						fund.adjustBalance(1)
 					} else {
@@ -348,15 +343,15 @@ struct ExpenseRowView: View {
 				
 			}
 		}
-		self.managedObjectContext.delete(existingExpense)
-		saveData(self.managedObjectContext)
+		managedObjectContext.delete(existingExpense)
+		saveData()
 	}
 }
 
 func getExpenseFor(timeSlot: TimeSlot, todaysExpenses: FetchedResults<TimeExpense>) -> TimeExpense? {
 	var result: TimeExpense? = nil
 	
-	let shortPeriod = AppState.get().fundListSettings.shortPeriod
+	let shortPeriod = appState.settings.shortPeriod
 	for expense in todaysExpenses {
 		if expense.when >= timeSlot.baseDate + Double(timeSlot.slotIndex) * shortPeriod {
 			let endDate = timeSlot.baseDate + Double(timeSlot.slotIndex) * shortPeriod + shortPeriod
@@ -371,12 +366,12 @@ func getExpenseFor(timeSlot: TimeSlot, todaysExpenses: FetchedResults<TimeExpens
 
 func toExpenseString(timeSlot: TimeSlot, todaysExpenses: FetchedResults<TimeExpense>) -> String {
 	var result = ""
-//	debugLog("DayView.toExpenseString(\(timeSlot))")
+	//	debugLog("DayView.toExpenseString(\(timeSlot))")
 	if let existingExpense = getExpenseFor(timeSlot: timeSlot, todaysExpenses: todaysExpenses) {
 		result = existingExpense.fundName
-//		debugLog("DayView.toExpenseString: existing expense: \(result)")
+		//		debugLog("DayView.toExpenseString: existing expense: \(result)")
 	} else {
-//		debugLog("DayView.toExpenseString: No existing expense")
+		//		debugLog("DayView.toExpenseString: No existing expense")
 	}
 	return result
 }
@@ -408,7 +403,6 @@ struct CalendarView_Previews: PreviewProvider {
 		let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
 		let testDataBuilder = TestDataBuilder(context: context)
 		testDataBuilder.createTestData()
-		let appState = AppState.get()
 		let budget = testDataBuilder.budgets.first!
 		appState.budgetStack.push(budget: budget)
 		let fund = testDataBuilder.funds.first!
@@ -420,12 +414,13 @@ struct CalendarView_Previews: PreviewProvider {
 				.environment(\.colorScheme, .light)
 				.environment(\.managedObjectContext, context)
 			
-//			DayView()
-//				.environment(\.colorScheme, .dark)
-//				.environment(\.managedObjectContext, context)
+			//			DayView()
+			//				.environment(\.colorScheme, .dark)
+			//				.environment(\.managedObjectContext, context)
 		}
 		
 	}
 }
+
 
 

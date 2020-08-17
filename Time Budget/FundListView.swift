@@ -13,17 +13,15 @@ struct FundListView: View {
 	@State var viewState = 0
 	
 	@Environment(\.editMode) var editMode
-	@Environment(\.managedObjectContext) var managedObjectContext
 	@Binding var budgetStack: BudgetStack
 	@FetchRequest var availableFunds: FetchedResults<TimeFund>
 	@FetchRequest var spentFunds: FetchedResults<TimeFund>
 	@FetchRequest var allFunds: FetchedResults<TimeFund>
 	@Binding var action: FundAction
 	@Binding var actionDetail: String
-
+	
 	init() {
 		debugLog("FundListView init()")
-		let appState = AppState.get()
 		_budgetStack = appState.$budgetStack
 		let budget = appState.budgetStack.getTopBudget()
 		_availableFunds = TimeFund.fetchAvailableRequest(budget: budget)
@@ -40,7 +38,7 @@ struct FundListView: View {
 				selectedIndex: self.$action,
 				onChange: { (newValue: FundAction) in
 					self.actionDetail = newValue.longDescription
-
+					
 					if newValue == .edit {
 						self.editMode?.wrappedValue = .active
 					} else {
@@ -86,15 +84,13 @@ struct FundSectionAvailableView: View {
 	var allFunds: FetchedResults<TimeFund>
 	@Binding var action : FundAction
 	@Environment(\.editMode) var editMode
-	@Environment(\.managedObjectContext) var managedObjectContext
-
+	
 	init(
 		
 		availableFunds: FetchedResults<TimeFund>,
 		allFunds: FetchedResults<TimeFund>
 	) {
-
-		let appState = AppState.get()
+		
 		self.availableFunds = availableFunds
 		self.allFunds = allFunds
 		_action = appState.$fundListAction
@@ -105,7 +101,7 @@ struct FundSectionAvailableView: View {
 		Section(header: Text("Available")) {
 			if self.editMode?.wrappedValue == .inactive {
 				NewFundRowView(
-					budgetStack: AppState.get().$budgetStack,
+					budgetStack: appState.$budgetStack,
 					funds: availableFunds,
 					posOfNewFund: .before
 				)
@@ -118,18 +114,18 @@ struct FundSectionAvailableView: View {
 			}
 			.onMove() { (source: IndexSet, destination: Int) in
 				debugLog("FundListView.onMove")
-
+				
 				var newFunds: [TimeFund] = self.availableFunds.map() { $0 }
 				newFunds.move(fromOffsets: source, toOffset: destination)
 				for (index, fund) in newFunds.enumerated() {
 					fund.order = Int16(index)
 				}
-				saveData(self.managedObjectContext)
+				saveData()
 			}
 			.listRowInsets(fundInsets())
 			if self.editMode?.wrappedValue == .inactive {
 				NewFundRowView(
-					budgetStack: AppState.get().$budgetStack,
+					budgetStack: appState.$budgetStack,
 					funds: availableFunds,
 					posOfNewFund: .after
 				)
@@ -142,7 +138,6 @@ struct FundSectionSpentView: View {
 	var spentFunds: FetchedResults<TimeFund>
 	var allFunds: FetchedResults<TimeFund>
 	@Binding var action : FundAction
-	@Environment(\.managedObjectContext) var managedObjectContext
 	@Binding var budgetStack: BudgetStack
 	
 	init(
@@ -151,19 +146,18 @@ struct FundSectionSpentView: View {
 	) {
 		self.spentFunds = spentFunds
 		self.allFunds = allFunds
-		let appState = AppState.get()
 		_action = appState.$fundListAction
 		_budgetStack = appState.$budgetStack
 	}
-
+	
 	var body: some View {
 		Section(header: Text("Spent")) {
-//			if self.action.canApplyToAll {
+			//			if self.action.canApplyToAll {
 			FundAllSpentRowView(spentFunds: self.spentFunds)
 				.foregroundColor(Color.accentColor)
 				.listRowInsets(fundInsets())
-
-//			}
+			
+			//			}
 			ForEach(self.spentFunds, id: \.self) { fund in
 				FundRowView(fund: ObservedObject(initialValue: fund), funds: self.allFunds)
 			}.onMove() { (source: IndexSet, destination: Int) in
@@ -172,7 +166,7 @@ struct FundSectionSpentView: View {
 				for (index, fund) in newFunds.enumerated() {
 					fund.order = Int16(index)
 				}
-				saveData(self.managedObjectContext)
+				saveData()
 			}.listRowInsets(fundInsets())
 		}
 	}
@@ -183,11 +177,11 @@ struct FundListView_Previews: PreviewProvider {
 		let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
 		let testDataBuilder = TestDataBuilder(context: context)
 		testDataBuilder.createTestData()
-		let appState = AppState.get()
 		let budget = testDataBuilder.budgets.first!
 		appState.budgetStack.push(budget: budget)
 		return FundListView()
 			.environment(\.managedObjectContext, context)
-//			.environment(\.colorScheme, .dark)
+		//			.environment(\.colorScheme, .dark)
 	}
 }
+

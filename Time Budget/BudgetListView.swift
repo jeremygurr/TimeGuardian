@@ -11,17 +11,16 @@ import Introspect
 
 struct BudgetListView: View {
 	@Environment(\.editMode) var editMode
-	@Environment(\.managedObjectContext) var managedObjectContext
 	@FetchRequest var mainBudgets: FetchedResults<TimeBudget>
 	@FetchRequest var subBudgets: FetchedResults<TimeBudget>
 	@State var newBudgetTop = ""
 	@State var newBudgetBottom = ""
-
+	
 	init() {
 		_mainBudgets = TimeBudget.fetchRequestMain()
 		_subBudgets = TimeBudget.fetchRequestSub()
 	}
-
+	
 	var body: some View {
 		List {
 			Section(header: Text("Top Level Budgets")) {
@@ -41,8 +40,7 @@ struct BudgetListView: View {
 
 struct BudgetListSection: View {
 	var budgets: FetchedResults<TimeBudget>
-	@Environment(\.managedObjectContext) var managedObjectContext
-
+	
 	var body: some View {
 		ForEach(budgets, id: \.self) { budget in
 			BudgetRowView(budget: budget)
@@ -54,9 +52,9 @@ struct BudgetListSection: View {
 					toDelete.append(self.budgets[index])
 				}
 				for budget in toDelete {
-					self.managedObjectContext.delete(budget)
+					managedObjectContext.delete(budget)
 				}
-				saveData(self.managedObjectContext)
+				saveData()
 			}
 		}.onMove() { (source: IndexSet, destination: Int) in
 			debugLog("BudgetListView.onMove")
@@ -66,7 +64,7 @@ struct BudgetListSection: View {
 				for (index, budget) in newBudgets.enumerated() {
 					budget.order = Int16(index)
 				}
-				saveData(self.managedObjectContext)
+				saveData()
 			}
 		}
 	}
@@ -75,12 +73,11 @@ struct BudgetListSection: View {
 
 struct BudgetRowView: View {
 	@Environment(\.editMode) var editMode
-	@Environment(\.managedObjectContext) var managedObjectContext
 	@State var budget: TimeBudget
 	@Binding var budgetStack: BudgetStack
-
+	
 	init(budget: TimeBudget) {
-		_budgetStack = AppState.get().$budgetStack
+		_budgetStack = appState.$budgetStack
 		_budget = State(initialValue: budget)
 	}
 	
@@ -88,7 +85,7 @@ struct BudgetRowView: View {
 		self.budget.name = self.budget.name.trimmingCharacters(in: .whitespacesAndNewlines)
 		let newName = self.budget.name
 		if newName == "" {
-			self.managedObjectContext.rollback()
+			managedObjectContext.rollback()
 		} else if let superFundSet = self.budget.superFund, superFundSet.count > 0 {
 			for superFund in superFundSet {
 				if (superFund as! TimeFund).name != newName {
@@ -96,7 +93,7 @@ struct BudgetRowView: View {
 				}
 			}
 		}
-		saveData(self.managedObjectContext)
+		saveData()
 	}
 	
 	var body: some View {
@@ -113,20 +110,20 @@ struct BudgetRowView: View {
 					onCommit: {
 						self.commitRenameBudget()
 				}
-			)
+				)
 			} else {
 				Button(
 					action: {
 						debugLog("Selected budget \(self.budget.name)")
 						self.budgetStack.push(budget: self.budget)
 						debugLog("BudgetStack count = \(self.budgetStack.getBudgets().count)")
-					},
+				},
 					label: {
 						Text(budget.name)
 							.font(.body)
 							.frame(minWidth: 0, maxWidth: .infinity, minHeight: 40, alignment: .leading)
 							.contentShape(Rectangle())
-					}
+				}
 				)
 			}
 		}
@@ -134,7 +131,6 @@ struct BudgetRowView: View {
 }
 
 struct NewBudgetRowView: View {
-	@Environment(\.managedObjectContext) var managedObjectContext
 	@Binding var newBudgetName: String
 	var budgets: FetchedResults<TimeBudget>
 	let posOfNewBudget: ListPosition
@@ -165,7 +161,7 @@ struct NewBudgetRowView: View {
 					return
 				}
 				
-				let budget = TimeBudget(context: self.managedObjectContext)
+				let budget = TimeBudget(context: managedObjectContext)
 				budget.name = self.newBudgetName
 				var index = 0
 				
@@ -185,7 +181,7 @@ struct NewBudgetRowView: View {
 					index += 1
 				}
 				
-				saveData(self.managedObjectContext)
+				saveData()
 				self.newBudgetName = ""
 			} catch {
 				let nserror = error as NSError
@@ -206,4 +202,5 @@ struct BudgetListView_Previews: PreviewProvider {
 			.environment(\.managedObjectContext, context)
 	}
 }
+
 

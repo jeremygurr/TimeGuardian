@@ -62,7 +62,7 @@ public class TimeExpense: NSManagedObject {
 		return request
 		
 	}
-
+	
 	@nonobjc class func fetchRequestFor(timeSlot: TimeSlot) -> NSFetchRequest<TimeExpense> {
 		let startDate = timeSlot.baseDate
 		let endDate = timeSlot.baseDate + Double(timeSlot.slotIndex) * timeSlot.slotSize
@@ -75,13 +75,13 @@ public class TimeExpense: NSManagedObject {
 		return request
 	}
 	
-//	public override var description: String {
-//		return "TimeExpense: { fund: \(fund), when: \(when), timeSlot: \(timeSlot), path: \(path) }"
-//	}
+	//	public override var description: String {
+	//		return "TimeExpense: { fund: \(fund), when: \(when), timeSlot: \(timeSlot), path: \(path) }"
+	//	}
 	
 }
 
-func addExpense(timeSlot: TimeSlot, fundPath: FundPath, managedObjectContext: NSManagedObjectContext) {
+func addExpense(timeSlot: TimeSlot, fundPath: FundPath) {
 	if let fund = fundPath.last {
 		debugLog("addExpense: { timeSlot: \(timeSlot), fund: \(fund.name) }")
 		
@@ -108,13 +108,13 @@ func addExpense(timeSlot: TimeSlot, fundPath: FundPath, managedObjectContext: NS
 func getTimeSlotOfCurrentTime() -> TimeSlot {
 	let now = Date()
 	let startOfDay = getStartOfDay()
-	let expensePeriod = AppState.get().fundListSettings.shortPeriod 
+	let expensePeriod = appState.settings.shortPeriod
 	let difference = startOfDay.distance(to: now)
 	let itemIndex = Int(difference / expensePeriod)
 	return TimeSlot(baseDate: startOfDay, slotIndex: itemIndex, slotSize: expensePeriod)
 }
 
-func addExpenseToCurrentTimeIfEmpty(fundPath: FundPath, managedObjectContext: NSManagedObjectContext) {
+func addExpenseToCurrentTimeIfEmpty(fundPath: FundPath) {
 	if let fund = fundPath.last {
 		let slot = getTimeSlotOfCurrentTime()
 		let request = TimeExpense.fetchRequestFor(timeSlot: slot)
@@ -124,7 +124,7 @@ func addExpenseToCurrentTimeIfEmpty(fundPath: FundPath, managedObjectContext: NS
 			let firstExpense: TimeExpense? = expenses.first
 			if firstExpense == nil {
 				debugLog("No expense found for this slot, so we will create one")
-				addExpense(timeSlot: slot, fundPath: fundPath, managedObjectContext: managedObjectContext)
+				addExpense(timeSlot: slot, fundPath: fundPath)
 			} else {
 				fund.deepSpend(fundPath: fundPath)
 			}
@@ -133,3 +133,4 @@ func addExpenseToCurrentTimeIfEmpty(fundPath: FundPath, managedObjectContext: NS
 		}
 	}
 }
+

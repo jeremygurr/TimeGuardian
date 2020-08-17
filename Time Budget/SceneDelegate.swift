@@ -6,12 +6,16 @@
 //  Copyright © 2020 Pure Logic Enterprises. All rights reserved.
 //
 
+import CoreData
 import UIKit
 import SwiftUI
+
+var managedObjectContext: NSManagedObjectContext = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 	
 	var window: UIWindow?
+	lazy var state: AppState = AppState()
 	
 	func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
 		// Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
@@ -19,15 +23,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		// This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
 		
 		// Get the managed object context from the shared persistent container.
-		let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+//		let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
 
 		// only uncomment this to wipe the data on the target
 //			let tdb = TestDataBuilder(context: context)
 //			tdb.createTestData()
 		
-		AppState.get().managedObjectContext = context
-		AppState.get().loadSettings()
-		AppState.get().migrateData()
+		state.migrateData()
 		
 		// Create the SwiftUI view and set the context as the value for the managedObjectContext environment keyPath.
 		// Add `@Environment(\.managedObjectContext)` in the views that will need the context.
@@ -53,7 +55,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 	func sceneDidBecomeActive(_ scene: UIScene) {
 		// Called when the scene has moved from an inactive state to an active state.
 		// Use this method to restart any tasks that were paused (or not yet started) when the scene was inactive.
-		AppState.get().dayViewTimeSlotOfCurrentTime = getTimeSlotOfCurrentTime()
+		state.dayViewTimeSlotOfCurrentTime = getTimeSlotOfCurrentTime()
 	}
 	
 	func sceneWillResignActive(_ scene: UIScene) {

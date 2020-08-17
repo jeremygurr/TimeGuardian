@@ -14,32 +14,30 @@ struct FundRowView: View {
 	@State var viewState = 0
 	@Binding var fundAction: FundAction
 	@Environment(\.editMode) var editMode
-	@Environment(\.managedObjectContext) var managedObjectContext
 	@Binding var budgetStack: BudgetStack
 	@ObservedObject var fund: TimeFund
 	var funds: FetchedResults<TimeFund>
 	@Binding var lastSelectedFundPaths: [FundPath]
-
+	
 	init(fund: ObservedObject<TimeFund>, funds: FetchedResults<TimeFund>) {
-		let appState = AppState.get()
 		_fundAction = appState.$fundListAction
 		_fund = fund
 		self.funds = funds
 		_budgetStack = appState.$budgetStack
 		_lastSelectedFundPaths = appState.$lastSelectedFundPaths
 	}
-
+	
 	func handleFrozen(_ s: String) -> String {
 		fund.frozen ? "∞" : s
 	}
-
+	
 	var balanceString: String {
 		let balanceString: String
-//		let t = fund.getRatio() * budgetStack.getCurrentRatio() * longPeriod * fund.balance / fund.recharge
-		let shortPeriod = AppState.get().fundListSettings.shortPeriod
+		//		let t = fund.getRatio() * budgetStack.getCurrentRatio() * longPeriod * fund.balance / fund.recharge
+		let shortPeriod = appState.settings.shortPeriod
 		let t = shortPeriod * TimeInterval(fund.balance)
 		let time = formatTime(t)
-		switch AppState.get().fundListSettings.balanceDisplayMode {
+		switch appState.settings.balanceDisplayMode {
 			case .unit:
 				balanceString = "\(Int(fund.balance))"
 			case .time:
@@ -54,13 +52,13 @@ struct FundRowView: View {
 			formatPercentage(
 				fund.getRatio() * budgetStack.getCurrentRatio()
 		)
-		let longPeriod = AppState.get().fundListSettings.longPeriod
+		let longPeriod = appState.settings.longPeriod
 		let time =
 			formatTime(
 				TimeInterval(fund.getRatio() * budgetStack.getCurrentRatio()) * longPeriod
 		)
 		let rechargeAmount = formatRecharge(fund.recharge)
-		switch AppState.get().fundListSettings.ratioDisplayMode {
+		switch appState.settings.ratioDisplayMode {
 			case .percentage:
 				ratioString = percentage
 			case .timePerDay:
@@ -70,12 +68,12 @@ struct FundRowView: View {
 		}
 		return handleFrozen(ratioString)
 	}
-         
+	
 	func commitRenameFund() {
 		self.fund.name = self.fund.name.trimmingCharacters(in: .whitespacesAndNewlines)
 		let newName = self.fund.name
 		if newName == "" {
-			self.managedObjectContext.rollback()
+			managedObjectContext.rollback()
 		} else if self.fund.subBudget != nil {
 			let subBudget = self.fund.subBudget!
 			if subBudget.name != newName {
@@ -88,7 +86,7 @@ struct FundRowView: View {
 					}
 				}
 			}
-			saveData(self.managedObjectContext)
+			saveData()
 		}
 	}
 	
@@ -113,8 +111,8 @@ struct FundRowView: View {
 						.frame(width: 55, alignment: .trailing)
 						.onTapGesture {
 							debugLog("clicked on balance button")
-							AppState.get().fundListSettings.balanceDisplayMode = AppState.get().fundListSettings.balanceDisplayMode.next()
-							saveData(self.managedObjectContext)
+							appState.settings.balanceDisplayMode = appState.settings.balanceDisplayMode.next()
+							saveData()
 					}
 					Divider()
 					Text("\(ratioString)")
@@ -125,15 +123,15 @@ struct FundRowView: View {
 							switch self.fundAction {
 								case .earn:
 									self.fund.recharge += 1
-									saveData(self.managedObjectContext)
+									saveData()
 								case .qspend:
 									if self.fund.recharge > 1 {
 										self.fund.recharge -= 1
-										saveData(self.managedObjectContext)
-									}
+										saveData()
+								}
 								default:
-									AppState.get().fundListSettings.ratioDisplayMode = AppState.get().fundListSettings.ratioDisplayMode.next()
-									saveData(self.managedObjectContext)
+									appState.settings.ratioDisplayMode = appState.settings.ratioDisplayMode.next()
+									saveData()
 							}
 					}
 					Divider()
@@ -149,13 +147,13 @@ struct FundRowView: View {
 							debugLog("clicked on sub")
 							var fundPath = self.budgetStack.getFundPath()
 							fundPath.append(self.fund)
-							AppState.get().push(fundPath: fundPath)
+							appState.push(fundPath: fundPath)
 							self.budgetStack.push(budget: self.fund.subBudget!)
 							self.budgetStack.push(fund: self.fund)
 						}
 					} else {
 						withAnimation(.none) {
-							getMainButton(expensePeriod: AppState.get().dayViewSettings.shortPeriod)
+							getMainButton(expensePeriod: appState.settings.shortPeriod)
 						}
 					}
 				}
@@ -180,12 +178,12 @@ struct FundRowView: View {
 					case .view:
 						var fundPath = self.budgetStack.getFundPath()
 						fundPath.append(self.fund)
-						AppState.get().push(fundPath: fundPath)
+						appState.push(fundPath: fundPath)
 						return
 					case .spend:
 						var fundPath = self.budgetStack.getFundPath()
 						fundPath.append(self.fund)
-						addExpenseToCurrentTimeIfEmpty(fundPath: fundPath, managedObjectContext: self.managedObjectContext)
+						addExpenseToCurrentTimeIfEmpty(fundPath: fundPath)
 						self.budgetStack.toFirstBudget()
 					case .reset:
 						self.fund.resetBalance()
@@ -195,10 +193,10 @@ struct FundRowView: View {
 						do {
 							var subBudget: TimeBudget
 							let request = TimeBudget.fetchRequest(name: self.fund.name)
-							if let budgetWithSameName = try self.managedObjectContext.fetch(request).first {
+							if let budgetWithSameName = try managedObjectContext.fetch(request).first {
 								subBudget = budgetWithSameName
 							} else {
-								subBudget = TimeBudget(context: self.managedObjectContext)
+								subBudget = TimeBudget(context: managedObjectContext)
 								subBudget.name = self.fund.name
 							}
 							self.fund.subBudget = subBudget
@@ -206,7 +204,7 @@ struct FundRowView: View {
 							errorLog("\(error)")
 					}
 					case .copy:
-						let newFund = TimeFund(context: self.managedObjectContext)
+						let newFund = TimeFund(context: managedObjectContext)
 						newFund.name = self.fund.name
 						newFund.order = self.fund.order
 						newFund.budget = self.budgetStack.getTopBudget()
@@ -214,7 +212,7 @@ struct FundRowView: View {
 					case .edit:
 						errorLog("Impossible")
 					case .delete:
-						self.managedObjectContext.delete(self.fund)
+						managedObjectContext.delete(self.fund)
 					case .qspend:
 						self.fund.adjustBalance(-1)
 					case .freeze:
@@ -222,7 +220,7 @@ struct FundRowView: View {
 					case .unSubBudget:
 						self.fund.subBudget = nil
 				}
-				saveData(self.managedObjectContext)
+				saveData()
 		}
 	}
 }
@@ -238,7 +236,7 @@ struct FundRowLabel: View {
 
 func formatTime(_ x: TimeInterval) -> String {
 	var y = Double(x)
-
+	
 	var sign = ""
 	if y < 0 {
 		sign = "-"
@@ -256,7 +254,7 @@ func formatTime(_ x: TimeInterval) -> String {
 		y /= hours
 		unit = "h"
 	}
-
+	
 	var result: String
 	if y < 0.1 {
 		result = ""
@@ -300,12 +298,12 @@ struct FundRowView_PreviewHelper: View {
 	@FetchRequest var allFunds: FetchedResults<TimeFund>
 	@State var action: FundAction = .view
 	let fund: TimeFund
-
+	
 	init(budget: TimeBudget, fund: TimeFund) {
 		_allFunds = TimeFund.fetchAllRequest(budget: budget)
 		self.fund = fund
 	}
-		
+	
 	var body: some View {
 		FundRowView(fund: ObservedObject(initialValue: fund), funds: allFunds)
 	}
@@ -313,13 +311,12 @@ struct FundRowView_PreviewHelper: View {
 
 struct FundRowView_Previews: PreviewProvider {
 	static var previews: some View {
-
+		
 		let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
 		let testDataBuilder = TestDataBuilder(context: context)
 		testDataBuilder.createTestData()
 		let budget = testDataBuilder.budgets.first!
 		let fund = testDataBuilder.funds.first!
-		let appState = AppState.get()
 		appState.budgetStack.push(budget: budget)
 		
 		return FundRowView_PreviewHelper(budget: budget, fund: fund)
@@ -329,3 +326,4 @@ struct FundRowView_Previews: PreviewProvider {
 		
 	}
 }
+

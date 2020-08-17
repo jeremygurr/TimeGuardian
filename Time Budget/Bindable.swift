@@ -13,18 +13,18 @@ import Combine
 class Bindable<T: Equatable, M> {
 	
 	private var internalValue: T
-	private let messageToSend: M
+	private let messagesToSend: [M]
 	private var subject: PassthroughSubject<M, Never>?
 	private let beforeSet: (T, T) -> Void
 	
 	init(
 		wrappedValue: T,
-		send message: M,
+		send messages: [M],
 		to subject: PassthroughSubject<M, Never>? = nil,
 		beforeSet: @escaping (T, T) -> Void = {(_, _) in}
 	) {
 		self.internalValue = wrappedValue
-		self.messageToSend = message
+		self.messagesToSend = messages
 		self.subject = subject
 		self.beforeSet = beforeSet
 	}
@@ -38,8 +38,10 @@ class Bindable<T: Equatable, M> {
 			if internalValue != newValue {
 				internalValue = newValue
 				if let s = subject {
-					debugLog("Bindable: sending \(messageToSend)")
-					s.send(messageToSend)
+					for message in messagesToSend {
+						debugLog("Bindable: sending \(message)")
+						s.send(message)
+					}
 				}
 			}
 		}
@@ -55,8 +57,10 @@ class Bindable<T: Equatable, M> {
 				if self.internalValue != $0 {
 					self.internalValue = $0
 					if let s = self.subject {
-						debugLog("Bindable: sending \(self.messageToSend)")
-						s.send(self.messageToSend)
+						for message in self.messagesToSend {
+							debugLog("Bindable: sending \(message)")
+							s.send(message)
+						}
 					}
 				}
 		}

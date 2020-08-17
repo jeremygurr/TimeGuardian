@@ -13,10 +13,10 @@ struct TopView: View {
 	@Binding var budgetStack: BudgetStack
 	@State var viewState = 0
 	@Environment(\.editMode) var editMode
-
+	
 	init() {
 		debugLog("TopView.init")
-		_budgetStack = AppState.get().$budgetStack
+		_budgetStack = appState.$budgetStack
 	}
 	
 	private func budgetFundView() -> some View {
@@ -30,13 +30,19 @@ struct TopView: View {
 	}
 	
 	var body: some View {
-		TabView(selection: AppState.get().$mainTabSelection) {
+		TabView(selection: appState.$mainTabSelection) {
 			budgetFundView()
 				.tabItem {
 					Image(systemName: "list.bullet")
 						.imageScale(.large)
 					Text("Budget")
 			}.tag(MainTabSelection.fund)
+			SettingsView()
+				.tabItem {
+					Image(systemName: "gear")
+						.imageScale(.large)
+					Text("Settings")
+			}.tag(MainTabSelection.settings)
 			DayView()
 				.tabItem {
 					Image(systemName: "calendar")
@@ -46,7 +52,7 @@ struct TopView: View {
 		}
 		.onReceive(
 			AppState.subject
-				.filter({ $0 == .budgetStack || $0 == .topView })
+				.filter({ $0 == .topView })
 				.collect(.byTime(RunLoop.main, .milliseconds(stateChangeCollectionTime)))
 		) { x in
 			self.viewState += 1
@@ -57,6 +63,7 @@ struct TopView: View {
 
 enum MainTabSelection: Int, Hashable {
 	case fund = 0
+	case settings
 	case day
 }
 
@@ -84,11 +91,10 @@ struct BudgetListViewWindow: View {
 struct FundListViewWindow: View {
 	@Binding var budgetStack: BudgetStack
 	@Environment(\.editMode) var editMode
-	@Environment(\.managedObjectContext) var managedObjectContext
 	
 	init() {
 		debugLog("FundListViewWindow.init")
-		_budgetStack = AppState.get().$budgetStack
+		_budgetStack = appState.$budgetStack
 	}
 	
 	var body: some View {
@@ -102,31 +108,31 @@ struct FundListViewWindow: View {
 						withAnimation(.none) {
 							self.budgetStack.removeLastBudget()
 							self.budgetStack.removeLastFund()
-							AppState.get().titleOverride = nil
+							appState.titleOverride = nil
 							self.editMode?.wrappedValue = .inactive
-							self.managedObjectContext.rollback()
+							managedObjectContext.rollback()
 						}
 				}
-//				.onLongPressGesture(
-//					minimumDuration: Double(longPressDuration), maximumDistance: longPressMaxDrift,
-//					pressing: {
-//						if $0 {
-//							AppState.get().titleOverride = "to Top"
-//						} else {
-//							AppState.get().titleOverride = nil
-//						}
-//				}, perform: {
-//					withAnimation(.none) {
-//						self.budgetStack.toFirstBudget()
-//						AppState.get().titleOverride = nil
-//						self.editMode?.wrappedValue = .inactive
-//						self.managedObjectContext.rollback()
-//					}
-//				}
-//				)
+				//				.onLongPressGesture(
+				//					minimumDuration: Double(longPressDuration), maximumDistance: longPressMaxDrift,
+				//					pressing: {
+				//						if $0 {
+				//							appState.titleOverride = "to Top"
+				//						} else {
+				//							appState.titleOverride = nil
+				//						}
+				//				}, perform: {
+				//					withAnimation(.none) {
+				//						self.budgetStack.toFirstBudget()
+				//						appState.titleOverride = nil
+				//						self.editMode?.wrappedValue = .inactive
+				//						self.managedObjectContext.rollback()
+				//					}
+				//				}
+				//				)
 				Spacer()
-				Text("\(AppState.get().title)")
-					.font(Font.system(size: AppState.get().budgetNameFontSize))
+				Text("\(appState.title)")
+					.font(Font.system(size: appState.budgetNameFontSize))
 					.padding(Edge.Set([.trailing]), 10)
 			}
 			.frame(maxWidth: .infinity, alignment: .leading)
@@ -146,4 +152,5 @@ struct TopView_Previews: PreviewProvider {
 			.environment(\.managedObjectContext, context)
 	}
 }
+
 

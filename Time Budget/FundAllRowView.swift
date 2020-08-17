@@ -12,11 +12,10 @@ import SwiftUI
 struct FundAllRowView: View {
 	var allFunds: FetchedResults<TimeFund>
 	@Binding var action: FundAction
-	@Environment(\.managedObjectContext) var managedObjectContext
-
+	
 	init(allFunds: FetchedResults<TimeFund>) {
 		self.allFunds = allFunds
-		_action = AppState.get().$fundListAction
+		_action = appState.$fundListAction
 	}
 	
 	var allFundBalance: Int {
@@ -25,7 +24,7 @@ struct FundAllRowView: View {
 	
 	var ratioString: String {
 		let ratioString: String
-		let budgetStack = AppState.get().budgetStack
+		let budgetStack = appState.budgetStack
 		
 		var ratioSum : Float = 0
 		var rechargeSum : Float = 0
@@ -37,10 +36,10 @@ struct FundAllRowView: View {
 		}
 		
 		let percentage = formatPercentage(ratioSum * budgetStack.getCurrentRatio())
-		let longPeriod = AppState.get().fundListSettings.longPeriod
+		let longPeriod = appState.settings.longPeriod
 		let time = formatTime(TimeInterval(ratioSum * budgetStack.getCurrentRatio()) * longPeriod)
 		let rechargeAmount = formatRecharge(rechargeSum)
-		switch AppState.get().fundListSettings.ratioDisplayMode {
+		switch appState.settings.ratioDisplayMode {
 			case .percentage:
 				ratioString = percentage
 			case .timePerDay:
@@ -51,7 +50,7 @@ struct FundAllRowView: View {
 		return ratioString
 	}
 	
-
+	
 	var body: some View {
 		Section() {
 			Button(action: {
@@ -66,7 +65,7 @@ struct FundAllRowView: View {
 					}
 					case .delete:
 						for fund in self.allFunds {
-							self.managedObjectContext.delete(fund)
+							managedObjectContext.delete(fund)
 					}
 					case .qspend:
 						for fund in self.allFunds {
@@ -79,7 +78,7 @@ struct FundAllRowView: View {
 					default:
 						debugLog("Impossible")
 				}
-				saveData(self.managedObjectContext)
+				saveData()
 			}, label: {
 				HStack {
 					Text("\(allFundBalance)")
@@ -90,7 +89,7 @@ struct FundAllRowView: View {
 						.contentShape(Rectangle())
 						.onTapGesture {
 							debugLog("clicked on ratio button")
-							AppState.get().fundListSettings.ratioDisplayMode = AppState.get().fundListSettings.ratioDisplayMode.next()
+							appState.settings.ratioDisplayMode = appState.settings.ratioDisplayMode.next()
 					}
 					Divider()
 					Text("All Funds")
@@ -105,11 +104,10 @@ struct FundAllRowView: View {
 struct FundAllSpentRowView: View {
 	var spentFunds: FetchedResults<TimeFund>
 	@Binding var action: FundAction
-	@Environment(\.managedObjectContext) var managedObjectContext
 	
 	var ratioString: String {
 		let ratioString: String
-		let budgetStack = AppState.get().budgetStack
+		let budgetStack = appState.budgetStack
 		
 		var ratioSum : Float = 0
 		var rechargeSum : Float = 0
@@ -121,10 +119,10 @@ struct FundAllSpentRowView: View {
 		}
 		
 		let percentage = formatPercentage(ratioSum * budgetStack.getCurrentRatio())
-		let longPeriod = AppState.get().fundListSettings.longPeriod
+		let longPeriod = appState.settings.longPeriod
 		let time = formatTime(TimeInterval(ratioSum * budgetStack.getCurrentRatio()) * longPeriod)
 		let rechargeAmount = formatRecharge(rechargeSum)
-		switch AppState.get().fundListSettings.ratioDisplayMode {
+		switch appState.settings.ratioDisplayMode {
 			case .percentage:
 				ratioString = percentage
 			case .timePerDay:
@@ -137,7 +135,7 @@ struct FundAllSpentRowView: View {
 	
 	init(spentFunds: FetchedResults<TimeFund>) {
 		self.spentFunds = spentFunds
-		_action = AppState.get().$fundListAction
+		_action = appState.$fundListAction
 	}
 	
 	var allSpentFundBalance: Int {
@@ -158,7 +156,7 @@ struct FundAllSpentRowView: View {
 					}
 					case .delete:
 						for fund in self.spentFunds {
-							self.managedObjectContext.delete(fund)
+							managedObjectContext.delete(fund)
 					}
 					case .qspend:
 						for fund in self.spentFunds {
@@ -171,7 +169,7 @@ struct FundAllSpentRowView: View {
 					default:
 						debugLog("Impossible")
 				}
-				saveData(self.managedObjectContext)
+				saveData()
 			}, label: {
 				HStack {
 					Text("\(allSpentFundBalance)")
@@ -182,7 +180,7 @@ struct FundAllSpentRowView: View {
 						.contentShape(Rectangle())
 						.onTapGesture {
 							debugLog("clicked on ratio button")
-							AppState.get().fundListSettings.ratioDisplayMode = AppState.get().fundListSettings.ratioDisplayMode.next()
+							appState.settings.ratioDisplayMode = appState.settings.ratioDisplayMode.next()
 					}
 					Divider()
 					Text("All Spent Funds")
@@ -193,4 +191,5 @@ struct FundAllSpentRowView: View {
 		}
 	}
 }
+
 
