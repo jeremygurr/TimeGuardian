@@ -104,7 +104,9 @@ class AppState {
 	var dayViewActionDetail: String = "No action selected"
 	
 	var dayViewPeriodsPerDay: Int {
-		return Int(oneDay / settings.shortPeriod)
+		let result = Int(oneDay / settings.shortPeriod)
+		debugLog("AppState.dayViewPeriodsPerDay = \(result)")
+		return result
 	}
 	
 	@Bindable(send: [.dayView], to: subject)
@@ -209,9 +211,12 @@ struct WrappedSettings: Equatable {
 			
 			_shortPeriod = Binding(
 				get: {
-					settings.shortPeriod
+					debugLog("AppState WrappedSettings get shortPeriod = \(settings.shortPeriod)")
+					return settings.shortPeriod
 			}, set: {
+				debugLog("AppState WrappedSettings setting shortPeriod to \($0)")
 				settings.shortPeriod = $0
+				debugLog("AppState WrappedSettings shortPeriod is now \(settings.shortPeriod)")
 			}
 			)
 			

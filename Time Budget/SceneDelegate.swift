@@ -15,7 +15,6 @@ var managedObjectContext: NSManagedObjectContext = (UIApplication.shared.delegat
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 	
 	var window: UIWindow?
-	lazy var state: AppState = AppState()
 	
 	func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
 		// Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
@@ -29,12 +28,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 //			let tdb = TestDataBuilder(context: context)
 //			tdb.createTestData()
 		
-		state.migrateData()
+		appState.migrateData()
 		
 		// Create the SwiftUI view and set the context as the value for the managedObjectContext environment keyPath.
 		// Add `@Environment(\.managedObjectContext)` in the views that will need the context.
 		let contentView = TopView()
-			.environment(\.managedObjectContext, context)
+			.environment(\.managedObjectContext, managedObjectContext)
 		
 		// Use a UIHostingController as window root view controller.
 		if let windowScene = scene as? UIWindowScene {
@@ -55,7 +54,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 	func sceneDidBecomeActive(_ scene: UIScene) {
 		// Called when the scene has moved from an inactive state to an active state.
 		// Use this method to restart any tasks that were paused (or not yet started) when the scene was inactive.
-		state.dayViewTimeSlotOfCurrentTime = getTimeSlotOfCurrentTime()
+		appState.dayViewTimeSlotOfCurrentTime = getTimeSlotOfCurrentTime()
 	}
 	
 	func sceneWillResignActive(_ scene: UIScene) {

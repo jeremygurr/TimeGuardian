@@ -41,6 +41,8 @@ struct DayView: View {
 		_recentExpenses = TimeExpense.fetchRequestFor(startDate: newStartDate, endDate: newEndDate)
 		var newTimeSlots: [TimeSlot] = []
 		
+		debugLog("DayView.init: Generating \(appState.dayViewPeriodsPerDay) time slots for each day")
+		
 		for dayOffset in -plusMinus ... plusMinus {
 			for timeSlot in 0 ..< appState.dayViewPeriodsPerDay {
 				let baseDate = today + Double(dayOffset) * days
