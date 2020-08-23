@@ -41,10 +41,10 @@ struct DayView: View {
 		_recentExpenses = TimeExpense.fetchRequestFor(startDate: newStartDate, endDate: newEndDate)
 		var newTimeSlots: [TimeSlot] = []
 		
-		debugLog("DayView.init: Generating \(appState.dayViewPeriodsPerDay) time slots for each day")
+		debugLog("DayView.init: Generating \(dayViewPeriodsPerDay()) time slots for each day")
 		
 		for dayOffset in -plusMinus ... plusMinus {
-			for timeSlot in 0 ..< appState.dayViewPeriodsPerDay {
+			for timeSlot in 0 ..< dayViewPeriodsPerDay() {
 				let baseDate = today + Double(dayOffset) * days
 				newTimeSlots.append(
 					TimeSlot(
@@ -169,8 +169,10 @@ struct DayView: View {
 		let today = getStartOfDay()
 		let plusMinus = appState.dayViewPlusMinusDays
 		
+		debugLog("DayView.updateTimeSlots: Generating \(dayViewPeriodsPerDay()) time slots for each day")
+
 		for dayOffset in -plusMinus ... plusMinus {
-			for timeSlot in 0 ..< appState.dayViewPeriodsPerDay {
+			for timeSlot in 0 ..< dayViewPeriodsPerDay() {
 				let baseDate = today + Double(dayOffset) * days
 				newTimeSlots.append(TimeSlot(baseDate: baseDate, slotIndex: timeSlot, slotSize: appState.settings.shortPeriod))
 			}
@@ -181,6 +183,15 @@ struct DayView: View {
 		}
 	}
 	
+}
+
+func dayViewPeriodsPerDay() -> Int {
+	let settings = appState.settings
+	let shortPeriod = settings.shortPeriod
+	debugLog("dayViewPeriodsPerDay read shortPeriod = \(shortPeriod)")
+	let result = Int(oneDay / appState.settings.shortPeriod)
+	debugLog("dayViewPeriodsPerDay() = \(result)")
+	return result
 }
 
 struct RecentFundViewRow: View {

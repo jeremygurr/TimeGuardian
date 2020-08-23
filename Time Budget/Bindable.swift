@@ -35,8 +35,9 @@ class Bindable<T: Equatable, M> {
 		}
 		set {
 			beforeSet(internalValue, newValue)
-			if internalValue != newValue {
-				internalValue = newValue
+			let changed = internalValue != newValue
+			internalValue = newValue
+			if changed {
 				if let s = subject {
 					for message in messagesToSend {
 						debugLog("Bindable: sending \(message)")
@@ -54,8 +55,9 @@ class Bindable<T: Equatable, M> {
 		},
 			set: {
 				self.beforeSet(self.internalValue, $0)
-				if self.internalValue != $0 {
-					self.internalValue = $0
+				let changed = self.internalValue != $0
+				self.internalValue = $0
+				if changed {
 					if let s = self.subject {
 						for message in self.messagesToSend {
 							debugLog("Bindable: sending \(message)")

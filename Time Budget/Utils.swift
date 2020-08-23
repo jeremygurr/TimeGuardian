@@ -35,10 +35,11 @@ func errorLog(_ message: String) {
 }
 
 func saveData() {
-	debugLog("saveData")
+	debugLog("saveData called")
 
 	managedObjectContext.performAndWait {
 		do {
+			debugLog("managedObjectContext.save() called")
 			try managedObjectContext.save()
 		} catch {
 			let nserror = error as NSError

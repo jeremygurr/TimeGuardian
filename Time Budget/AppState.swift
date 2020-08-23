@@ -28,7 +28,7 @@ class AppState {
 	}
 	
 	func migrateData() {
-		let dataVersion = settings.dataVersion
+		let dataVersion = AppState.newSettings.dataVersion
 		if dataVersion < 1 {
 			debugLog("Older dataVersion found: \(dataVersion), migrating data to version 1")
 			do {
@@ -51,7 +51,7 @@ class AppState {
 						debugLog("New expense: \(expense.description)")
 					}
 				}
-				settings.dataVersion = 1
+				AppState.newSettings.dataVersion = 1
 				saveData()
 			} catch {
 				errorLog("Error migrating data: \(error)")
@@ -59,10 +59,51 @@ class AppState {
 		}
 	}
 	
+	func loadSettings() {
+		shortPeriod = AppState.newSettings.shortPeriod
+		longPeriod = AppState.newSettings.longPeriod
+		balanceDisplayMode = BalanceDisplayMode(rawValue: Int(AppState.newSettings.balanceDisplayMode)) ?? .unit
+		ratioDisplayMode = RatioDisplayMode(rawValue: Int(AppState.newSettings.ratioDisplayMode)) ?? .percentage
+	}
+	
 	static let subject = PassthroughSubject<ViewRefreshKey, Never>()
 	
-	@Bindable(send: [.fundList, .dayView], to: subject)
-	var settings = WrappedSettings()
+//	@Bindable(send: [.fundList, .dayView], to: subject)
+//	var something:
+	
+	static var newSettings = Settings.fetch(context: managedObjectContext)
+	
+	@Bindable(send: [.topView], to: subject, beforeSet: {
+		(beforeValue, afterValue) in
+		if beforeValue != afterValue {
+			newSettings.shortPeriod = afterValue
+		}
+	})
+	var shortPeriod: TimeInterval = 30 * minutes
+	
+	@Bindable(send: [.topView], to: subject, beforeSet: {
+		(beforeValue, afterValue) in
+		if beforeValue != afterValue {
+			newSettings.longPeriod = afterValue
+		}
+	})
+	var longPeriod: TimeInterval = oneDay
+	
+	@Bindable(send: [.topView], to: subject, beforeSet: {
+		(beforeValue, afterValue) in
+		if beforeValue != afterValue {
+			newSettings.balanceDisplayMode = Int16(afterValue.rawValue)
+		}
+	})
+	var balanceDisplayMode: BalanceDisplayMode = .unit
+	
+	@Bindable(send: [.topView], to: subject, beforeSet: {
+		(beforeValue, afterValue) in
+		if beforeValue != afterValue {
+			newSettings.ratioDisplayMode = Int16(afterValue.rawValue)
+		}
+	})
+	var ratioDisplayMode: RatioDisplayMode = .percentage
 	
 	@Bindable(send: [.topView], to: subject, beforeSet: {
 		(beforeValue, afterValue) in
@@ -102,12 +143,6 @@ class AppState {
 		debugLog("Bindable: dayViewActionDetail changed from " + beforeValue + "  to " + afterValue)
 	})
 	var dayViewActionDetail: String = "No action selected"
-	
-	var dayViewPeriodsPerDay: Int {
-		let result = Int(oneDay / settings.shortPeriod)
-		debugLog("AppState.dayViewPeriodsPerDay = \(result)")
-		return result
-	}
 	
 	@Bindable(send: [.dayView], to: subject)
 	var dayViewTimeSlotOfCurrentTime: TimeSlot = TimeSlot(baseDate: Date(), slotIndex: 0, slotSize: 30 * minutes)
@@ -183,7 +218,7 @@ class AppState {
 	
 }
 
-struct WrappedSettings: Equatable {
+struct NotUsedWrappedSettings: Equatable {
 	static func == (lhs: WrappedSettings, rhs: WrappedSettings) -> Bool {
 		lhs.shortPeriod == rhs.shortPeriod
 			&& lhs.longPeriod == rhs.longPeriod
@@ -199,6 +234,7 @@ struct WrappedSettings: Equatable {
 	
 	init() {
 		
+		debugLog("WrappedSettings.init")
 		do {
 			let settings: Settings
 			let request: NSFetchRequest<Settings> = Settings.fetchRequest()
@@ -206,6 +242,7 @@ struct WrappedSettings: Equatable {
 			if let s = settingsArray.first {
 				settings = s
 			} else {
+				debugLog("WrappedSettings.init: created new Settings record")
 				settings = Settings(context: managedObjectContext)
 			}
 			
