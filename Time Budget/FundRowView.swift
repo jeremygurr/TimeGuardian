@@ -34,10 +34,10 @@ struct FundRowView: View {
 	var balanceString: String {
 		let balanceString: String
 		//		let t = fund.getRatio() * budgetStack.getCurrentRatio() * longPeriod * fund.balance / fund.recharge
-		let shortPeriod = appState.settings.shortPeriod
+		let shortPeriod = appState.shortPeriod
 		let t = shortPeriod * TimeInterval(fund.balance)
 		let time = formatTime(t)
-		switch appState.settings.balanceDisplayMode {
+		switch appState.balanceDisplayMode {
 			case .unit:
 				balanceString = "\(Int(fund.balance))"
 			case .time:
@@ -52,13 +52,13 @@ struct FundRowView: View {
 			formatPercentage(
 				fund.getRatio() * budgetStack.getCurrentRatio()
 		)
-		let longPeriod = appState.settings.longPeriod
+		let longPeriod = appState.longPeriod
 		let time =
 			formatTime(
 				TimeInterval(fund.getRatio() * budgetStack.getCurrentRatio()) * longPeriod
 		)
 		let rechargeAmount = formatRecharge(fund.recharge)
-		switch appState.settings.ratioDisplayMode {
+		switch appState.ratioDisplayMode {
 			case .percentage:
 				ratioString = percentage
 			case .timePerDay:
@@ -111,7 +111,7 @@ struct FundRowView: View {
 						.frame(width: 55, alignment: .trailing)
 						.onTapGesture {
 							debugLog("clicked on balance button")
-							appState.settings.balanceDisplayMode = appState.settings.balanceDisplayMode.next()
+							appState.balanceDisplayMode = appState.balanceDisplayMode.next()
 							saveData()
 					}
 					Divider()
@@ -130,7 +130,7 @@ struct FundRowView: View {
 										saveData()
 								}
 								default:
-									appState.settings.ratioDisplayMode = appState.settings.ratioDisplayMode.next()
+									appState.ratioDisplayMode = appState.ratioDisplayMode.next()
 									saveData()
 							}
 					}
@@ -153,7 +153,7 @@ struct FundRowView: View {
 						}
 					} else {
 						withAnimation(.none) {
-							getMainButton(expensePeriod: appState.settings.shortPeriod)
+							getMainButton(expensePeriod: appState.shortPeriod)
 						}
 					}
 				}

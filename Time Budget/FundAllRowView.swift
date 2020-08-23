@@ -36,10 +36,10 @@ struct FundAllRowView: View {
 		}
 		
 		let percentage = formatPercentage(ratioSum * budgetStack.getCurrentRatio())
-		let longPeriod = appState.settings.longPeriod
+		let longPeriod = appState.longPeriod
 		let time = formatTime(TimeInterval(ratioSum * budgetStack.getCurrentRatio()) * longPeriod)
 		let rechargeAmount = formatRecharge(rechargeSum)
-		switch appState.settings.ratioDisplayMode {
+		switch appState.ratioDisplayMode {
 			case .percentage:
 				ratioString = percentage
 			case .timePerDay:
@@ -89,7 +89,7 @@ struct FundAllRowView: View {
 						.contentShape(Rectangle())
 						.onTapGesture {
 							debugLog("clicked on ratio button")
-							appState.settings.ratioDisplayMode = appState.settings.ratioDisplayMode.next()
+							appState.ratioDisplayMode = appState.ratioDisplayMode.next()
 					}
 					Divider()
 					Text("All Funds")
@@ -119,10 +119,10 @@ struct FundAllSpentRowView: View {
 		}
 		
 		let percentage = formatPercentage(ratioSum * budgetStack.getCurrentRatio())
-		let longPeriod = appState.settings.longPeriod
+		let longPeriod = appState.longPeriod
 		let time = formatTime(TimeInterval(ratioSum * budgetStack.getCurrentRatio()) * longPeriod)
 		let rechargeAmount = formatRecharge(rechargeSum)
-		switch appState.settings.ratioDisplayMode {
+		switch appState.ratioDisplayMode {
 			case .percentage:
 				ratioString = percentage
 			case .timePerDay:
@@ -180,7 +180,7 @@ struct FundAllSpentRowView: View {
 						.contentShape(Rectangle())
 						.onTapGesture {
 							debugLog("clicked on ratio button")
-							appState.settings.ratioDisplayMode = appState.settings.ratioDisplayMode.next()
+							appState.ratioDisplayMode = appState.ratioDisplayMode.next()
 					}
 					Divider()
 					Text("All Spent Funds")

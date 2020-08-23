@@ -17,7 +17,7 @@ struct SettingsView: View {
 	var body: some View {
 		VStack {
 			Text("Fund Time Unit")
-			Picker("Fund Time Unit", selection: appState.settings.$shortPeriod) {
+			Picker("Fund Time Unit", selection: appState.$shortPeriod) {
 				Text("10 minutes").tag(10 * minutes)
 				Text("12 minutes").tag(12 * minutes)
 				Text("15 minutes").tag(15 * minutes)

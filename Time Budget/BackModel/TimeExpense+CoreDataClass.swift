@@ -108,7 +108,7 @@ func addExpense(timeSlot: TimeSlot, fundPath: FundPath) {
 func getTimeSlotOfCurrentTime() -> TimeSlot {
 	let now = Date()
 	let startOfDay = getStartOfDay()
-	let expensePeriod = appState.settings.shortPeriod
+	let expensePeriod = appState.shortPeriod
 	let difference = startOfDay.distance(to: now)
 	let itemIndex = Int(difference / expensePeriod)
 	return TimeSlot(baseDate: startOfDay, slotIndex: itemIndex, slotSize: expensePeriod)

@@ -50,7 +50,7 @@ struct DayView: View {
 					TimeSlot(
 						baseDate: baseDate,
 						slotIndex: timeSlot,
-						slotSize: appState.settings.shortPeriod
+						slotSize: appState.shortPeriod
 					)
 				)
 			}
@@ -174,7 +174,7 @@ struct DayView: View {
 		for dayOffset in -plusMinus ... plusMinus {
 			for timeSlot in 0 ..< dayViewPeriodsPerDay() {
 				let baseDate = today + Double(dayOffset) * days
-				newTimeSlots.append(TimeSlot(baseDate: baseDate, slotIndex: timeSlot, slotSize: appState.settings.shortPeriod))
+				newTimeSlots.append(TimeSlot(baseDate: baseDate, slotIndex: timeSlot, slotSize: appState.shortPeriod))
 			}
 		}
 		
@@ -186,10 +186,9 @@ struct DayView: View {
 }
 
 func dayViewPeriodsPerDay() -> Int {
-	let settings = appState.settings
-	let shortPeriod = settings.shortPeriod
+	let shortPeriod = appState.shortPeriod
 	debugLog("dayViewPeriodsPerDay read shortPeriod = \(shortPeriod)")
-	let result = Int(oneDay / appState.settings.shortPeriod)
+	let result = Int(oneDay / appState.shortPeriod)
 	debugLog("dayViewPeriodsPerDay() = \(result)")
 	return result
 }
@@ -364,7 +363,7 @@ struct ExpenseRowView: View {
 func getExpenseFor(timeSlot: TimeSlot, todaysExpenses: FetchedResults<TimeExpense>) -> TimeExpense? {
 	var result: TimeExpense? = nil
 	
-	let shortPeriod = appState.settings.shortPeriod
+	let shortPeriod = appState.shortPeriod
 	for expense in todaysExpenses {
 		if expense.when >= timeSlot.baseDate + Double(timeSlot.slotIndex) * shortPeriod {
 			let endDate = timeSlot.baseDate + Double(timeSlot.slotIndex) * shortPeriod + shortPeriod
