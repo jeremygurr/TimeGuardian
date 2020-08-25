@@ -15,9 +15,6 @@ struct DayView: View {
 	@State var viewState = 0
 	
 	@Binding var budgetStack: BudgetStack
-	@FetchRequest var recentExpenses: FetchedResults<TimeExpense>
-	@State var startDate: Date
-	@State var endDate: Date
 	@State var timeSlots: [TimeSlot]
 	@Binding var action: DayViewAction
 	@Binding var actionDetail: String
@@ -34,22 +31,17 @@ struct DayView: View {
 		_actionDetail = appState.$dayViewActionDetail
 		let today = getStartOfDay()
 		let plusMinus = appState.dayViewPlusMinusDays
-		let newStartDate = today - Double(plusMinus) * days
-		let newEndDate = today + Double(plusMinus) * days
-		_startDate = State(initialValue: newStartDate)
-		_endDate = State(initialValue: newEndDate)
-		_recentExpenses = TimeExpense.fetchRequestFor(startDate: newStartDate, endDate: newEndDate)
 		var newTimeSlots: [TimeSlot] = []
 		
 		debugLog("DayView.init: Generating \(dayViewPeriodsPerDay()) time slots for each day")
 		
 		for dayOffset in -plusMinus ... plusMinus {
-			for timeSlot in 0 ..< dayViewPeriodsPerDay() {
+			for slotIndex in 0 ..< dayViewPeriodsPerDay() {
 				let baseDate = today + Double(dayOffset) * days
 				newTimeSlots.append(
 					TimeSlot(
 						baseDate: baseDate,
-						slotIndex: timeSlot,
+						slotIndex: slotIndex,
 						slotSize: appState.shortPeriod
 					)
 				)
@@ -88,10 +80,9 @@ struct DayView: View {
 			List {
 				Section(header: Text("Time Slots")) {
 					ExpenseRowView(
-						tableView: self.$tableView,
-						todaysExpenses: self.recentExpenses,
+						tableView: $tableView,
 						timeSlots: $timeSlots,
-						timeSlotOfCurrentTime: self.$timeSlotOfCurrentTime
+						timeSlotOfCurrentTime: $timeSlotOfCurrentTime
 					)
 						.listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
 				}
@@ -249,21 +240,33 @@ struct RecentFundViewRow: View {
 struct ExpenseRowView: View {
 	@Binding private var tableView: UITableView?
 	@Binding var budgetStack: BudgetStack
-	var todaysExpenses: FetchedResults<TimeExpense>
+	@FetchRequest var recentExpenses: FetchedResults<TimeExpense>
 	@Binding var timeSlots: [TimeSlot]
 	@Binding var lastSelectedFundPaths: [FundPath]
 	@Binding var action: DayViewAction
 	@Binding var timeSlotOfCurrentTime: TimeSlot
-	
-	init(tableView: Binding<UITableView?>, todaysExpenses: FetchedResults<TimeExpense>, timeSlots: Binding<[TimeSlot]>, timeSlotOfCurrentTime: Binding<TimeSlot>) {
+	@State var startDate: Date
+	@State var endDate: Date
+
+	init(tableView: Binding<UITableView?>, timeSlots: Binding<[TimeSlot]>, timeSlotOfCurrentTime: Binding<TimeSlot>) {
+
 		debugLog("ExpenseRowView.init")
+
 		_tableView = tableView
-		self.todaysExpenses = todaysExpenses
 		_timeSlots = timeSlots
 		_budgetStack = appState.$budgetStack
 		_lastSelectedFundPaths = appState.$lastSelectedFundPaths
 		_action = appState.$dayViewAction
 		_timeSlotOfCurrentTime = timeSlotOfCurrentTime
+
+		let today = getStartOfDay()
+		let plusMinus = appState.dayViewPlusMinusDays
+		let newStartDate = today - Double(plusMinus) * days
+		let newEndDate = today + Double(plusMinus) * days
+		_startDate = State(initialValue: newStartDate)
+		_endDate = State(initialValue: newEndDate)
+		_recentExpenses = TimeExpense.fetchRequestFor(startDate: newStartDate, endDate: newEndDate)
+
 	}
 	
 	var body: some View {
@@ -288,14 +291,14 @@ struct ExpenseRowView: View {
 			}
 			.padding(.leading, 10)
 			Spacer()
-			Text("\(toExpenseString(timeSlot: timeSlot, todaysExpenses: self.todaysExpenses))")
+			Text("\(toExpenseString(timeSlot: timeSlot, todaysExpenses: self.recentExpenses))")
 				.padding(.trailing, 10)
 		}
 		.contentShape(Rectangle())
 		.background(colorOfRow(timeSlot: timeSlot))
 		.onTapGesture {
 			debugLog("DayView: expense row pressed")
-			let existingExpense = getExpenseFor(timeSlot: timeSlot, todaysExpenses: self.todaysExpenses)
+			let existingExpense = getExpenseFor(timeSlot: timeSlot, todaysExpenses: self.recentExpenses)
 			
 			if let t = self.tableView {
 				appState.dayViewPosition = t.contentOffset

@@ -23,12 +23,13 @@ struct SettingsView: View {
 				Text("15 minutes").tag(15 * minutes)
 				Text("20 minutes").tag(20 * minutes)
 				Text("30 minutes").tag(30 * minutes)
-				Text("60 minutes").tag(60 * minutes)
+				Text("1 hour").tag(oneHour)
 				Text("2 hours").tag(2 * hours)
 			}
 			.labelsHidden()
 		}
 		.onDisappear() {
+			debugLog("SettingsView disappeared")
 			saveData()
 		}
 	}

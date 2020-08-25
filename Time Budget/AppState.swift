@@ -73,9 +73,10 @@ class AppState {
 	
 	static var newSettings = Settings.fetch(context: managedObjectContext)
 	
-	@Bindable(send: [.topView], to: subject, beforeSet: {
+	@Bindable(send: [.fundList, .dayView], to: subject, beforeSet: {
 		(beforeValue, afterValue) in
 		if beforeValue != afterValue {
+			debugLog("AppState: updating settings.shortPeriod to " + String(afterValue))
 			newSettings.shortPeriod = afterValue
 		}
 	})
