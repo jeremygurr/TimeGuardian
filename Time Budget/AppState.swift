@@ -28,7 +28,7 @@ class AppState {
 	}
 	
 	func migrateData() {
-		let dataVersion = AppState.newSettings.dataVersion
+		let dataVersion = AppState.settings.dataVersion
 		if dataVersion < 1 {
 			debugLog("Older dataVersion found: \(dataVersion), migrating data to version 1")
 			do {
@@ -51,7 +51,7 @@ class AppState {
 						debugLog("New expense: \(expense.description)")
 					}
 				}
-				AppState.newSettings.dataVersion = 1
+				AppState.settings.dataVersion = 1
 				saveData()
 			} catch {
 				errorLog("Error migrating data: \(error)")
@@ -60,10 +60,10 @@ class AppState {
 	}
 	
 	func loadSettings() {
-		shortPeriod = AppState.newSettings.shortPeriod
-		longPeriod = AppState.newSettings.longPeriod
-		balanceDisplayMode = BalanceDisplayMode(rawValue: Int(AppState.newSettings.balanceDisplayMode)) ?? .unit
-		ratioDisplayMode = RatioDisplayMode(rawValue: Int(AppState.newSettings.ratioDisplayMode)) ?? .percentage
+		shortPeriod = AppState.settings.shortPeriod
+		longPeriod = AppState.settings.longPeriod
+		balanceDisplayMode = BalanceDisplayMode(rawValue: Int(AppState.settings.balanceDisplayMode)) ?? .unit
+		ratioDisplayMode = RatioDisplayMode(rawValue: Int(AppState.settings.ratioDisplayMode)) ?? .percentage
 	}
 	
 	static let subject = PassthroughSubject<ViewRefreshKey, Never>()
@@ -71,37 +71,37 @@ class AppState {
 //	@Bindable(send: [.fundList, .dayView], to: subject)
 //	var something:
 	
-	static var newSettings = Settings.fetch(context: managedObjectContext)
+	static private var settings = Settings.fetch(context: managedObjectContext)
 	
 	@Bindable(send: [.fundList, .dayView], to: subject, beforeSet: {
 		(beforeValue, afterValue) in
 		if beforeValue != afterValue {
 			debugLog("AppState: updating settings.shortPeriod to " + String(afterValue))
-			newSettings.shortPeriod = afterValue
+			settings.shortPeriod = afterValue
 		}
 	})
 	var shortPeriod: TimeInterval = 30 * minutes
 	
-	@Bindable(send: [.topView], to: subject, beforeSet: {
+	@Bindable(send: [.fundList], to: subject, beforeSet: {
 		(beforeValue, afterValue) in
 		if beforeValue != afterValue {
-			newSettings.longPeriod = afterValue
+			settings.longPeriod = afterValue
 		}
 	})
 	var longPeriod: TimeInterval = oneDay
 	
-	@Bindable(send: [.topView], to: subject, beforeSet: {
+	@Bindable(send: [.fundList], to: subject, beforeSet: {
 		(beforeValue, afterValue) in
 		if beforeValue != afterValue {
-			newSettings.balanceDisplayMode = Int16(afterValue.rawValue)
+			settings.balanceDisplayMode = Int16(afterValue.rawValue)
 		}
 	})
 	var balanceDisplayMode: BalanceDisplayMode = .unit
 	
-	@Bindable(send: [.topView], to: subject, beforeSet: {
+	@Bindable(send: [.fundList], to: subject, beforeSet: {
 		(beforeValue, afterValue) in
 		if beforeValue != afterValue {
-			newSettings.ratioDisplayMode = Int16(afterValue.rawValue)
+			settings.ratioDisplayMode = Int16(afterValue.rawValue)
 		}
 	})
 	var ratioDisplayMode: RatioDisplayMode = .percentage
@@ -121,7 +121,7 @@ class AppState {
 	})
 	var mainTabSelection = MainTabSelection.fund
 	
-	@Bindable(send: [.topView, .fundList], to: subject)
+	@Bindable(send: [.fundList], to: subject)
 	var budgetStack: BudgetStack = BudgetStack()
 	
 	@Bindable(send: [.dayView], to: subject)
@@ -144,6 +144,8 @@ class AppState {
 		debugLog("Bindable: dayViewActionDetail changed from " + beforeValue + "  to " + afterValue)
 	})
 	var dayViewActionDetail: String = "No action selected"
+	
+	var dayViewTimeSlots: [TimeSlot] = []
 	
 	@Bindable(send: [.dayView], to: subject)
 	var dayViewTimeSlotOfCurrentTime: TimeSlot = TimeSlot(baseDate: Date(), slotIndex: 0, slotSize: 30 * minutes)
@@ -183,7 +185,7 @@ class AppState {
 		lastSelectedFundPaths = newFundPaths
 	}
 	
-	@Bindable(send: [.topView], to: subject)
+	@Bindable(send: [false])
 	var titleOverride: String? = nil
 	
 	var title: String {

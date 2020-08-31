@@ -19,7 +19,7 @@ class Bindable<T: Equatable, M> {
 	
 	init(
 		wrappedValue: T,
-		send messages: [M],
+		send messages: [M] = [],
 		to subject: PassthroughSubject<M, Never>? = nil,
 		beforeSet: @escaping (T, T) -> Void = {(_, _) in}
 	) {

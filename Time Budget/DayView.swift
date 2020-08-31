@@ -15,7 +15,6 @@ struct DayView: View {
 	@State var viewState = 0
 	
 	@Binding var budgetStack: BudgetStack
-	@State var timeSlots: [TimeSlot]
 	@Binding var action: DayViewAction
 	@Binding var actionDetail: String
 	@Binding var recentFunds: [FundPath]
@@ -26,6 +25,9 @@ struct DayView: View {
 	init() {
 		
 		debugLog("DayView.init")
+				
+		// rebuild this view if current time timeslot is incorrect
+		appState.dayViewTimeSlotOfCurrentTime = getTimeSlotOfCurrentTime()
 		
 		_action = appState.$dayViewAction
 		_actionDetail = appState.$dayViewActionDetail
@@ -48,7 +50,7 @@ struct DayView: View {
 			}
 		}
 		
-		_timeSlots = State(initialValue: newTimeSlots)
+		appState.dayViewTimeSlots = newTimeSlots
 		_budgetStack = appState.$budgetStack
 		_recentFunds = appState.$lastSelectedFundPaths
 		
@@ -81,7 +83,6 @@ struct DayView: View {
 				Section(header: Text("Time Slots")) {
 					ExpenseRowView(
 						tableView: $tableView,
-						timeSlots: $timeSlots,
 						timeSlotOfCurrentTime: $timeSlotOfCurrentTime
 					)
 						.listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
@@ -145,8 +146,8 @@ struct DayView: View {
 	
 	func getCalendarOffsetForCurrentTime() -> Int {
 		var result: Int = 0
-		for i in 0 ..< timeSlots.count {
-			let slot = timeSlots[i]
+		for i in 0 ..< appState.dayViewTimeSlots.count {
+			let slot = appState.dayViewTimeSlots[i]
 			if slot.coversCurrentTime {
 				result = i
 				break
@@ -169,8 +170,8 @@ struct DayView: View {
 			}
 		}
 		
-		if timeSlots[0] != newTimeSlots[0] {
-			timeSlots = newTimeSlots
+		if appState.dayViewTimeSlots[0] != newTimeSlots[0] {
+			appState.dayViewTimeSlots = newTimeSlots
 		}
 	}
 	
@@ -241,19 +242,17 @@ struct ExpenseRowView: View {
 	@Binding private var tableView: UITableView?
 	@Binding var budgetStack: BudgetStack
 	@FetchRequest var recentExpenses: FetchedResults<TimeExpense>
-	@Binding var timeSlots: [TimeSlot]
 	@Binding var lastSelectedFundPaths: [FundPath]
 	@Binding var action: DayViewAction
 	@Binding var timeSlotOfCurrentTime: TimeSlot
 	@State var startDate: Date
 	@State var endDate: Date
 
-	init(tableView: Binding<UITableView?>, timeSlots: Binding<[TimeSlot]>, timeSlotOfCurrentTime: Binding<TimeSlot>) {
+	init(tableView: Binding<UITableView?>, timeSlotOfCurrentTime: Binding<TimeSlot>) {
 
 		debugLog("ExpenseRowView.init")
 
 		_tableView = tableView
-		_timeSlots = timeSlots
 		_budgetStack = appState.$budgetStack
 		_lastSelectedFundPaths = appState.$lastSelectedFundPaths
 		_action = appState.$dayViewAction
@@ -270,7 +269,7 @@ struct ExpenseRowView: View {
 	}
 	
 	var body: some View {
-		ForEach(0 ..< self.timeSlots.count, id: \.self) { index in
+		ForEach(0 ..< appState.dayViewTimeSlots.count, id: \.self) { index in
 			self.rowView(index)
 		}
 	}
@@ -283,7 +282,7 @@ struct ExpenseRowView: View {
 	}
 	
 	func rowView(_ index: Int) -> some View {
-		let timeSlot = timeSlots[index]
+		let timeSlot = appState.dayViewTimeSlots[index]
 		return HStack {
 			VStack {
 				Text("\(toDayString(timeSlot: timeSlot))")
