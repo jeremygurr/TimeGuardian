@@ -133,7 +133,7 @@ class AppState {
 	})
 	var mainTabSelection = MainTabSelection.fund
 	
-	@Bindable(send: [.fundList], to: subject)
+	@Bindable(send: [.topView, .fundList], to: subject)
 	var budgetStack: BudgetStack = BudgetStack()
 	
 	@Bindable(send: [.dayView], to: subject)
@@ -177,6 +177,7 @@ class AppState {
 		
 		if !arrayEquals(appState.dayViewTimeSlots, newTimeSlots) {
 			appState.dayViewTimeSlots = newTimeSlots
+			dayViewResetListPosition = true
 		}
 		
 		let currentTimeSlot = getTimeSlotOfCurrentTime()
