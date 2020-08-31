@@ -28,8 +28,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 //			let tdb = TestDataBuilder(context: context)
 //			tdb.createTestData()
 		
-		appState.migrateData()
-		appState.loadSettings()
+		appState.postInit()
 		
 		// Create the SwiftUI view and set the context as the value for the managedObjectContext environment keyPath.
 		// Add `@Environment(\.managedObjectContext)` in the views that will need the context.
@@ -55,7 +54,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 	func sceneDidBecomeActive(_ scene: UIScene) {
 		// Called when the scene has moved from an inactive state to an active state.
 		// Use this method to restart any tasks that were paused (or not yet started) when the scene was inactive.
-		appState.dayViewTimeSlotOfCurrentTime = getTimeSlotOfCurrentTime()
+		appState.updateTimeSlots()
 	}
 	
 	func sceneWillResignActive(_ scene: UIScene) {

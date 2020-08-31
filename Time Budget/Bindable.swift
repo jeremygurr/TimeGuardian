@@ -16,17 +16,20 @@ class Bindable<T: Equatable, M> {
 	private let messagesToSend: [M]
 	private var subject: PassthroughSubject<M, Never>?
 	private let beforeSet: (T, T) -> Void
-	
+	private let afterSet: (T, T) -> Void
+
 	init(
 		wrappedValue: T,
 		send messages: [M] = [],
 		to subject: PassthroughSubject<M, Never>? = nil,
-		beforeSet: @escaping (T, T) -> Void = {(_, _) in}
+		beforeSet: @escaping (T, T) -> Void = {(_, _) in},
+		afterSet: @escaping (T, T) -> Void = {(_, _) in}
 	) {
 		self.internalValue = wrappedValue
 		self.messagesToSend = messages
 		self.subject = subject
 		self.beforeSet = beforeSet
+		self.afterSet = afterSet
 	}
 	
 	var wrappedValue: T {
@@ -34,7 +37,8 @@ class Bindable<T: Equatable, M> {
 			internalValue
 		}
 		set {
-			beforeSet(internalValue, newValue)
+			let oldValue = internalValue
+			beforeSet(oldValue, newValue)
 			let changed = internalValue != newValue
 			internalValue = newValue
 			if changed {
@@ -45,6 +49,7 @@ class Bindable<T: Equatable, M> {
 					}
 				}
 			}
+			afterSet(oldValue, newValue)
 		}
 	}
 	
@@ -54,8 +59,9 @@ class Bindable<T: Equatable, M> {
 				self.internalValue
 		},
 			set: {
-				self.beforeSet(self.internalValue, $0)
-				let changed = self.internalValue != $0
+				let oldValue = self.internalValue
+				self.beforeSet(oldValue, $0)
+				let changed = oldValue != $0
 				self.internalValue = $0
 				if changed {
 					if let s = self.subject {
@@ -65,6 +71,7 @@ class Bindable<T: Equatable, M> {
 						}
 					}
 				}
+				self.afterSet(oldValue, $0)
 		}
 		)
 	}

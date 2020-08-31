@@ -27,6 +27,12 @@ class AppState {
 		debugLog("AppState.init")
 	}
 	
+	func postInit() {
+		migrateData()
+		loadSettings()
+		updateTimeSlots()
+	}
+	
 	func migrateData() {
 		let dataVersion = AppState.settings.dataVersion
 		if dataVersion < 1 {
@@ -76,8 +82,14 @@ class AppState {
 	@Bindable(send: [.fundList, .dayView], to: subject, beforeSet: {
 		(beforeValue, afterValue) in
 		if beforeValue != afterValue {
-			debugLog("AppState: updating settings.shortPeriod to " + String(afterValue))
+			debugLog("AppState: beforeSet: updating settings.shortPeriod to " + String(afterValue))
 			settings.shortPeriod = afterValue
+		}
+	}, afterSet: {
+		(beforeValue, afterValue) in
+		debugLog("AppState: afterSet: updating settings.shortPeriod to " + String(afterValue))
+		if beforeValue != afterValue {
+			appState.updateTimeSlots()
 		}
 	})
 	var shortPeriod: TimeInterval = 30 * minutes
@@ -144,8 +156,35 @@ class AppState {
 		debugLog("Bindable: dayViewActionDetail changed from " + beforeValue + "  to " + afterValue)
 	})
 	var dayViewActionDetail: String = "No action selected"
-	
+
+	@Bindable(send: [.dayView], to: subject)
 	var dayViewTimeSlots: [TimeSlot] = []
+	
+	func updateTimeSlots() {
+		
+		var newTimeSlots: [TimeSlot] = []
+		let today = getStartOfDay()
+		let plusMinus = appState.dayViewPlusMinusDays
+		
+		debugLog("AppState.updateTimeSlots: Generating \(dayViewPeriodsPerDay()) time slots for each day")
+		
+		for dayOffset in -plusMinus ... plusMinus {
+			for timeSlot in 0 ..< dayViewPeriodsPerDay() {
+				let baseDate = today + Double(dayOffset) * days
+				newTimeSlots.append(TimeSlot(baseDate: baseDate, slotIndex: timeSlot, slotSize: appState.shortPeriod))
+			}
+		}
+		
+		if !arrayEquals(appState.dayViewTimeSlots, newTimeSlots) {
+			appState.dayViewTimeSlots = newTimeSlots
+		}
+		
+		let currentTimeSlot = getTimeSlotOfCurrentTime()
+		if currentTimeSlot != appState.dayViewTimeSlotOfCurrentTime {
+			appState.dayViewTimeSlotOfCurrentTime = currentTimeSlot
+		}
+
+	}
 	
 	@Bindable(send: [.dayView], to: subject)
 	var dayViewTimeSlotOfCurrentTime: TimeSlot = TimeSlot(baseDate: Date(), slotIndex: 0, slotSize: 30 * minutes)

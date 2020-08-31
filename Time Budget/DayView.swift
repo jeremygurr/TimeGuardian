@@ -18,7 +18,6 @@ struct DayView: View {
 	@Binding var action: DayViewAction
 	@Binding var actionDetail: String
 	@Binding var recentFunds: [FundPath]
-	@Binding var timeSlotOfCurrentTime: TimeSlot
 	
 	@State private var tableView: UITableView?
 	
@@ -26,35 +25,10 @@ struct DayView: View {
 		
 		debugLog("DayView.init")
 				
-		// rebuild this view if current time timeslot is incorrect
-		appState.dayViewTimeSlotOfCurrentTime = getTimeSlotOfCurrentTime()
-		
 		_action = appState.$dayViewAction
 		_actionDetail = appState.$dayViewActionDetail
-		let today = getStartOfDay()
-		let plusMinus = appState.dayViewPlusMinusDays
-		var newTimeSlots: [TimeSlot] = []
-		
-		debugLog("DayView.init: Generating \(dayViewPeriodsPerDay()) time slots for each day")
-		
-		for dayOffset in -plusMinus ... plusMinus {
-			for slotIndex in 0 ..< dayViewPeriodsPerDay() {
-				let baseDate = today + Double(dayOffset) * days
-				newTimeSlots.append(
-					TimeSlot(
-						baseDate: baseDate,
-						slotIndex: slotIndex,
-						slotSize: appState.shortPeriod
-					)
-				)
-			}
-		}
-		
-		appState.dayViewTimeSlots = newTimeSlots
 		_budgetStack = appState.$budgetStack
 		_recentFunds = appState.$lastSelectedFundPaths
-		
-		_timeSlotOfCurrentTime = appState.$dayViewTimeSlotOfCurrentTime
 		
 	}
 	
@@ -81,10 +55,7 @@ struct DayView: View {
 			}
 			List {
 				Section(header: Text("Time Slots")) {
-					ExpenseRowView(
-						tableView: $tableView,
-						timeSlotOfCurrentTime: $timeSlotOfCurrentTime
-					)
+					ExpenseRowView(tableView: $tableView)
 						.listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
 				}
 			}
@@ -110,14 +81,14 @@ struct DayView: View {
 			}
 		}.onAppear {
 			debugLog("DayView appeared")
-			self.updateCurrentTimeSlot()
+//			appState.updateTimeSlots()
 		}.onDisappear {
 			debugLog("DayView disappeared")
 			if let t = self.tableView {
 				appState.dayViewPosition = t.contentOffset
 				debugLog("AppState dayViewPosition updated to \(t.contentOffset)")
 			}
-			self.updateCurrentTimeSlot()
+//			appState.updateTimeSlots()
 		}.onReceive(
 			AppState.subject
 				.filter({ $0 == .dayView })
@@ -137,13 +108,6 @@ struct DayView: View {
 		}
 	}
 	
-	func updateCurrentTimeSlot() {
-		let ts = getTimeSlotOfCurrentTime()
-		if ts != self.timeSlotOfCurrentTime {
-			self.timeSlotOfCurrentTime = ts
-		}
-	}
-	
 	func getCalendarOffsetForCurrentTime() -> Int {
 		var result: Int = 0
 		for i in 0 ..< appState.dayViewTimeSlots.count {
@@ -156,25 +120,7 @@ struct DayView: View {
 		return result
 	}
 	
-	func updateTimeSlots() {
-		var newTimeSlots: [TimeSlot] = []
-		let today = getStartOfDay()
-		let plusMinus = appState.dayViewPlusMinusDays
-		
-		debugLog("DayView.updateTimeSlots: Generating \(dayViewPeriodsPerDay()) time slots for each day")
 
-		for dayOffset in -plusMinus ... plusMinus {
-			for timeSlot in 0 ..< dayViewPeriodsPerDay() {
-				let baseDate = today + Double(dayOffset) * days
-				newTimeSlots.append(TimeSlot(baseDate: baseDate, slotIndex: timeSlot, slotSize: appState.shortPeriod))
-			}
-		}
-		
-		if appState.dayViewTimeSlots[0] != newTimeSlots[0] {
-			appState.dayViewTimeSlots = newTimeSlots
-		}
-	}
-	
 }
 
 func dayViewPeriodsPerDay() -> Int {
@@ -244,11 +190,10 @@ struct ExpenseRowView: View {
 	@FetchRequest var recentExpenses: FetchedResults<TimeExpense>
 	@Binding var lastSelectedFundPaths: [FundPath]
 	@Binding var action: DayViewAction
-	@Binding var timeSlotOfCurrentTime: TimeSlot
 	@State var startDate: Date
 	@State var endDate: Date
 
-	init(tableView: Binding<UITableView?>, timeSlotOfCurrentTime: Binding<TimeSlot>) {
+	init(tableView: Binding<UITableView?>) {
 
 		debugLog("ExpenseRowView.init")
 
@@ -256,7 +201,6 @@ struct ExpenseRowView: View {
 		_budgetStack = appState.$budgetStack
 		_lastSelectedFundPaths = appState.$lastSelectedFundPaths
 		_action = appState.$dayViewAction
-		_timeSlotOfCurrentTime = timeSlotOfCurrentTime
 
 		let today = getStartOfDay()
 		let plusMinus = appState.dayViewPlusMinusDays
@@ -275,7 +219,7 @@ struct ExpenseRowView: View {
 	}
 	
 	func colorOfRow(timeSlot: TimeSlot) -> some View {
-		if(timeSlot == timeSlotOfCurrentTime) {
+		if(timeSlot == appState.dayViewTimeSlotOfCurrentTime) {
 			return Color.init("HighlightBackground")
 		}
 		return Color.clear
