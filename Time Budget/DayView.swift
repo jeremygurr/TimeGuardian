@@ -65,7 +65,6 @@ struct DayView: View {
 				}
 				
 				if appState.dayViewResetListPosition {
-					debugLog("DayView: resetting list position")
 					tableView.scrollToRow(
 						at: IndexPath(
 							item: self.getCalendarOffsetForCurrentTime() + 1, section: 0)
@@ -76,19 +75,12 @@ struct DayView: View {
 					appState.dayViewResetListPosition = false
 				} else {
 					tableView.setContentOffset(appState.dayViewPosition, animated: false)
-					debugLog("DayView: list position updated to \(tableView.contentOffset)")
 				}
 			}
-		}.onAppear {
-			debugLog("DayView appeared")
-//			appState.updateTimeSlots()
 		}.onDisappear {
-			debugLog("DayView disappeared")
 			if let t = self.tableView {
 				appState.dayViewPosition = t.contentOffset
-				debugLog("AppState dayViewPosition updated to \(t.contentOffset)")
 			}
-//			appState.updateTimeSlots()
 		}.onReceive(
 			AppState.subject
 				.filter({ $0 == .dayView })
@@ -100,7 +92,6 @@ struct DayView: View {
 		) { x in
 			if let t = self.tableView, t.contentOffset.y > 0 {
 				appState.dayViewPosition = t.contentOffset
-				debugLog("AppState dayViewPosition updated to \(t.contentOffset)")
 			}
 			
 			self.viewState += 1
@@ -124,10 +115,7 @@ struct DayView: View {
 }
 
 func dayViewPeriodsPerDay() -> Int {
-	let shortPeriod = appState.shortPeriod
-	debugLog("dayViewPeriodsPerDay read shortPeriod = \(shortPeriod)")
 	let result = Int(oneDay / appState.shortPeriod)
-	debugLog("dayViewPeriodsPerDay() = \(result)")
 	return result
 }
 
@@ -240,28 +228,12 @@ struct ExpenseRowView: View {
 		.contentShape(Rectangle())
 		.background(colorOfRow(timeSlot: timeSlot))
 		.onTapGesture {
-			debugLog("DayView: expense row pressed")
 			let existingExpense = getExpenseFor(timeSlot: timeSlot, todaysExpenses: self.recentExpenses)
 			
 			if let t = self.tableView {
 				appState.dayViewPosition = t.contentOffset
-				debugLog("AppState dayViewPosition updated to \(t.contentOffset)")
 			}
 			
-			//			switch self.action {
-			//				case .add:
-			//					debugLog("DayView: add action")
-			//					if existingExpense == nil {
-			//						addExpense(timeSlot: timeSlot, lastSelectedFund: self.lastSelectedFund, budgetStack: self.budgetStack, managedObjectContext: self.managedObjectContext)
-			//					}
-			//				case .remove:
-			//					debugLog("DayView: remove action")
-			//					if existingExpense != nil {
-			//						self.lastSelectedFund = existingExpense!.fund
-			//						self.removeExpense(existingExpense: existingExpense!)
-			//				}
-			//				case .toggle:
-			debugLog("DayView: toggle action")
 			if existingExpense != nil {
 				appState.push(fundPath: existingExpense!.fundPath)
 				self.removeExpense(existingExpense: existingExpense!)
@@ -324,12 +296,8 @@ func getExpenseFor(timeSlot: TimeSlot, todaysExpenses: FetchedResults<TimeExpens
 
 func toExpenseString(timeSlot: TimeSlot, todaysExpenses: FetchedResults<TimeExpense>) -> String {
 	var result = ""
-	//	debugLog("DayView.toExpenseString(\(timeSlot))")
 	if let existingExpense = getExpenseFor(timeSlot: timeSlot, todaysExpenses: todaysExpenses) {
 		result = existingExpense.fundName
-		//		debugLog("DayView.toExpenseString: existing expense: \(result)")
-	} else {
-		//		debugLog("DayView.toExpenseString: No existing expense")
 	}
 	return result
 }
@@ -341,7 +309,6 @@ func toTimeString(timeSlot: TimeSlot) -> String {
 	let timeFormat = DateFormatter()
 	timeFormat.dateFormat = "HH:mm"
 	let timeString = timeFormat.string(from: currentPeriod)
-	//	debugLog("toTimeString -> \(timeString)")
 	return timeString
 }
 
@@ -352,7 +319,6 @@ func toDayString(timeSlot: TimeSlot) -> String {
 	let timeFormat = DateFormatter()
 	timeFormat.dateFormat = "E"
 	let timeString = timeFormat.string(from: currentPeriod)
-	//	debugLog("toTimeString -> \(timeString)")
 	return timeString
 }
 
@@ -372,9 +338,6 @@ struct CalendarView_Previews: PreviewProvider {
 				.environment(\.colorScheme, .light)
 				.environment(\.managedObjectContext, context)
 			
-			//			DayView()
-			//				.environment(\.colorScheme, .dark)
-			//				.environment(\.managedObjectContext, context)
 		}
 		
 	}

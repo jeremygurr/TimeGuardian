@@ -43,7 +43,6 @@ class AppState {
 				debugLog("Found \(expenses.count) expenses to migrate")
 				for expense in expenses {
 					if let fund = expense.fund {
-						debugLog("Expense needs to be migrated: \(expense.description)")
 						var pathString = expense.path
 						pathString.append(newline)
 						pathString.append(fund.name)
@@ -54,7 +53,6 @@ class AppState {
 						when.addTimeInterval(Double(expense.timeSlot) * 30 * minutes)
 						expense.when = when
 						expense.timeSlot = -1
-						debugLog("New expense: \(expense.description)")
 					}
 				}
 				AppState.settings.dataVersion = 1
@@ -74,20 +72,15 @@ class AppState {
 	
 	static let subject = PassthroughSubject<ViewRefreshKey, Never>()
 	
-//	@Bindable(send: [.fundList, .dayView], to: subject)
-//	var something:
-	
 	static private var settings = Settings.fetch(context: managedObjectContext)
 	
 	@Bindable(send: [.fundList, .dayView], to: subject, beforeSet: {
 		(beforeValue, afterValue) in
 		if beforeValue != afterValue {
-			debugLog("AppState: beforeSet: updating settings.shortPeriod to " + String(afterValue))
 			settings.shortPeriod = afterValue
 		}
 	}, afterSet: {
 		(beforeValue, afterValue) in
-		debugLog("AppState: afterSet: updating settings.shortPeriod to " + String(afterValue))
 		if beforeValue != afterValue {
 			appState.updateTimeSlots()
 		}
@@ -142,19 +135,13 @@ class AppState {
 	@Bindable(send: [false])
 	var dayViewPosition: CGPoint = CGPoint(x: 0, y: 0)
 	
-	//	@Bindable(send: .dayView, to: subject)
-	//	var dayViewExpensePeriod: TimeInterval = 30 * minutes
-	//
 	@Bindable(send: [.dayView], to: subject)
 	var dayViewPlusMinusDays: Int = 1
 	
 	@Bindable(send: [.dayView], to: subject)
 	var dayViewAction: DayViewAction = .add
 	
-	@Bindable(send: [.dayView], to: subject, beforeSet: {
-		(beforeValue, afterValue) in
-		debugLog("Bindable: dayViewActionDetail changed from " + beforeValue + "  to " + afterValue)
-	})
+	@Bindable(send: [.dayView], to: subject)
 	var dayViewActionDetail: String = "No action selected"
 
 	@Bindable(send: [.dayView], to: subject)
@@ -165,8 +152,6 @@ class AppState {
 		var newTimeSlots: [TimeSlot] = []
 		let today = getStartOfDay()
 		let plusMinus = appState.dayViewPlusMinusDays
-		
-		debugLog("AppState.updateTimeSlots: Generating \(dayViewPeriodsPerDay()) time slots for each day")
 		
 		for dayOffset in -plusMinus ... plusMinus {
 			for timeSlot in 0 ..< dayViewPeriodsPerDay() {
@@ -196,23 +181,7 @@ class AppState {
 	@Bindable(send: [.fundList], to: subject)
 	var fundListActionDetail: String = "No action selected"
 	
-	//	@Bindable(send: .fundList, to: subject)
-	//	var balanceDisplayMode: BalanceDisplayMode = .unit
-	//
-	//	@Bindable(send: .fundList, to: subject)
-	//	var ratioDisplayMode: RatioDisplayMode = .percentage
-	//
-	@Bindable(send: [.dayView], to: subject, beforeSet: {
-		(beforeValue: [FundPath], afterValue: [FundPath]) in
-		let beforeLastPath: FundPath? = beforeValue.last
-		let afterLastPath: FundPath? = afterValue.last
-		let beforeName: String? = beforeLastPath?.last?.name
-		let afterName: String? = afterLastPath?.last?.name
-		let b = beforeName ?? "nil"
-		let a = afterName ?? "nil"
-		let out = "Bindable: lastSelectedFundPaths.last changed from \(b) to \(a)"
-		debugLog(out)
-	})
+	@Bindable(send: [.dayView], to: subject)
 	var lastSelectedFundPaths: [FundPath] = []
 	
 	func push(fundPath: FundPath) {
