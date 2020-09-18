@@ -249,7 +249,6 @@ struct ExpenseRowView: View {
 	
 	func removeExpense(existingExpense: TimeExpense) {
 		debugLog("removeExpense: \(existingExpense)")
-		existingExpense.lastFund.adjustBalance(1)
 		var path = existingExpense.path.split(separator: newline)
 		if path.count > 0 {
 			path.reverse()
