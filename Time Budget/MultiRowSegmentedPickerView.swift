@@ -170,6 +170,7 @@ struct MultiRowSegmentedPickerView<T: Buttonable>: View {
 						longPressState: self.longPressState[row][col]
 					)
 				)
+				.frame(width: self.selectionWidth, height: self.selectionHeight, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
 					.font(.body)
 					.contentShape(Rectangle())
 					.onTapGesture(
