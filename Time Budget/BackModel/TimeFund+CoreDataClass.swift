@@ -35,7 +35,7 @@ public class TimeFund: NSManagedObject, Identifiable {
 		let request = FetchRequest<TimeFund>(
 			entity: TimeFund.entity(),
 			sortDescriptors: [
-				NSSortDescriptor(keyPath: \TimeFund.balance, ascending: false),
+//				NSSortDescriptor(keyPath: \TimeFund.balance, ascending: false),
 				NSSortDescriptor(keyPath: \TimeFund.order, ascending: true)
 			],
 			predicate: NSPredicate(format: "budget == %@", budget)
@@ -48,7 +48,7 @@ public class TimeFund: NSManagedObject, Identifiable {
 		let request = FetchRequest<TimeFund>(
 			entity: TimeFund.entity(),
 			sortDescriptors: [
-				NSSortDescriptor(keyPath: \TimeFund.balance, ascending: false),
+//				NSSortDescriptor(keyPath: \TimeFund.balance, ascending: false),
 				NSSortDescriptor(keyPath: \TimeFund.order, ascending: true)
 			],
 			predicate: NSPredicate(format: "budget == %@ AND balance > 0", budget)
@@ -61,7 +61,7 @@ public class TimeFund: NSManagedObject, Identifiable {
 		let request = FetchRequest<TimeFund>(
 			entity: TimeFund.entity(),
 			sortDescriptors: [
-				NSSortDescriptor(keyPath: \TimeFund.balance, ascending: false),
+//				NSSortDescriptor(keyPath: \TimeFund.balance, ascending: false),
 				NSSortDescriptor(keyPath: \TimeFund.order, ascending: true)
 			],
 			predicate: NSPredicate(format: "budget == %@ AND balance <= 0", budget)
