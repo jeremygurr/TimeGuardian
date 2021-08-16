@@ -135,7 +135,7 @@ public class TimeFund: NSManagedObject, Identifiable {
 	
 	func earn() {
 		debugLog("TimeFund.earn on \(self.name)")
-		adjustBalance(recharge)
+		adjustBalance(1)
 	}
 	
 	func resetBalance() {
